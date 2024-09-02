@@ -19,6 +19,12 @@ body:
           required: true
   - type: textarea
     attributes:
+      label: 'Current Behavior:'
+      description: A concise description of what you're experiencing.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
       label: 'Expected Behavior:'
       description: A concise description of what you expected to happen.
     validations:
@@ -46,12 +52,6 @@ body:
         - Linux / Ubuntu
         - Linux / RedHat
         - MacOS
-  - type: textarea
-    attributes:
-      label: 'Current Behavior:'
-      description: A concise description of what is happening instead.
-    validations:
-      required: true
   - type: textarea
     id: to-reproduce
     attributes:
