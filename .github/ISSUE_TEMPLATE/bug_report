@@ -23,6 +23,29 @@ body:
       description: A concise description of what you expected to happen.
     validations:
       required: false
+  - type: dropdown
+    id: _version
+    attributes:
+      label: Version
+      description: What version are you running? Look to AYON Tray
+      options:
+        - 1.0.0
+    validations:
+      required: true
+  - type: dropdown
+    validations:
+      required: true
+    attributes:
+      label: What platform you are running on?
+      description: |
+        Please specify the operating systems you are using.
+      multiple: true
+      options:
+        - Windows
+        - Linux / Centos
+        - Linux / Ubuntu
+        - Linux / RedHat
+        - MacOS
   - type: textarea
     attributes:
       label: 'Current Behavior:'
