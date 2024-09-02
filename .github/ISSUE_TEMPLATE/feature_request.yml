@@ -2,7 +2,7 @@ name: Feature Request
 description: Create a request to add a particular feature.
 title: "Your issue title here"
 labels:
-  - "type: feature"
+  - "feature"
 body:
   - type: markdown
     attributes:
@@ -16,7 +16,7 @@ body:
       - label: I have searched the existing issues.
         required: true
   - type: textarea
-    id: related-feature
+    id: feature-description
     attributes:
       label: Please describe the feature you have in mind and explain what the current shortcomings are?
       description: A clear and concise description of what the problem is.
