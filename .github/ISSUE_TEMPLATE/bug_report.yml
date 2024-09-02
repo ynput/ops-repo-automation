@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report!
+        Thanks for taking the time to fill out this bug report.
   - type: checkboxes
     attributes:
       label: Is there an existing issue for this?
@@ -19,39 +19,16 @@ body:
           required: true
   - type: textarea
     attributes:
-      label: 'Current Behavior:'
-      description: A concise description of what you're experiencing.
+      label: 'Expected Behavior:'
+      description: A concise description of what you expected to happen.
     validations:
       required: true
   - type: textarea
     attributes:
-      label: 'Expected Behavior:'
-      description: A concise description of what you expected to happen.
-    validations:
-      required: false
-  - type: dropdown
-    id: _version
-    attributes:
-      label: Version
-      description: What version are you running? Look to AYON Tray
-      options:
-        - 1.0.0
+      label: 'Current Behavior:'
+      description: A concise description of what happened instead.
     validations:
       required: true
-  - type: dropdown
-    validations:
-      required: true
-    attributes:
-      label: What platform you are running on?
-      description: |
-        Please specify the operating systems you are using.
-      multiple: true
-      options:
-        - Windows
-        - Linux / Centos
-        - Linux / Ubuntu
-        - Linux / RedHat
-        - MacOS
   - type: textarea
     id: to-reproduce
     attributes:
