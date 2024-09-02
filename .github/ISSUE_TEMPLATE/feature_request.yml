@@ -34,7 +34,7 @@ body:
       label: Are there any labels you wish to add?
       description: Please search labels and identify those related to your enhancement.
       options:
-      - label: I have added the relevant labels to the enhancement request.
+      - label: I have added the relevant labels to the feature request.
         required: true
   - type: textarea
     id: alternatives
