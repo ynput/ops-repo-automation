@@ -38,11 +38,17 @@ jobs:
   verify_repo_vars_and_secrets:
     runs-on: ubuntu-latest
 
+    # TODO include orgnaistion secrets - needs actions [secrets fine-grained permission](https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28)
+    # TODO only check if no inputs provided
     # TODO move verification into github action
     steps:
       - name: 🔎 Verify repo secrets for ${{ github.repository }}
         id: verify_var
         run: |
+          missing_vars=$(echo ${{ env.REQUIRED_SECRECTS }} | tr ',' '\n' | while read var; do
+            gh secret list --repo ${{ github.repository }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
+          done)
+
           missing_vars=$(echo ${{ env.REQUIRED_SECRECTS }} | tr ',' '\n' | while read var; do
             gh secret list --repo ${{ github.repository }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
           done)
