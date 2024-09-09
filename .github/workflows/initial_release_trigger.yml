@@ -41,7 +41,6 @@ jobs:
     # TODO move verification into github action
     steps:
       - name: 🔎 Verify repo secrets for ${{ github.repository }}
-        id: verify_var
         run: |
           missing_vars=$(echo ${{ env.REQUIRED_SECRECTS }} | tr ',' '\n' | while read var; do
             gh secret list --repo ${{ github.repository }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
@@ -55,7 +54,6 @@ jobs:
           fi
 
       - name: 🔎 Verify repo variables for ${{ github.repository }}
-        id: verify_var
         run: |
           missing_vars=$(echo ${{ env.REQUIRED_VARS }} | tr ',' '\n' | while read var; do
             gh variable list --repo ${{ github.repository }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
@@ -124,7 +122,6 @@ jobs:
 
   merge-to-main:
     runs-on: ubuntu-latest
-    needs: increment-version
 
     steps:
       - name: ⬇️ Checkout ${{ vars.MAIN_BRANCH }}
@@ -157,7 +154,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - merge-to-main
-      - increment-version
     env:
       OUTPUT_DIR: "artifact"
     outputs:
@@ -170,7 +166,7 @@ jobs:
           ref: ${{ vars.MAIN_BRANCH }}
           fetch-depth: 0
 
-      - name: Update package.py version to ${{ env.NEXT_VERSION }}
+      - name: Update package.py version to ${{ env.INIT_VERSION }}
         run: |
           sed -i "s/^version = \".*\"/version = \"${{ env.INIT_VERSION }}\"/" package.py
           sed -i "s/^name = \".*\"/name = \"${{ env.PROJECT_NAME }}\"/" package.py
@@ -179,7 +175,7 @@ jobs:
         id: create-artifact
         run: |
           python create_package.py --output ${{ env.OUTPUT_DIR }}
-          echo "file_name=${{ env.PROJECT_NAME }}-${{ env.NEXT_VERSION }}.zip" >> $GITHUB_OUTPUT
+          echo "file_name=${{ env.PROJECT_NAME }}-${{ env.INIT_VERSION }}.zip" >> $GITHUB_OUTPUT
 
       - name: 🔼 Upload zip artifacts
         id: increment-v
@@ -194,7 +190,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build-from-main
-      - increment-version
     env:
       NEXT_PACKAGE_VERSION: "${{ env.INIT_VERSION }}-dev"
 
@@ -227,10 +222,15 @@ jobs:
           version=$(sed -n 's/^version *= *"\(.*\)"/\1/p' package.py)
           echo "version=$version" >> $GITHUB_OUTPUT
 
-      - name: Update package.py version to ${{ env.NEXT_PACKAGE_VERSION }}
-        if: ${{ steps.package-version.outputs.version != env.NEXT_PACKAGE_VERSION }}
+      - name: Set develop version
+        id: develop-version
         run: |
-          sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_PACKAGE_VERSION }}\"/" package.py
+          echo "develop_version=${{ env.INIT_VERSION }}-dev" >> $GITHUB_OUTPUT
+
+      - name: Update package.py version to ${{ steps.develop-version.outputs.develop_version }}
+        if: ${{ steps.package-version.outputs.version != steps.develop-version.outputs.develop_version }}
+        run: |
+          sed -i "s/^version = \".*\"/version = \"${{ steps.develop-version.outputs.develop_version }}\"/" package.py
           git add package.py
           git commit -m "[Automated] Update version in package.py for develop"
           git push origin ${{ github.ref_name }}
@@ -240,7 +240,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build-from-main
-      - increment-version
 
     steps:
       - name: 🔽 Download zip artifacts
@@ -262,7 +261,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - create-release
-      - increment-version
 
     steps:
       - name: Fetch Latest Release Draft
