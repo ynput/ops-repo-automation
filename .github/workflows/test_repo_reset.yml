@@ -151,21 +151,21 @@ jobs:
         run: |
           curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/caller_workflows/addon_repo_initial_release.yml
 
-          mv addon_repo_initial_release.yml ./.github/workflows/initial_release_trigger.yml
+          mv addon_repo_initial_release.yml ./.github/workflows/initial_release.yml
 
           git config --global user.name "${{ secrets.CI_USER }}"
           git config --global user.email "${{ secrets.CI_EMAIL }}"
 
-          git add ./.github/workflows/initial_release_trigger.yml
-          git commit -m "Add release trigger workflow"
+          git add ./.github/workflows/initial_release.yml
+          git commit -m "Add initial release trigger workflow"
           git push origin ${{ env.DEFAULT_BRANCH }}
 
       - name: Add release workflow
         # TODO replace develop with main after initial release
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/caller_workflows/release_trigger_addon_repo.yml
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/caller_workflows/addon_repo_release_trigger.yml
 
-          mv release_trigger_addon_repo.yml ./.github/workflows/release_trigger.yml
+          mv addon_repo_release_trigger.yml ./.github/workflows/release_trigger.yml
 
           git config --global user.name "${{ secrets.CI_USER }}"
           git config --global user.email "${{ secrets.CI_EMAIL }}"
@@ -288,4 +288,4 @@ jobs:
 
       - name: Create GitHub Release
         run: |
-          gh workflow run initial_release_trigger.yml --repo ${{ env.TARGET_REPO }}
+          gh workflow run initial_release.yml --repo ${{ env.TARGET_REPO }}
