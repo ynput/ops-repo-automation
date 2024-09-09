@@ -285,12 +285,5 @@ jobs:
           gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature02 --title "Add mem file" --body "$pr_body" --label "enhancement" --assignee "${{ github.actor }}"
 
       - name: Create GitHub Release
-        # TODO remove as soon as initial release trigger is in place
         run: |
-          # Define the release tag and title
-          tag="0.1.0"
-          title="Release $tag"
-          body="This is the release for version $tag"
-  
-          # Create the release
-          gh release create "$tag" --title "$title" --notes "$body"
+          gh workflow run initial_release_trigger.yml
