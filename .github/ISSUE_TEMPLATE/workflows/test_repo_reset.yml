@@ -144,9 +144,24 @@ jobs:
           git commit -m "Add pr template"
           git push origin ${{ env.DEFAULT_BRANCH }}
 
-      - name: Add release workflow
+      - name: Add initial-release workflow
+        # TODO replace develop with main after initial release
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/.github/workflows/release_trigger_addon_repo.yml
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/reusable_workflows/addon_repo_release_trigger
+
+          mv release_trigger_addon_repo.yml ./.github/workflows/initial_release_trigger.yml
+
+          git config --global user.name "${{ secrets.CI_USER }}"
+          git config --global user.email "${{ secrets.CI_EMAIL }}"
+
+          git add ./.github/workflows/release_trigger.yml
+          git commit -m "Add release trigger workflow"
+          git push origin ${{ env.DEFAULT_BRANCH }}
+
+      - name: Add release workflow
+        # TODO replace develop with main after initial release
+        run: |
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/reusable_workflows/release_trigger_addon_repo.yml
 
           mv release_trigger_addon_repo.yml ./.github/workflows/release_trigger.yml
 
