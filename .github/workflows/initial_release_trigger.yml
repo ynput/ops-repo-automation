@@ -254,7 +254,7 @@ jobs:
           generateReleaseNotes: true
           artifacts: ${{ needs.build-from-main.outputs.artifact_file }}
           token: ${{ env.GH_TOKEN }}
-          draft: true
+          draft: false
 
 
   verify-release:
