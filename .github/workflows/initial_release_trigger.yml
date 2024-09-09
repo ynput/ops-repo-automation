@@ -122,6 +122,8 @@ jobs:
 
   merge-to-main:
     runs-on: ubuntu-latest
+    needs:
+      - get-latest-release
 
     steps:
       - name: ⬇️ Checkout ${{ vars.MAIN_BRANCH }}
@@ -190,8 +192,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build-from-main
-    env:
-      NEXT_PACKAGE_VERSION: "${{ env.INIT_VERSION }}-dev"
 
     steps:
       - name: ⬇️ Checkout ${{ github.ref_name }}
