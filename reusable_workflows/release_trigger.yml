@@ -1,0 +1,355 @@
+name: Release [demand]
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      major:
+        type: string
+      minor:
+        type: string
+      patch:
+        type: string
+      name:
+        type: string
+
+    secrets:
+      token:
+        required: true
+      email:
+        required: true
+      user:
+        required: true
+
+env:
+  LABEL_DELIMITTER: ", "
+  GH_TOKEN: ${{ secrets.token || secrets.YNPUT_BOT_TOKEN}}
+  GH_USER: ${{ secrets.user || secrets.CI_USER }}
+  GH_EMAIL: ${{ secrets.email || secrets.CI_EMAIL }}
+  MAJOR: ${{ inputs.major || vars.MAJOR }}
+  MINOR: ${{ inputs.minor || vars.MINOR }}
+  PATCH: ${{ inputs.patch || vars.PATCH }}
+  RELEASE_NAME: ${{ inputs.name || '' }}
+  ARTIFACT_NAME: "${{ vars.PROJECT_NAME }}-package"
+  PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
+  REQUIRED_VARS: MAIN_BRANCH,MINOR_BUMP_LABEL,PATCH_BUMP_LABEL,PROJECT_NAME
+  REQUIRED_SECRECTS: CI_EMAIL,CI_USER,YNPUT_BOT_TOKEN
+
+jobs:
+  verify_repo_vars_and_secrets:
+    runs-on: ubuntu-latest
+
+    # TODO move verification into github action
+    steps:
+      - name: 🔎 Verify repo secrets for ${{ github.repository }}
+        id: verify_var
+        run: |
+          missing_vars=$(echo ${{ env.REQUIRED_SECRECTS }} | tr ',' '\n' | while read var; do
+            gh secret list --repo ${{ github.repository }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
+          done)
+
+          if [ -n "$missing_vars" ]; then
+            echo "::error::The following required variables are missing: $missing_vars for repository ${{ github.repository }}"
+            exit 1
+          else
+            echo "::notice::All required variables are present."
+          fi
+
+      - name: 🔎 Verify repo variables for ${{ github.repository }}
+        id: verify_var
+        run: |
+          missing_vars=$(echo ${{ env.REQUIRED_VARS }} | tr ',' '\n' | while read var; do
+            gh variable list --repo ${{ github.repository }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
+          done)
+
+          if [ -n "$missing_vars" ]; then
+            echo "::error::The following required variables are missing: $missing_vars for repository ${{ github.repository }}"
+            exit 1
+          else
+            echo "::notice::All required variables are present."
+          fi
+
+
+  # TODO Move release query logic into github action
+  get-latest-release:
+    runs-on: ubuntu-latest
+    needs: 
+      - verify_repo_vars
+    outputs:
+      id: ${{ steps.latest-release.outputs.id }}
+      name: ${{ steps.latest-release.outputs.name }}
+      tag: ${{ steps.latest-release.outputs.tag }}
+      date_created: ${{ steps.latest-release.outputs.date_created }}
+      date_published: ${{ steps.latest-release.outputs.date_published }}
+      draft: ${{ steps.latest-release.outputs.draft }}
+      pre_release: ${{ steps.latest-release.outputs.pre_release}}
+
+    steps:
+      - name: Get latest release
+        id: latest-release
+        run: |
+          declare -A release_option_map=(
+            ["id"]="id"
+            ["createdAt"]="date_created"
+            ["publishedAt"]="date_published"
+            ["tagName"]="tag"
+            ["name"]="name"
+            ["isDraft"]="draft"
+            ["isPrerelease"]="pre_release"
+          )
+
+          key_list=$(IFS=,; echo "${!release_option_map[*]}")
+          release=$(gh release view --repo ${{ github.repository }} --json $key_list || true)
+
+          for key in "${!release_option_map[@]}"; do
+            value=$(echo "$release" | jq -r ".$key")
+            echo "${release_option_map[$key]}=$value" >> $GITHUB_OUTPUT
+          done
+
+      - name: Show release data
+        # TODO create a loop for this
+        run: |
+          echo "Release ID: ${{ steps.latest-release.outputs.id }}"
+          echo "Release Name: ${{ steps.latest-release.outputs.name }}"
+          echo "Tag Name: ${{ steps.latest-release.outputs.tag }}"
+          echo "Date Created: ${{ steps.latest-release.outputs.date_created }}"
+          echo "Date Published: ${{ steps.latest-release.outputs.date_published }}"
+          echo "Draft Status: ${{ steps.latest-release.outputs.draft }}"
+          echo "Pre-release Status: ${{ steps.latest-release.outputs.pre_release }}"
+
+      - name: Test existing release
+        if: ${{ ! steps.latest-release.outputs.date_published }}
+        run: |
+          echo "::warning::No releases found for ${{ github.repository }}. Please use initial-release-trigger first.
+          exit 1
+
+      - name: Test release drafts
+        if: ${{ fromJson(steps.latest-release.outputs.draft) }}
+        run: |
+          echo "::warning::Release draft already present: ${{ steps.latest-release.outputs.name }}"
+          exit 0
+
+
+  increment-version:
+    runs-on: ubuntu-latest
+    needs: get-latest-release
+    env:
+      release_date: ${{ needs.get-latest-release.outputs.date_published }}
+    outputs:
+      next-version: "${{ steps.calculated_version_tag.outputs.major-version }}.${{ steps.calculated_version_tag.outputs.minor-version }}.${{ steps.calculated_version_tag.outputs.patch-version }}"
+
+    steps:
+      - name: Query PR data
+        id: pr-query
+        uses: ynput/github-query@main
+        with:
+          repo: "${{ github.repository }}"
+          date: "${{ env.release_date }}"
+          query_parameters: "body,labels,title"
+
+      - name: Show debug output
+        run: |
+          echo "raw-ouput: "&& echo '${{ steps.pr-query.outputs.raw-output }}'
+          echo "label-list: ${{ steps.pr-query.outputs.label-list }}"
+          echo "bump-increment: ${{ steps.pr-query.outputs.bump-increment }}"
+
+      - name: Check for existing PRs
+        if: ${{ !fromJson(steps.pr-query.outputs.raw-output) }}
+        run: |
+          echo "pr_list: ${{ steps.pr-query.outputs.raw-output }}"
+          echo "::error::No merged PRs found since last release."
+          exit 1
+
+      - name: Check for existing PR labels
+        if: ${{ !fromJson(steps.pr-query.outputs.label-list) }}
+        run: |
+          echo "::error:: No PR labels found. Can't create a new release."
+          exit 1
+
+      - name: ❗ Validate labels
+        if: ${{ !steps.pr-query.outputs.bump-increment }}
+        run: |
+          # TODO Format using line breaks - not supported by annotations
+          echo "::error:: No valid versioning labels found in PRs. Only found these labels: ${{ steps.pr-query.outputs.label-list }}. Are you sure you want to create a new release?"
+          exit 1
+
+      - name: 🔼 Get next Version Tag
+        uses: reecetech/version-increment@2024.4.4
+        id: calculated_version_tag
+        with:
+          scheme: semver
+          increment: ${{ steps.pr-query.outputs.bump-increment }}
+          release_branch: main
+          use_api: true
+
+
+  merge-to-main:
+    runs-on: ubuntu-latest
+    needs: increment-version
+
+    steps:
+      - name: ⬇️ Checkout ${{ vars.MAIN_BRANCH }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ vars.MAIN_BRANCH }}
+          fetch-depth: 0
+
+      - name: 🔑 Set Bot Authentication
+        run: |
+          git config --global user.name "${{ env.GH_USER }}"
+          git config --global user.email "${{ env.GH_EMAIL }}"
+
+      - name: 🔀 Merge ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}
+        run: |
+          git pull origin ${{ github.ref_name }}
+          git merge --no-ff origin/${{ github.ref_name }} -m "[Automated] Merged ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}"
+
+      # TODO implement this using gh command
+      - name: 🔏 Push to protected main branch
+        uses: CasperWA/push-protected@v2.15.0
+        with:
+          token: ${{ env.GH_TOKEN }}
+          branch: ${{ vars.MAIN_BRANCH }}
+          tags: true
+          unprotect_reviews: true
+
+
+  build-from-main:
+    runs-on: ubuntu-latest
+    needs:
+      - merge-to-main
+      - increment-version
+    env:
+      OUTPUT_DIR: "artifact"
+      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
+    outputs:
+      artifact_file: ${{ steps.create-artifact.outputs.file_name }}
+
+    steps:
+      - name: ⬇️ Checkout ${{ vars.MAIN_BRANCH }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ vars.MAIN_BRANCH }}
+          fetch-depth: 0
+
+      - name: Update package.py version to ${{ env.NEXT_VERSION }}
+        run: |
+          sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_VERSION }}\"/" package.py
+          sed -i "s/^name = \".*\"/name = \"${{ env.PROJECT_NAME }}\"/" package.py
+
+      - name: Create artifacts
+        id: create-artifact
+        run: |
+          python create_package.py --output ${{ env.OUTPUT_DIR }}
+          echo "file_name=${{ env.PROJECT_NAME }}-${{ env.NEXT_VERSION }}.zip" >> $GITHUB_OUTPUT
+
+      - name: 🔼 Upload zip artifacts
+        id: increment-v
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: |
+            ${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}
+
+
+  update-develop:
+    runs-on: ubuntu-latest
+    needs:
+      - build-from-main
+      - increment-version
+    env:
+      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
+      NEXT_PACKAGE_VERSION: "${{ needs.increment-version.outputs.next-version }}-dev"
+
+    steps:
+      - name: ⬇️ Checkout ${{ github.ref_name }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: 🔑 Set Bot Authentication
+        run: |
+          git config --global user.email "${{ secrets.CI_EMAIL }}"
+          git config --global user.name "${{ secrets.CI_USER }}"
+
+      - name: 🔁 Merge ${{ vars.MAIN_BRANCH }} -> ${{ github.ref_name }}
+        run: |
+          git pull origin ${{ vars.MAIN_BRANCH }}
+          git merge origin/${{ vars.MAIN_BRANCH }} -m "[Automated] Merge ${{ vars.MAIN_BRANCH }} -> ${{ github.ref_name }}"
+          git push origin ${{ github.ref_name }}
+
+      - name: 🔑 Set Bot Authentication
+        run: |
+          git config --global user.email "${{ env.GH_EMAIL }}"
+          git config --global user.name "${{ env.GH_USER }}"
+
+      - name: Read version from package.py
+        id: package-version
+        run: |
+          version=$(sed -n 's/^version *= *"\(.*\)"/\1/p' package.py)
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Show found versions
+        run: |
+          echo "${{ steps.package-version.outputs.version != env.NEXT_PACKAGE_VERSION }}"
+
+      - name: Update package.py version to ${{ env.NEXT_PACKAGE_VERSION }}
+        if: ${{ steps.package-version.outputs.version != env.NEXT_PACKAGE_VERSION }}
+        run: |
+          sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_PACKAGE_VERSION }}\"/" package.py
+          git add package.py
+          git commit -m "[Automated] Update version in package.py for develop"
+          git push origin ${{ github.ref_name }}
+
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs:
+      - build-from-main
+      - increment-version
+    env:
+      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
+
+    steps:
+      - name: 🔽 Download zip artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          
+      - name: 🚀 Create Github Release Draft
+        uses: ncipollo/release-action@v1
+        with:
+          tag: "${{ env.NEXT_VERSION }}"
+          generateReleaseNotes: true
+          artifacts: ${{ needs.build-from-main.outputs.artifact_file }}
+          token: ${{ env.GH_TOKEN }}
+          draft: true
+
+
+  verify-release:
+    runs-on: ubuntu-latest
+    needs:
+      - create-release
+      - increment-version
+    env:
+      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
+    steps:
+      - name: Fetch Latest Release Draft
+        id: fetch-latest-release-draft
+        run: |
+          current_release_name="$(gh release list --repo ${{ github.repository }} --json isDraft,name,createdAt --jq '[.[] | select(.isDraft == true)] | sort_by(.createdAt) | reverse | .[0].name')"
+          echo "current_release_name=$current_release_name" >> $GITHUB_OUTPUT
+
+      - name: 🔍 Check Release-Draft Name
+        id: check-release-tag
+        env:
+          latest_release_draft: ${{ steps.fetch-latest-release-draft.outputs.current_release_name }}
+
+        run: |
+          if [ "${{ env.NEXT_VERSION }}" == "${{ env.latest_release_draft }}" ]; then
+            echo "::notice::Success, release-draft found with the expected name ${{ env.NEXT_VERSION }}."
+            exit 0
+          fi
+
+          echo "::error::Expected tag ${{ env.NEXT_VERSION }}, but found ${{ env.latest_release_draft }}."
+          exit 1
