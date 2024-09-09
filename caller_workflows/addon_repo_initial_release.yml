@@ -6,7 +6,7 @@ on:
 jobs:
   call-release-trigger:
     # TODO update from develop to main
-    uses: ynput/automation/reusable_workflows/initial_release_trigger.yml@develop
+    uses: ynput/automation/.github/workflows/initial_release_trigger.yml@develop
     secrets:
       token: ${{ secrets.YNPUT_BOT_TOKEN }}
       email: ${{ secrets.CI_EMAIL }}
