@@ -279,5 +279,5 @@ jobs:
             exit 0
           fi
 
-          echo "::error::Expected tag ${{ env.NEXT_VERSION }}, but found ${{ env.latest_release_draft }}."
+          echo "::error::Expected tag ${{ env.INIT_VERSION }}, but found ${{ env.latest_release_draft }}."
           exit 1
