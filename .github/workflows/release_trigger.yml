@@ -42,12 +42,18 @@ jobs:
     steps:
       - name: Check if Secrets are set
         run: |
-          : "${GH_TOKEN?Error: GH_TOKEN is not set or empty}"
-          : "${GH_USER?Error: GH_USER is not set or empty}"
-          : "${GH_EMAIL?Error: GH_EMAIL is not set or empty}"
+            local variables=("${{ env.GH_TOKEN }}" "${{ env.GH_USER }}" "${{ env.GH_EMAIL }}")
+
+            for var in "${variables[@]}"; do
+              if [ -z "${!var}" ]; then
+                echo "::error::${var} is not set or empty"
+                exit 1
+              fi
+            done
+
+            echo "::notice::All required secrets are present."
 
       - name: 🔎 Verify repo variables for ${{ github.repository }}
-        id: verify_var
         run: |
           missing_vars=$(echo ${{ env.REQUIRED_VARS }} | tr ',' '\n' | while read var; do
             gh variable list --repo ${{ github.repository }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
