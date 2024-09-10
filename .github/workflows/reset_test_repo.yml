@@ -285,8 +285,12 @@ jobs:
           * [x] The documentation has been updated if necessary
           "
           gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature02 --title "Add mem file" --body "$pr_body" --label "enhancement" --assignee "${{ github.actor }}"
-      
-      # TODO create own job for initial release creation
+  
+  preapre-release:
+    runs-on: ubuntu-latest
+    needs: add-local-changes
+
+    steps:
       - name: Create GitHub Release
         run: |
           gh workflow run initial_release.yml --repo ${{ env.TARGET_REPO }}
@@ -299,6 +303,8 @@ jobs:
             DRAFT_RELEASE=$(gh release list --repo ${{ env.TARGET_REPO }} --limit 1 --json isDraft --jq '.[0].isDraft')
             if [[ "$DRAFT_RELEASE" == "true" ]]; then
               echo "Draft release found."
+              release_tag=$(gh release list --repo ${{ env.TARGET_REPO }} --limit 1 --json tagName --jq '.[0].tagName')
+              echo "release_tag=$release_tag" >> $GITHUB_OUTPUT
               break
             else
               echo "Draft release not found yet, retrying in 15 seconds..."
@@ -306,13 +312,7 @@ jobs:
             fi
           done
 
-      - name: Get draft release
-        id: draft-tag
-        run: |
-          RELEASE_ID=$(gh release list --repo ${{ env.TARGET_REPO }} --limit 1 --json tagName --jq '.[0].tagName')
-          echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
-
       - name: Publish Release
-        if: steps.draft-tag.outputs.release_id != ''
+        if: steps.poll_release.outputs.release_tag
         run: |
           gh release edit ${{ steps.poll_release.outputs.release_id }} --draft=false --repo ${{ env.TARGET_REPO }}
