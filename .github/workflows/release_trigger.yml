@@ -39,7 +39,7 @@ jobs:
 
     # TODO include orgnaistion secrets - needs actions [secrets fine-grained permission](https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28)
     # TODO move verification into github action
-    # TODO RnD mroe efficient way for secret checks without convertign them to values
+    # TODO RnD more efficient way for secret checks without converting them to values
     steps:
       - name: 🔎 Verify secret 'GH_TOKEN' for ${{ github.repository }}
         if: ${{ !env.GH_TOKEN }}
