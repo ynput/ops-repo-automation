@@ -43,7 +43,7 @@ jobs:
     # TODO move verification into github action
     steps:
       - name: 🔎 Verify repo secrets for ${{ github.repository }}
-        id: verify_var
+        id: verify_secret
         run: |
           missing_vars=$(echo ${{ env.REQUIRED_SECRECTS }} | tr ',' '\n' | while read var; do
             gh secret list --repo ${{ github.repository }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
@@ -125,7 +125,7 @@ jobs:
       - name: Test existing release
         if: ${{ ! steps.latest-release.outputs.date_published }}
         run: |
-          echo "::warning::No releases found for ${{ github.repository }}. Please create initial-release manually first.
+          echo "::warning::No releases found for ${{ github.repository }}. Please use the initial_release_trigger.
           exit 1
 
       - name: Test release drafts
