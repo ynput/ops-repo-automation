@@ -39,19 +39,27 @@ jobs:
 
     # TODO include orgnaistion secrets - needs actions [secrets fine-grained permission](https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28)
     # TODO move verification into github action
+    # TODO RnD mroe efficient way for secret checks without convertign them to values
     steps:
-      - name: 🔎 Verify secrets for ${{ github.repository }}
+      - name: 🔎 Verify secret 'GH_TOKEN' for ${{ github.repository }}
+        if: ${{ !env.GH_TOKEN }}
         run: |
-            secrects=("${{ env.GH_TOKEN }}" "${{ env.GH_USER }}" "${{ env.GH_EMAIL }}")
+          echo "::error::Secret 'GH_TOKEN' is not set or empty"
 
-            for secret in "${secrects[@]}"; do
-              if [ -z "${!secret}" ]; then
-                echo "::error::${secret} is not set or empty"
-                exit 1
-              fi
-            done
+      - name: 🔎 Verify secret 'GH_USER' for ${{ github.repository }}
+        if: ${{ !env.GH_USER }}
+        run: |
+          echo "::error::Secret 'GH_USER' is not set or empty"
 
-            echo "::notice::All required secrets are present."
+      - name: 🔎 Verify secret 'GH_EMAIL' for ${{ github.repository }}
+        if: ${{ !env.GH_EMAIL }}
+        run: |
+          echo "::error::Secret 'GH_EMAIL' is not set or empty"
+
+      - name: 🔎 Secrets verified
+        if: ${{ env.GH_TOKEN && env.GH_USER && env.GH_EMAIL }} 
+        run: |
+          echo "::notice::All required secrets are present."
 
       - name: 🔎 Verify repo variables for ${{ github.repository }}
         run: |
