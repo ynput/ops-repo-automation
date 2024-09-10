@@ -297,7 +297,7 @@ jobs:
 
       - name: Poll for Draft Release
         # TODO check if draft release creation emmits a signal or something to avoid this kind of pulling
-        id: poll_release
+        id: poll-release
         run: |
           for i in {1..20}; do
             DRAFT_RELEASE=$(gh release list --repo ${{ env.TARGET_REPO }} --limit 1 --json isDraft --jq '.[0].isDraft')
@@ -313,6 +313,7 @@ jobs:
           done
 
       - name: Publish Release
-        if: steps.poll_release.outputs.release_tag
+        if: steps.poll-release.outputs.release_tag
         run: |
-          gh release edit ${{ steps.poll_release.outputs.release_id }} --draft=false --repo ${{ env.TARGET_REPO }}
+          echo "release tag: ${{ steps.poll-release.outputs.release_tag }}"
+          gh release edit ${{ steps.poll-release.outputs.release_tag }} --draft=false --repo ${{ env.TARGET_REPO }}
