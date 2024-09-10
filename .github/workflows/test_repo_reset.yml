@@ -285,7 +285,8 @@ jobs:
           * [x] The documentation has been updated if necessary
           "
           gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature02 --title "Add mem file" --body "$pr_body" --label "enhancement" --assignee "${{ github.actor }}"
-
+      
+      # TODO create own job for initial release creation
       - name: Create GitHub Release
         run: |
           gh workflow run initial_release.yml --repo ${{ env.TARGET_REPO }}
@@ -295,7 +296,7 @@ jobs:
         id: poll_release
         run: |
           for i in {1..10}; do
-            DRAFT_RELEASE=$(gh release list --repo ynput/ayon-addon-action-testing --limit 1 --json draft --jq '.[0].draft')
+            DRAFT_RELEASE=$(gh release list --repo ynput/ayon-addon-action-testing --limit 1 --json isDraft --jq '.[0].draft')
             if [[ "$DRAFT_RELEASE" == "true" ]]; then
               echo "Draft release found."
               RELEASE_ID=$(gh release list --repo ynput/ayon-addon-action-testing --limit 1 --json id --jq '.[0].id')
@@ -316,4 +317,4 @@ jobs:
       - name: Publish Release
         if: steps.draft-id.outputs.release_id != ''
         run: |
-          gh release edit ${{ steps.draft-id.outputs.release_id }} --draft=false --repo ynput/ayon-addon-action-testing
+          gh release edit ${{ steps.poll_release.outputs.release_id }} --draft=false --repo ynput/ayon-addon-action-testing
