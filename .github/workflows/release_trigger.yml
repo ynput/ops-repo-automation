@@ -42,11 +42,11 @@ jobs:
     steps:
       - name: 🔎 Verify secrets for ${{ github.repository }}
         run: |
-            local variables=("${{ env.GH_TOKEN }}" "${{ env.GH_USER }}" "${{ env.GH_EMAIL }}")
+            secrects=("${{ env.GH_TOKEN }}" "${{ env.GH_USER }}" "${{ env.GH_EMAIL }}")
 
-            for var in "${variables[@]}"; do
-              if [ -z "${!var}" ]; then
-                echo "::error::${var} is not set or empty"
+            for secret in "${secrects[@]}"; do
+              if [ -z "${!secret}" ]; then
+                echo "::error::${secret} is not set or empty"
                 exit 1
               fi
             done
