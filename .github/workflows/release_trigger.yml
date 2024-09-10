@@ -1,4 +1,4 @@
-name: Release [demand]
+name: Release Trigger
 on:
   workflow_dispatch:
   workflow_call:
@@ -125,7 +125,7 @@ jobs:
       - name: Test existing release
         if: ${{ ! steps.latest-release.outputs.date_published }}
         run: |
-          echo "::warning::No releases found for ${{ github.repository }}. Please use the initial_release_trigger.
+          echo "::warning::No releases found for ${{ github.repository }}. Please use the Initial Release Trigger workflow.
           exit 1
 
       - name: Test release drafts

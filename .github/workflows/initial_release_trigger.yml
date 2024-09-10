@@ -1,4 +1,4 @@
-name: Release [demand]
+name: Initial Release Trigger
 on:
   workflow_dispatch:
   workflow_call:
