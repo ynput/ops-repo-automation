@@ -32,33 +32,19 @@ env:
   ARTIFACT_NAME: "${{ vars.PROJECT_NAME }}-package"
   PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
   REQUIRED_VARS: MAIN_BRANCH,MINOR_BUMP_LABEL,PATCH_BUMP_LABEL,PROJECT_NAME
-  REQUIRED_SECRECTS: CI_EMAIL,CI_USER,YNPUT_BOT_TOKEN
 
 jobs:
   verify_repo_vars_and_secrets:
     runs-on: ubuntu-latest
 
     # TODO include orgnaistion secrets - needs actions [secrets fine-grained permission](https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28)
-    # TODO only check if no inputs provided
     # TODO move verification into github action
     steps:
-      - name: 🔎 Verify repo secrets for ${{ github.repository }}
-        id: verify_secret
+      - name: Check if Secrets are set
         run: |
-          missing_vars=$(echo ${{ env.REQUIRED_SECRECTS }} | tr ',' '\n' | while read var; do
-            gh secret list --repo ${{ github.repository }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
-          done)
-
-          missing_vars=$(echo ${{ env.REQUIRED_SECRECTS }} | tr ',' '\n' | while read var; do
-            gh secret list --repo ${{ github.repository }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
-          done)
-
-          if [ -n "$missing_vars" ]; then
-            echo "::error::The following required secrets are missing: $missing_vars for repository ${{ github.repository }}"
-            exit 1
-          else
-            echo "::notice::All required secrets are present."
-          fi
+          : "${GH_TOKEN?Error: GH_TOKEN is not set or empty}"
+          : "${GH_USER?Error: GH_USER is not set or empty}"
+          : "${GH_EMAIL?Error: GH_EMAIL is not set or empty}"
 
       - name: 🔎 Verify repo variables for ${{ github.repository }}
         id: verify_var
