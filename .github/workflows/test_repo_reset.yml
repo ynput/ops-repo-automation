@@ -289,3 +289,31 @@ jobs:
       - name: Create GitHub Release
         run: |
           gh workflow run initial_release.yml --repo ${{ env.TARGET_REPO }}
+
+      - name: Poll for Draft Release
+        # TODO check if draft release creation emmits a signal or something to avoid this kin of pulling
+        id: poll_release
+        run: |
+          for i in {1..10}; do
+            DRAFT_RELEASE=$(gh release list --repo ynput/ayon-addon-action-testing --limit 1 --json draft --jq '.[0].draft')
+            if [[ "$DRAFT_RELEASE" == "true" ]]; then
+              echo "Draft release found."
+              RELEASE_ID=$(gh release list --repo ynput/ayon-addon-action-testing --limit 1 --json id --jq '.[0].id')
+              echo "release_id=$RELEASE_ID" >> $GITHUB_ENV
+              break
+            else
+              echo "Draft release not found yet, retrying in 15 seconds..."
+              sleep 15
+            fi
+          done
+
+      - name: Get draft release
+        id: draft-id
+        run: |
+          RELEASE_ID=$(gh release list --repo ${{ env.TARGET_REPO }} --limit 1 --json id --jq '.[0].id')
+          echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
+
+      - name: Publish Release
+        if: steps.draft-id.outputs.release_id != ''
+        run: |
+          gh release edit ${{ steps.draft-id.outputs.release_id }} --draft=false --repo ynput/ayon-addon-action-testing
