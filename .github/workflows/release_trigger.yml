@@ -154,7 +154,6 @@ jobs:
 
       - name: Show debug output
         run: |
-          echo "raw-ouput: "&& echo '${{ steps.pr-query.outputs.raw-output }}'
           echo "label-list: ${{ steps.pr-query.outputs.label-list }}"
           echo "bump-increment: ${{ steps.pr-query.outputs.bump-increment }}"
 
