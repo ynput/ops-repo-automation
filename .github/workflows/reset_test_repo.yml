@@ -83,10 +83,11 @@ jobs:
             -f permission=admin
 
       - name: Set repo secrets
+        # INFO should be set from organization
         run: |
-          gh secret set YNPUT_BOT_TOKEN --body "${{ secrets.YNPUT_BOT_TOKEN }}" --repo ${{ env.TARGET_REPO }}
-          gh secret set CI_USER --body "${{ secrets.CI_USER }}" --repo ${{ env.TARGET_REPO }}
-          gh secret set CI_EMAIL --body "${{ secrets.CI_EMAIL }}" --repo ${{ env.TARGET_REPO }}
+          # gh secret set YNPUT_BOT_TOKEN --body "${{ secrets.YNPUT_BOT_TOKEN }}" --repo ${{ env.TARGET_REPO }}
+          # gh secret set CI_USER --body "${{ secrets.CI_USER }}" --repo ${{ env.TARGET_REPO }}
+          # gh secret set CI_EMAIL --body "${{ secrets.CI_EMAIL }}" --repo ${{ env.TARGET_REPO }}
 
           echo "$(gh secret list --repo ${{ env.TARGET_REPO }})"
 

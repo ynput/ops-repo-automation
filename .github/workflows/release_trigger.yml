@@ -22,7 +22,7 @@ on:
 
 env:
   LABEL_DELIMITTER: ", "
-  GH_TOKEN: ${{ secrets.token || secrets.YNPUT_BOT_TOKEN}}
+  GH_TOKEN: ${{ secrets.token || secrets.YNPUT_BOT_TOKEN }}
   GH_USER: ${{ secrets.user || secrets.CI_USER }}
   GH_EMAIL: ${{ secrets.email || secrets.CI_EMAIL }}
   MAJOR: ${{ inputs.major || vars.MAJOR }}
@@ -215,7 +215,7 @@ jobs:
           token: ${{ env.GH_TOKEN }}
           branch: ${{ vars.MAIN_BRANCH }}
           tags: true
-          unprotect_reviews: true
+          unprotect_reviews: false
 
 
   build-from-main:
