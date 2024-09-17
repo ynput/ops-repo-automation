@@ -209,7 +209,7 @@ jobs:
           git merge --no-ff origin/${{ github.ref_name }} -m "[Automated] Merged ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}"
 
       # TODO implement this using gh command
-      - name: 🔏 Push to protected main branch
+      - name: 🔏 Push to protected ${{ vars.MAIN_BRANCH }} branch
         uses: CasperWA/push-protected@v2.15.0
         with:
           token: ${{ env.GH_TOKEN }}
@@ -304,18 +304,15 @@ jobs:
         run: |
           sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_PACKAGE_VERSION }}\"/" package.py
           git add .
-          git commit -m "[Automated] Update version in package.py for develop
+          git commit -m "[Automated] Update version in package.py for develop"
 
-
-          request-checks: true"
-
-      - name: 🔏 Push to protected main branch
+      - name: 🔏 Push to protected ${{ github.ref_name }} branch
         uses: CasperWA/push-protected@v2.15.0
         with:
           token: ${{ env.GH_TOKEN }}
           branch: ${{ github.ref_name }}
-          tags: true
-          unprotect_reviews: true
+          tags: false
+          unprotect_reviews: false
 
   create-release:
     runs-on: ubuntu-latest
