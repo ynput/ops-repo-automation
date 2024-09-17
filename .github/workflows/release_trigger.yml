@@ -247,8 +247,9 @@ jobs:
           python create_package.py --output ${{ env.OUTPUT_DIR }}
           echo "file_name=${{ env.PROJECT_NAME }}-${{ env.NEXT_VERSION }}.zip" >> $GITHUB_OUTPUT
 
+      # TODO add all changed files to commit
+
       - name: 🔼 Upload zip artifacts
-        id: increment-v
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
@@ -303,7 +304,10 @@ jobs:
         run: |
           sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_PACKAGE_VERSION }}\"/" package.py
           git add .
-          git commit -m "[Automated] Update version in package.py for develop"
+          git commit -m "[Automated] Update version in package.py for develop
+
+
+          skip-checks: true"
           git push origin ${{ github.ref_name }}
 
 
