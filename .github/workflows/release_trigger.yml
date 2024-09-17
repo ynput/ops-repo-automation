@@ -247,6 +247,11 @@ jobs:
           python create_package.py --output ${{ env.OUTPUT_DIR }}
           echo "file_name=${{ env.PROJECT_NAME }}-${{ env.NEXT_VERSION }}.zip" >> $GITHUB_OUTPUT
 
+      - name: 🔑 Set Bot Authentication
+        run: |
+          git config --global user.name "${{ env.GH_USER }}"
+          git config --global user.email "${{ env.GH_EMAIL }}"
+
       - name: Add generated files from ${{ vars.MAIN_BRANCH }}
         run: |
           git add .
