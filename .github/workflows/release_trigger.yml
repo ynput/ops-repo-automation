@@ -307,7 +307,7 @@ jobs:
           git commit -m "[Automated] Update version in package.py for develop
 
 
-          skip-checks: true"
+          request-checks: true"
           git push origin ${{ github.ref_name }}
 
 
