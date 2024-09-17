@@ -293,11 +293,16 @@ jobs:
         run: |
           echo "${{ steps.package-version.outputs.version != env.NEXT_PACKAGE_VERSION }}"
 
+      - name: Create artifacts
+        id: create-artifact
+        run: |
+          python create_package.py
+
       - name: Update package.py version to ${{ env.NEXT_PACKAGE_VERSION }}
         if: ${{ steps.package-version.outputs.version != env.NEXT_PACKAGE_VERSION }}
         run: |
           sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_PACKAGE_VERSION }}\"/" package.py
-          git add package.py
+          git add .
           git commit -m "[Automated] Update version in package.py for develop"
           git push origin ${{ github.ref_name }}
 
@@ -344,7 +349,6 @@ jobs:
         id: check-release-tag
         env:
           latest_release_draft: ${{ steps.fetch-latest-release-draft.outputs.current_release_name }}
-
         run: |
           if [ "${{ env.NEXT_VERSION }}" == "${{ env.latest_release_draft }}" ]; then
             echo "::notice::Success, release-draft found with the expected name ${{ env.NEXT_VERSION }}."
