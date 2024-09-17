@@ -254,7 +254,7 @@ jobs:
 
       - name: Add generated files from ${{ vars.MAIN_BRANCH }}
         run: |
-          git add .
+          git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}'
           git commit -m "[Automated] Add generated package files from ${{ vars.MAIN_BRANCH }}"
 
       - name: 🔏 Push to protected ${{ vars.MAIN_BRANCH }} branch
@@ -279,6 +279,7 @@ jobs:
       - build-from-main
       - increment-version
     env:
+      OUTPUT_DIR: "artifact"
       NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
       NEXT_PACKAGE_VERSION: "${{ needs.increment-version.outputs.next-version }}-dev"
 
@@ -295,14 +296,10 @@ jobs:
           version=$(sed -n 's/^version *= *"\(.*\)"/\1/p' package.py)
           echo "version=$version" >> $GITHUB_OUTPUT
 
-      - name: Show found versions
-        run: |
-          echo "${{ steps.package-version.outputs.version != env.NEXT_PACKAGE_VERSION }}"
-
       - name: Create artifacts
         id: create-artifact
         run: |
-          python create_package.py
+          python create_package.py --output ${{ env.OUTPUT_DIR }}
 
       - name: 🔑 Set Bot Authentication
         run: |
@@ -313,7 +310,7 @@ jobs:
         if: ${{ steps.package-version.outputs.version != env.NEXT_PACKAGE_VERSION }}
         run: |
           sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_PACKAGE_VERSION }}\"/" package.py
-          git add .
+          git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}'
           git commit -m "[Automated] Update version in package.py for develop"
 
       - name: 🔏 Push to protected ${{ github.ref_name }} branch
