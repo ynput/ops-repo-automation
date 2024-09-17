@@ -308,8 +308,14 @@ jobs:
 
 
           request-checks: true"
-          git push origin ${{ github.ref_name }}
 
+      - name: 🔏 Push to protected main branch
+        uses: CasperWA/push-protected@v2.15.0
+        with:
+          token: ${{ env.GH_TOKEN }}
+          branch: ${{ github.ref_name }}
+          tags: true
+          unprotect_reviews: false
 
   create-release:
     runs-on: ubuntu-latest
