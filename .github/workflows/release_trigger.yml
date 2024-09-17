@@ -247,7 +247,18 @@ jobs:
           python create_package.py --output ${{ env.OUTPUT_DIR }}
           echo "file_name=${{ env.PROJECT_NAME }}-${{ env.NEXT_VERSION }}.zip" >> $GITHUB_OUTPUT
 
-      # TODO add all changed files to commit
+      - name: Add generated files from ${{ vars.MAIN_BRANCH }}
+        run: |
+          git add .
+          git commit -m "[Automated] Add generated package files from ${{ vars.MAIN_BRANCH }}"
+
+      - name: 🔏 Push to protected ${{ github.ref_name }} branch
+        uses: CasperWA/push-protected@v2.15.0
+        with:
+          token: ${{ env.GH_TOKEN }}
+          branch: ${{ github.ref_name }}
+          tags: false
+          unprotect_reviews: false
 
       - name: 🔼 Upload zip artifacts
         uses: actions/upload-artifact@v4
