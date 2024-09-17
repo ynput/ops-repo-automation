@@ -289,17 +289,6 @@ jobs:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
 
-      - name: 🔑 Set Bot Authentication
-        run: |
-          git config --global user.email "${{ env.GH_EMAIL }}"
-          git config --global user.name "${{ env.GH_USER }}"
-
-      - name: 🔁 Merge ${{ vars.MAIN_BRANCH }} -> ${{ github.ref_name }}
-        run: |
-          git pull origin ${{ vars.MAIN_BRANCH }}
-          git merge origin/${{ vars.MAIN_BRANCH }} -m "[Automated] Merge ${{ vars.MAIN_BRANCH }} -> ${{ github.ref_name }}"
-          git push origin ${{ github.ref_name }}
-
       - name: Read version from package.py
         id: package-version
         run: |
@@ -314,6 +303,11 @@ jobs:
         id: create-artifact
         run: |
           python create_package.py
+
+      - name: 🔑 Set Bot Authentication
+        run: |
+          git config --global user.email "${{ env.GH_EMAIL }}"
+          git config --global user.name "${{ env.GH_USER }}"
 
       - name: Update package.py version to ${{ env.NEXT_PACKAGE_VERSION }}
         if: ${{ steps.package-version.outputs.version != env.NEXT_PACKAGE_VERSION }}
