@@ -40,6 +40,26 @@ jobs:
     # TODO only check if no inputs provided
     # TODO move verification into github action
     steps:
+      - name: 🔎 Verify secret 'GH_TOKEN' for ${{ github.repository }}
+        if: ${{ !env.GH_TOKEN }}
+        run: |
+          echo "::error::Secret 'GH_TOKEN' is not set or empty"
+
+      - name: 🔎 Verify secret 'GH_USER' for ${{ github.repository }}
+        if: ${{ !env.GH_USER }}
+        run: |
+          echo "::error::Secret 'GH_USER' is not set or empty"
+
+      - name: 🔎 Verify secret 'GH_EMAIL' for ${{ github.repository }}
+        if: ${{ !env.GH_EMAIL }}
+        run: |
+          echo "::error::Secret 'GH_EMAIL' is not set or empty"
+
+      - name: 🔎 Secrets verified
+        if: ${{ env.GH_TOKEN && env.GH_USER && env.GH_EMAIL }} 
+        run: |
+          echo "::notice::All required secrets are present."
+
       - name: 🔎 Verify repo secrets for ${{ github.repository }}
         run: |
           missing_vars=$(echo ${{ env.REQUIRED_SECRECTS }} | tr ',' '\n' | while read var; do
