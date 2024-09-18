@@ -30,7 +30,6 @@ env:
   ARTIFACT_NAME: "${{ vars.PROJECT_NAME }}-package"
   PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
   REQUIRED_VARS: MAIN_BRANCH,MINOR_BUMP_LABEL,PATCH_BUMP_LABEL,PROJECT_NAME
-  REQUIRED_SECRECTS: CI_EMAIL,CI_USER,YNPUT_BOT_TOKEN
 
 jobs:
   verify_repo_vars_and_secrets:
@@ -59,19 +58,6 @@ jobs:
         if: ${{ env.GH_TOKEN && env.GH_USER && env.GH_EMAIL }} 
         run: |
           echo "::notice::All required secrets are present."
-
-      - name: 🔎 Verify repo secrets for ${{ github.repository }}
-        run: |
-          missing_vars=$(echo ${{ env.REQUIRED_SECRECTS }} | tr ',' '\n' | while read var; do
-            gh secret list --repo ${{ github.repository }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
-          done)
-
-          if [ -n "$missing_vars" ]; then
-            echo "::error::The following required variables are missing: $missing_vars for repository ${{ github.repository }}"
-            exit 1
-          else
-            echo "::notice::All required variables are present."
-          fi
 
       - name: 🔎 Verify repo variables for ${{ github.repository }}
         run: |
