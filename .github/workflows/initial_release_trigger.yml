@@ -193,7 +193,12 @@ jobs:
       - name: Add generated files from ${{ vars.MAIN_BRANCH }}
         run: |
           git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}'
-          git commit -m "[Automated] Add generated package files from ${{ vars.MAIN_BRANCH }}"
+          if git diff --cached --exit-code > /dev/null; then
+            echo "No changes to commit"
+          else
+            git commit -m "[Automated] Add generated package files from ${{ vars.MAIN_BRANCH }}"
+          fi
+
           git tag -a ${{ env.INIT_VERSION }} -m "[Automated] Release version ${{ env.INIT_VERSION }}"
 
       - name: 🔏 Push to protected ${{ vars.MAIN_BRANCH }} branch
