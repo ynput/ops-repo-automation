@@ -239,6 +239,13 @@ jobs:
     needs: prepare-release
 
     steps:
+      - name: Checkout ${{ env.TARGET_REPO }} repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ env.GH_TOKEN }}
+          repository: ${{ env.TARGET_REPO }}
+          ref: ${{ env.DEFAULT_BRANCH }}
+
       - name: Create first feature branch
         run: |
           git config --global user.name "${{ secrets.CI_USER }}"
