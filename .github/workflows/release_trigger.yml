@@ -202,11 +202,12 @@ jobs:
           git config --global user.name "${{ env.GH_USER }}"
           git config --global user.email "${{ env.GH_EMAIL }}"
 
+      # TODO remove debug output when fixed
       - name: 🔀 Check differences before merge ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}
         run: |
           git fetch origin ${{ github.ref_name }}
           git diff HEAD..origin/${{ github.ref_name }} --name-only  # Show file differences
-        
+
       - name: 🔀 Merge ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}
         run: |
           git pull origin ${{ github.ref_name }}  #  --no-rebase
