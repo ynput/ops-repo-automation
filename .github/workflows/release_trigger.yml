@@ -210,6 +210,7 @@ jobs:
           git diff HEAD..origin/${{ github.ref_name }}
 
       - name: 🔀 Merge ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}
+        # TODO find a way without enforcing local version
         run: |
           # git pull origin ${{ github.ref_name }} --no-rebase
           git merge -X ours origin/${{ github.ref_name }} -m "[Automated] Merged ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}"
