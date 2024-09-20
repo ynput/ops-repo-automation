@@ -5,6 +5,7 @@ on:
 
 env:
   TARGET_REPO: "ynput/ayon-addon-action-testing"
+  TARGET_REPO_PROJECT_NAME: "template"
   DEFAULT_BRANCH: "develop"
   MAIN_BRANCH: main
   TEMPLATE_REPO: "ynput/ayon-addon-template"
@@ -96,7 +97,7 @@ jobs:
           gh variable set PATCH_BUMP_LABEL --body "bugfix" --repo ${{ env.TARGET_REPO }}
           gh variable set MINOR_BUMP_LABEL --body "feature, enhancement" --repo ${{ env.TARGET_REPO }}
           gh variable set MAIN_BRANCH --body "main" --repo ${{ env.TARGET_REPO }}
-          gh variable set PROJECT_NAME --body "template" --repo ${{ env.TARGET_REPO }}
+          gh variable set PROJECT_NAME --body ${{ env.TARGET_REPO_PROJECT_NAME }} --repo ${{ env.TARGET_REPO }}
 
           echo "$(gh variable list --repo ${{ env.TARGET_REPO }})"
 
@@ -180,12 +181,11 @@ jobs:
           git config --global user.name "${{ secrets.CI_USER }}"
           git config --global user.email "${{ secrets.CI_EMAIL }}"
 
-          repo_name=$(basename ${{ env.TARGET_REPO }})
           # INFO capitalize all letters after a "-" and the first one
-          repo_name_cap=$(echo "$repo_name" | sed -E 's/(^|-)(.)/\1\U\2/g')
+          repo_name_cap=$(echo "${{ env.TARGET_REPO_PROJECT_NAME }}" | sed -E 's/(^|-)(.)/\1\U\2/g')
 
           sed -i "s/^version = \".*\"/version = \"0.1.0\"/" package.py
-          sed -i "s/^name = \".*\"/name = \"$repo_name\"/" package.py
+          sed -i "s/^name = \".*\"/name = \"${{ env.TARGET_REPO_PROJECT_NAME }}\"/" package.py
           sed -i "s/^title = \".*\"/title = \"$repo_name_cap\"/" package.py
           git add package.py
 
