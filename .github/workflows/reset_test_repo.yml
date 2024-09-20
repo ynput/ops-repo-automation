@@ -5,7 +5,7 @@ on:
 
 env:
   TARGET_REPO: "ynput/ayon-addon-action-testing"
-  TARGET_REPO_PROJECT_NAME: "template"
+  TARGET_REPO_PROJECT_NAME: "action-testing"
   DEFAULT_BRANCH: "develop"
   MAIN_BRANCH: main
   TEMPLATE_REPO: "ynput/ayon-addon-template"
