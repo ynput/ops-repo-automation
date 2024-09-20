@@ -212,7 +212,7 @@ jobs:
       - name: 🔀 Merge ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}
         run: |
           # git pull origin ${{ github.ref_name }} --no-rebase
-          git merge --no-ff origin/${{ github.ref_name }} -m "[Automated] Merged ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}"
+          git merge -X ours origin/${{ github.ref_name }} -m "[Automated] Merged ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}"
 
       # TODO implement this using gh command
       - name: 🔏 Push to protected ${{ vars.MAIN_BRANCH }} branch
