@@ -30,8 +30,6 @@ env:
   PATCH: ${{ inputs.patch || vars.PATCH }}
   RELEASE_NAME: ${{ inputs.name || '' }}
   ARTIFACT_NAME: "${{ vars.PROJECT_NAME }}-package"
-  ZIP_FILE: "${{ vars.PROJECT_NAME }}-source.zip"
-  TAR_FILE: "${{ vars.PROJECT_NAME }}-source.tar.gz"
   PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
   REQUIRED_VARS: MAIN_BRANCH,MINOR_BUMP_LABEL,PATCH_BUMP_LABEL,PROJECT_NAME
 
@@ -249,11 +247,6 @@ jobs:
           sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_VERSION }}\"/" package.py
           sed -i "s/^name = \".*\"/name = \"${{ env.PROJECT_NAME }}\"/" package.py
 
-      - name: Create source artifacts
-        run: |
-          zip -r ${{ env.ZIP_FILE }} . -x "*/\.*"
-          tar -czvf ${{ env.TAR_FILE }} --exclude=".*" .
-
       - name: Create package artifacts
         id: create-artifact
         run: |
@@ -285,22 +278,6 @@ jobs:
           name: ${{ env.ARTIFACT_NAME }}
           path: |
             ${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}
-            ${{ env.ZIP_FILE }}
-            ${{ env.TAR_FILE }}
-      
-      - name: 🔼 Upload source zip artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.ZIP_FILE }}
-          path: |
-            ${{ env.ZIP_FILE }}
-
-      - name: 🔼 Upload source zip artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.TAR_FILE }}
-          path: |
-            ${{ env.TAR_FILE }}
 
 
   update-develop:
@@ -381,8 +358,6 @@ jobs:
           generateReleaseNotes: true
           artifacts: |
             ${{ needs.build-from-main.outputs.artifact_file }}
-            ${{ env.TAR_FILE }}
-            ${{ env.ZIP_FILE }}
           token: ${{ env.GH_TOKEN }}
           draft: true
 
