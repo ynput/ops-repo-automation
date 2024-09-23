@@ -212,7 +212,7 @@ jobs:
       # TODO find a way without enforcing local version
       - name: 🔀 Merge ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}
         run: |
-          git merge -X ours origin/${{ github.ref_name }} -m "[Automated] Merged ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}"
+          git merge origin/${{ github.ref_name }} -m "[Automated] Merged ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}"
 
       # TODO implement this using gh command
       - name: 🔏 Push to protected ${{ vars.MAIN_BRANCH }} branch
@@ -263,7 +263,7 @@ jobs:
         run: |
           git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}'
           git commit -m "[Automated] Add generated package files from ${{ vars.MAIN_BRANCH }}"
-          
+
       # - name: Create tag ${{ env.NEXT_VERSION }} for next version
       #   if: ${{ needs.get-latest-release.outputs.tag != env.NEXT_VERSION }} 
       #   run: |
