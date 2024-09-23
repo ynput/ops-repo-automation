@@ -280,13 +280,27 @@ jobs:
           tags: true
           unprotect_reviews: false
 
-      - name: 🔼 Upload zip artifacts
+      - name: 🔼 Upload package zip artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: |
             ${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}
             ${{ env.ZIP_FILE }}
+            ${{ env.TAR_FILE }}
+      
+      - name: 🔼 Upload source zip artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ZIP_FILE }}
+          path: |
+            ${{ env.ZIP_FILE }}
+
+      - name: 🔼 Upload source zip artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.TAR_FILE }}
+          path: |
             ${{ env.TAR_FILE }}
 
 
@@ -360,7 +374,10 @@ jobs:
         with:
           tag: "${{ env.NEXT_VERSION }}"
           generateReleaseNotes: true
-          artifacts: ${{ needs.build-from-main.outputs.artifact_file }}
+          artifacts: |
+            ${{ needs.build-from-main.outputs.artifact_file }}
+            ${{ env.TAR_FILE }}
+            ${{ env.ZIP_FILE }}
           token: ${{ env.GH_TOKEN }}
           draft: true
 
