@@ -264,10 +264,10 @@ jobs:
           git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}'
           git commit -m "[Automated] Add generated package files from ${{ vars.MAIN_BRANCH }}"
           
-      - name: Create tag ${{ env.NEXT_VERSION }} for next version
-        if: ${{ needs.get-latest-release.outputs.tag != env.NEXT_VERSION }} 
-        run: |
-          git tag -a ${{ env.NEXT_VERSION }} -m "[Automated] Release version ${{ env.NEXT_VERSION }}"
+      # - name: Create tag ${{ env.NEXT_VERSION }} for next version
+      #   if: ${{ needs.get-latest-release.outputs.tag != env.NEXT_VERSION }} 
+      #   run: |
+      #     git tag -a ${{ env.NEXT_VERSION }} -m "[Automated] Release version ${{ env.NEXT_VERSION }}"
 
       - name: 🔏 Push to protected ${{ vars.MAIN_BRANCH }} branch
         uses: CasperWA/push-protected@v2.16.0
