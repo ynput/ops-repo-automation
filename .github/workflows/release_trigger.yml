@@ -3,6 +3,8 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
+      draft:
+        type: boolean
       major:
         type: string
       minor:
@@ -25,6 +27,7 @@ env:
   GH_TOKEN: ${{ secrets.token || secrets.YNPUT_BOT_TOKEN }}
   GH_USER: ${{ secrets.user || secrets.CI_USER }}
   GH_EMAIL: ${{ secrets.email || secrets.CI_EMAIL }}
+  DRAFT: ${{ inputs.draft || true }}
   MAJOR: ${{ inputs.major || vars.MAJOR }}
   MINOR: ${{ inputs.minor || vars.MINOR }}
   PATCH: ${{ inputs.patch || vars.PATCH }}
@@ -364,7 +367,7 @@ jobs:
           artifacts: |
             ${{ needs.build-from-main.outputs.artifact_file }}
           token: ${{ env.GH_TOKEN }}
-          draft: true
+          draft: ${{ env.DRAFT }}
 
 
   verify-release:
@@ -378,9 +381,10 @@ jobs:
       - name: Fetch Latest Release Draft
         id: fetch-latest-release-draft
         run: |
-          current_release_name="$(gh release list --repo ${{ github.repository }} --json isDraft,name,createdAt --jq '[.[] | select(.isDraft == true)] | sort_by(.createdAt) | reverse | .[0].name')"
+          current_release_name="$(gh release list --repo ${{ github.repository }} --json isDraft,name,createdAt --jq '[.[] | select(.isDraft == ${{ env.DRAFT }})] | sort_by(.createdAt) | reverse | .[0].name')"
           echo "current_release_name=$current_release_name" >> $GITHUB_OUTPUT
 
+      # TODO streamline to use actions if check
       - name: 🔍 Check Release-Draft Name
         id: check-release-tag
         env:
