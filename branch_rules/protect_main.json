@@ -1,0 +1,37 @@
+{
+  "id": 1900695,
+  "name": "Protect main",
+  "target": "branch",
+  "source_type": "Repository",
+  "source": "ynput/ayon-addon-action-testing",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "exclude": [],
+      "include": [
+        "refs/heads/main"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "type": "deletion"
+    },
+    {
+      "type": "non_fast_forward"
+    },
+    {
+      "type": "creation"
+    },
+    {
+      "type": "update"
+    }
+  ],
+  "bypass_actors": [
+    {
+      "actor_id": 10997209,
+      "actor_type": "Team",
+      "bypass_mode": "always"
+    }
+  ]
+}

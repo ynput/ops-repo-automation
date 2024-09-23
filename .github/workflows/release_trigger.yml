@@ -27,7 +27,7 @@ env:
   GH_TOKEN: ${{ secrets.token || secrets.YNPUT_BOT_TOKEN }}
   GH_USER: ${{ secrets.user || secrets.CI_USER }}
   GH_EMAIL: ${{ secrets.email || secrets.CI_EMAIL }}
-  DRAFT: ${{ inputs.draft || true }}
+  DRAFT: ${{ inputs.draft }}
   MAJOR: ${{ inputs.major || vars.MAJOR }}
   MINOR: ${{ inputs.minor || vars.MINOR }}
   PATCH: ${{ inputs.patch || vars.PATCH }}

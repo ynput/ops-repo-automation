@@ -5,9 +5,6 @@ on:
     inputs:
       draft:
         type: boolean
-        description: "Create the release as draft or not"
-        required: false
-        default: true
       major:
         type: string
       minor:
@@ -32,6 +29,7 @@ env:
   GH_EMAIL: ${{ secrets.email || secrets.CI_EMAIL }}
   INIT_VERSION: "0.1.0"
   RELEASE_NAME: ${{ inputs.name || '' }}
+  DRAFT: ${{ inputs.draft }}
   ARTIFACT_NAME: "${{ vars.PROJECT_NAME }}-package"
   PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
   REQUIRED_VARS: MAIN_BRANCH,MINOR_BUMP_LABEL,PATCH_BUMP_LABEL,PROJECT_NAME

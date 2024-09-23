@@ -5,14 +5,14 @@ on:
     inputs:
       draft:
         type: boolean
-        description: "Create the release as draft or not"
+        description: "Create the release as draft"
         required: false
         default: true
 
 jobs:
   call-release-trigger:
     uses: ynput/automation/.github/workflows/release_trigger.yml@main
-    inputs:
+    with:
       draft: ${{ inputs.draft }}
     secrets:
       token: ${{ secrets.YNPUT_BOT_TOKEN }}
