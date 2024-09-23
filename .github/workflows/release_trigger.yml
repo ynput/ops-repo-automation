@@ -30,6 +30,8 @@ env:
   PATCH: ${{ inputs.patch || vars.PATCH }}
   RELEASE_NAME: ${{ inputs.name || '' }}
   ARTIFACT_NAME: "${{ vars.PROJECT_NAME }}-package"
+  ZIP_FILE: ${{ vars.PROJECT_NAME }}-source.zip
+  TAR_FILE: ${{ vars.PROJECT_NAME }}-source.tar.gz
   PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
   REQUIRED_VARS: MAIN_BRANCH,MINOR_BUMP_LABEL,PATCH_BUMP_LABEL,PROJECT_NAME
 
@@ -248,7 +250,12 @@ jobs:
           sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_VERSION }}\"/" package.py
           sed -i "s/^name = \".*\"/name = \"${{ env.PROJECT_NAME }}\"/" package.py
 
-      - name: Create artifacts
+      - name: Create source artifacts
+        run: |
+          zip -r ${{ env.ZIP_FILE }} . -x "*/\.*"
+          tar -czvf ${{ env.TAR_FILE }} --exclude=".*" .
+
+      - name: Create package artifacts
         id: create-artifact
         run: |
           python create_package.py --output ${{ env.OUTPUT_DIR }}
@@ -261,7 +268,7 @@ jobs:
 
       - name: Add generated files from ${{ vars.MAIN_BRANCH }}
         run: |
-          git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}'
+          git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}' ':!${{ env.ZIP_FILE }}' ':!${{ env.TAR_FILE }}'
           git commit -m "[Automated] Add generated package files from ${{ vars.MAIN_BRANCH }}"
           git tag -a ${{ env.NEXT_VERSION }} -m "[Automated] Release version ${{ env.NEXT_VERSION }}"
 
@@ -279,6 +286,8 @@ jobs:
           name: ${{ env.ARTIFACT_NAME }}
           path: |
             ${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}
+            ${{ env.ZIP_FILE }}
+            ${{ env.TAR_FILE }}
 
 
   update-develop:
