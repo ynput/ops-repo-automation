@@ -125,7 +125,7 @@ jobs:
       - name: Test existing release
         if: ${{ steps.latest-release.outputs.date_published }}
         run: |
-          echo "::error::An existing releases was found for ${{ github.repository }}. Please use the general release-trigger for further releases.
+          echo "::error::An existing releases was found for ${{ github.repository }}. Please use the general release-trigger for further releases."
           exit 1
 
 
