@@ -258,9 +258,13 @@ jobs:
           git config --global user.name "${{ env.GH_USER }}"
           git config --global user.email "${{ env.GH_EMAIL }}"
 
-      - name: Add generated files from ${{ vars.MAIN_BRANCH }}
+      - name: Debug git status
         run: |
-          git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}' ':!${{ env.ZIP_FILE }}' ':!${{ env.TAR_FILE }}'
+          git status
+
+      - name: Add changed files from ${{ vars.MAIN_BRANCH }}
+        run: |
+          git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}'
           git commit -m "[Automated] Add generated package files from ${{ vars.MAIN_BRANCH }}"
           git tag -a ${{ env.NEXT_VERSION }} -m "[Automated] Release version ${{ env.NEXT_VERSION }}"
 
