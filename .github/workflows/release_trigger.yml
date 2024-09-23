@@ -30,8 +30,8 @@ env:
   PATCH: ${{ inputs.patch || vars.PATCH }}
   RELEASE_NAME: ${{ inputs.name || '' }}
   ARTIFACT_NAME: "${{ vars.PROJECT_NAME }}-package"
-  ZIP_FILE: ${{ vars.PROJECT_NAME }}-source.zip
-  TAR_FILE: ${{ vars.PROJECT_NAME }}-source.tar.gz
+  ZIP_FILE: "${{ vars.PROJECT_NAME }}-source.zip"
+  TAR_FILE: "${{ vars.PROJECT_NAME }}-source.tar.gz"
   PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
   REQUIRED_VARS: MAIN_BRANCH,MINOR_BUMP_LABEL,PATCH_BUMP_LABEL,PROJECT_NAME
 
@@ -211,10 +211,9 @@ jobs:
           git fetch origin ${{ github.ref_name }}
           git diff HEAD..origin/${{ github.ref_name }}
 
+      # TODO find a way without enforcing local version
       - name: 🔀 Merge ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}
-        # TODO find a way without enforcing local version
         run: |
-          # git pull origin ${{ github.ref_name }} --no-rebase
           git merge -X ours origin/${{ github.ref_name }} -m "[Automated] Merged ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}"
 
       # TODO implement this using gh command
@@ -320,13 +319,19 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
 
+      - name: 🔀 Merge ${{ vars.MAIN_BRANCH }} -> ${{ github.ref_name }}
+        run: |
+          git pull origin ${{ vars.MAIN_BRANCH }}
+          git merge --no-ff origin/${{ vars.MAIN_BRANCH }} -m "[Automated] Merged ${{ vars.MAIN_BRANCH }} -> ${{ github.ref_name }}"
+
+      # ? Still requried ?
       - name: Read version from package.py
         id: package-version
         run: |
           version=$(sed -n 's/^version *= *"\(.*\)"/\1/p' package.py)
           echo "version=$version" >> $GITHUB_OUTPUT
 
-      - name: Update package version for ${{ github.ref_name }}
+      - name: Update package version for ${{ github.ref_name }} to ${{ env.NEXT_PACKAGE_VERSION }}
         run: |
           sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_PACKAGE_VERSION }}\"/" package.py
 
@@ -340,7 +345,7 @@ jobs:
           git config --global user.email "${{ env.GH_EMAIL }}"
           git config --global user.name "${{ env.GH_USER }}"
 
-      - name: Update package.py version to ${{ env.NEXT_PACKAGE_VERSION }}
+      - name: Commit generated files
         if: ${{ steps.package-version.outputs.version != env.NEXT_PACKAGE_VERSION }}
         run: |
           git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}'
