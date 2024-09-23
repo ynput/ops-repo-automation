@@ -201,25 +201,25 @@ jobs:
             -f ref="refs/heads/${{ env.MAIN_BRANCH }}" \
             -f sha="${{ steps.latest-sha.outputs.sha }}"
 
-      - name: Apply branch protection rules for 'main'
-        run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/branch_rules/protect_main.json
-          gh api \
-            --method PUT \
-            -H "Accept: application/vnd.github+json" \
-            /repos/${{ env.TARGET_REPO }}/branches/main/protection \
-            --input protect_main.json
-          rm protect_main.json
+      # - name: Apply branch protection rules for 'main'
+      #   run: |
+      #     curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/branch_rules/protect_main.json
+      #     gh api \
+      #       --method PUT \
+      #       -H "Accept: application/vnd.github+json" \
+      #       /repos/${{ env.TARGET_REPO }}/branches/main/protection \
+      #       --input protect_main.json
+      #     rm protect_main.json
 
-      - name: Apply branch protection rules for 'develop'
-        run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/branch_rules/protect_develop.json
-          gh api \
-            --method PUT \
-            -H "Accept: application/vnd.github+json" \
-            /repos/${{ env.TARGET_REPO }}/branches/develop/protection \
-            --input develop-branch-rules.json
-          rm protect_develop.json
+      # - name: Apply branch protection rules for 'develop'
+      #   run: |
+      #     curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/branch_rules/protect_develop.json
+      #     gh api \
+      #       --method PUT \
+      #       -H "Accept: application/vnd.github+json" \
+      #       /repos/${{ env.TARGET_REPO }}/branches/develop/protection \
+      #       --input develop-branch-rules.json
+      #     rm protect_develop.json
 
 
   prepare-release:
