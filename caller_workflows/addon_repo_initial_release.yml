@@ -12,7 +12,7 @@ on:
 jobs:
   call-release-trigger:
     uses: ynput/automation/.github/workflows/initial_release_trigger.yml@main
-    inputs:
+    with:
       draft: ${{ inputs.draft }}
     secrets:
       token: ${{ secrets.YNPUT_BOT_TOKEN }}
