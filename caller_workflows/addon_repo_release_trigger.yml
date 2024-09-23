@@ -2,16 +2,18 @@ name: 🚀 Release Trigger
 
 on:
   workflow_dispatch:
-
-jobs:
-  call-release-trigger:
-    uses: ynput/automation/.github/workflows/release_trigger.yml@main
     inputs:
       draft:
         type: boolean
         description: "Create the release as draft or not"
         required: false
         default: true
+
+jobs:
+  call-release-trigger:
+    uses: ynput/automation/.github/workflows/release_trigger.yml@main
+    inputs:
+      draft: ${{ inputs.draft }}
     secrets:
       token: ${{ secrets.YNPUT_BOT_TOKEN }}
       email: ${{ secrets.CI_EMAIL }}
