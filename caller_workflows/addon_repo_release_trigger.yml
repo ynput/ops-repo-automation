@@ -6,6 +6,11 @@ on:
 jobs:
   call-release-trigger:
     uses: ynput/automation/.github/workflows/release_trigger.yml@main
+    inputs:
+      draft:
+        description: "Create the release as draft or not"
+        required: false
+        default: "true"
     secrets:
       token: ${{ secrets.YNPUT_BOT_TOKEN }}
       email: ${{ secrets.CI_EMAIL }}
