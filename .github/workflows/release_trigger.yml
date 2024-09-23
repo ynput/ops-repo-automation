@@ -185,7 +185,7 @@ jobs:
         with:
           scheme: semver
           increment: ${{ steps.pr-query.outputs.bump-increment }}
-          release_branch: main
+          release_branch: ${{ vars.MAIN_BRANCH }}
           use_api: true
 
 

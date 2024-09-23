@@ -230,6 +230,11 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
 
+      - name: 🔀 Merge ${{ vars.MAIN_BRANCH }} -> ${{ github.ref_name }}
+        run: |
+          git pull origin ${{ vars.MAIN_BRANCH }}
+          git merge --no-ff origin/${{ vars.MAIN_BRANCH }} -m "[Automated] Merged ${{ vars.MAIN_BRANCH }} -> ${{ github.ref_name }}"
+
       - name: Read version from package.py
         id: package-version
         run: |
