@@ -289,7 +289,7 @@ jobs:
     env:
       OUTPUT_DIR: "artifact"
       NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
-      NEXT_PACKAGE_VERSION: "${{ needs.increment-version.outputs.next-version }}-dev"
+      NEXT_PACKAGE_VERSION: "${{ needs.increment-version.outputs.next-version }}+dev"
 
     steps:
       - name: ⬇️ Checkout ${{ github.ref_name }}
@@ -310,14 +310,14 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
 
       # TODO is set out to discuss cause to me it doesn't make much sense
-      - name: Increment patch version again for develop
-        id: bump-develop
-        run: |
-          version=$(echo ${{ env.NEXT_PACKAGE_VERSION }})
-          IFS='.' read -r major minor patch <<< "$version"
-          patch=$((patch + 1))
-          new_version="$major.$minor.$patch"
-          echo "new_version=$new_version" >> $GITHUB_ENV
+      # - name: Increment patch version again for develop
+      #   id: bump-develop
+      #   run: |
+      #     version=$(echo ${{ env.NEXT_PACKAGE_VERSION }})
+      #     IFS='.' read -r major minor patch <<< "$version"
+      #     patch=$((patch + 1))
+      #     new_version="$major.$minor.$patch"
+      #     echo "new_version=$new_version" >> $GITHUB_ENV
 
       - name: Update package version for ${{ github.ref_name }} to ${{ steps.bump-develop.outputs.new_version }}
         run: |
