@@ -319,9 +319,9 @@ jobs:
       #     new_version="$major.$minor.$patch"
       #     echo "new_version=$new_version" >> $GITHUB_ENV
 
-      - name: Update package version for ${{ github.ref_name }} to ${{ steps.bump-develop.outputs.new_version }}
+      - name: Update package version for ${{ github.ref_name }} to ${{ env.NEXT_PACKAGE_VERSION }}
         run: |
-          sed -i "s/^version = \".*\"/version = \"${{ steps.bump-develop.outputs.new_version }}\"/" package.py
+          sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_PACKAGE_VERSION }}\"/" package.py
 
       - name: Create artifacts
         id: create-artifact
