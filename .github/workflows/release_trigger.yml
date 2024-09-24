@@ -309,9 +309,19 @@ jobs:
           version=$(sed -n 's/^version *= *"\(.*\)"/\1/p' package.py)
           echo "version=$version" >> $GITHUB_OUTPUT
 
-      - name: Update package version for ${{ github.ref_name }} to ${{ env.NEXT_PACKAGE_VERSION }}
+      # TODO is set out to discuss cause to me it doesn't make much sense
+      - name: Increment patch version again for develop
+        id: bump-develop
         run: |
-          sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_PACKAGE_VERSION }}\"/" package.py
+          version=$(echo ${{ env.NEXT_PACKAGE_VERSION }})
+          IFS='.' read -r major minor patch <<< "$version"
+          patch=$((patch + 1))
+          new_version="$major.$minor.$patch"
+          echo "new_version=$new_version" >> $GITHUB_ENV
+
+      - name: Update package version for ${{ github.ref_name }} to ${{ steps.bump-develop.outputs.new_version }}
+        run: |
+          sed -i "s/^version = \".*\"/version = \"${{ steps.bump-develop.outputs.new_version }}\"/" package.py
 
       - name: Create artifacts
         id: create-artifact
@@ -351,7 +361,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          
+
       - name: 🚀 Create Github Release Draft
         uses: ncipollo/release-action@v1
         with:
