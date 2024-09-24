@@ -309,16 +309,6 @@ jobs:
           version=$(sed -n 's/^version *= *"\(.*\)"/\1/p' package.py)
           echo "version=$version" >> $GITHUB_OUTPUT
 
-      # TODO is set out to discuss cause to me it doesn't make much sense
-      # - name: Increment patch version again for develop
-      #   id: bump-develop
-      #   run: |
-      #     version=$(echo ${{ env.NEXT_PACKAGE_VERSION }})
-      #     IFS='.' read -r major minor patch <<< "$version"
-      #     patch=$((patch + 1))
-      #     new_version="$major.$minor.$patch"
-      #     echo "new_version=$new_version" >> $GITHUB_ENV
-
       - name: Update package version for ${{ github.ref_name }} to ${{ env.NEXT_PACKAGE_VERSION }}
         run: |
           sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_PACKAGE_VERSION }}\"/" package.py
