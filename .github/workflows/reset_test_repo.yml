@@ -215,7 +215,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /repos/${{ env.TARGET_REPO }}/rulesets \
-            --input branch_rules/protect_main.json
+            --input protect_main.json
 
       - name: Apply ruleset for 'develop'
         run: |
@@ -225,7 +225,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /repos/${{ env.TARGET_REPO }}/rulesets \
-            --input branch_rules/protect_develop.json
+            --input protect_develop.json
 
   prepare-release:
     runs-on: ubuntu-latest
