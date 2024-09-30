@@ -186,6 +186,12 @@ jobs:
           git commit -m "Add warning information to readme"
           git push origin ${{ env.DEFAULT_BRANCH }}
 
+
+  update-repo:
+    runs-on: ubuntu-latest
+    needs: add-local-changes
+
+    steps:
       - name: Get latest sha from ${{ env.DEFAULT_BRANCH }}
         id: latest-sha
         run: |
@@ -203,6 +209,7 @@ jobs:
 
       - name: Apply ruleset for '${{ env.MAIN_BRANCH }}'
         run: |
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/${{ env.MAIN_BRANCH }}/branch_rules/protect_main.json
           gh api \
             --method POST \
             -H "Accept: application/vnd.github+json" \
@@ -212,6 +219,7 @@ jobs:
 
       - name: Apply ruleset for 'develop'
         run: |
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/${{ env.MAIN_BRANCH }}/branch_rules/protect_develop.json
           gh api \
             --method POST \
             -H "Accept: application/vnd.github+json" \
@@ -221,7 +229,7 @@ jobs:
 
   prepare-release:
     runs-on: ubuntu-latest
-    needs: add-local-changes
+    needs: update-repo
 
     steps:
       - name: Create GitHub Release
