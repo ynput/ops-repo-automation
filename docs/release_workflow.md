@@ -1,13 +1,17 @@
-# Intention
+# Release Workflow
+
+Meant to automate any tasks related to release creation.
+
+## Intention
 
 The Release Workflow is meant to have a one-click solution to handling all release related tasks.
 This includes validation, merging branches, creating artifacts and so on.
 
-## Structure
+## Workflow Structure
 
 The workflow is split into multiple jobs, each handlings a different kind of logic.
 Additionally the jobs run certain dedicated Github Actions which are stand-alone units
-Some Examples in use right now (27.09.24)
+Some examples in use right now (27.09.24)
 
 ### Ynput-Owned
 

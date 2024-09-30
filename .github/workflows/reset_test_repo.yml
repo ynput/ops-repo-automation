@@ -189,7 +189,7 @@ jobs:
 
   update-repo:
     runs-on: ubuntu-latest
-    needs: add-local-changes
+    needs: run-local-changes
 
     steps:
       - name: Get latest sha from ${{ env.DEFAULT_BRANCH }}
