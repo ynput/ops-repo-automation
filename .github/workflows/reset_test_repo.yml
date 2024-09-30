@@ -108,7 +108,7 @@ jobs:
           echo "$(gh label list --repo ${{ env.TARGET_REPO }})"
 
 
-  add-local-changes:
+  run-local-changes:
     runs-on: ubuntu-latest
     needs: prepare-repo
 
