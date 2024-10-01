@@ -1,4 +1,6 @@
-# Workflow Development Approach
+# Ops Repo Automation
+
+Collection of templates, automation tools and github-workflows for Ayon related repositories.
 
 ## Terminology
 
