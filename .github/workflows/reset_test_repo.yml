@@ -99,7 +99,7 @@ jobs:
           gh variable set MAIN_BRANCH --body "main" --repo ${{ env.TARGET_REPO }}
           gh variable set PROJECT_NAME --body ${{ env.TARGET_REPO_PROJECT_NAME }} --repo ${{ env.TARGET_REPO }}
           gh variable set WORKFLOW_REPO --body ${{ github.repository }} --repo ${{ env.TARGET_REPO }}
-          gh variable set WORKFLOW_CHECKOUT--body "main" --repo ${{ env.TARGET_REPO }}
+          gh variable set WORKFLOW_CHECKOUT --body "main" --repo ${{ env.TARGET_REPO }}
 
           echo "$(gh variable list --repo ${{ env.TARGET_REPO }})"
 
