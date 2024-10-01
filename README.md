@@ -7,7 +7,7 @@ Collection of templates, automation tools and github-workflows for Ayon related 
 * Github Workflow - usually a .yml file which defines all steps to be run automatically
 * GitHub Action - stand-alone workflow module which works like a function using input parameters, processes internal logic and returns results
 * Caller Workflow - usually a pretty short .yml file which just calls larger workflows
-* Missing point
+* (Workflow Modules)
 
 ## Development Repository Structure
 
