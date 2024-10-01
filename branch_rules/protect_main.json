@@ -29,7 +29,7 @@
   ],
   "bypass_actors": [
     {
-      "actor_id": 10997209,
+      "actor_id": "<actor_id_placeholder>",
       "actor_type": "Team",
       "bypass_mode": "always"
     }
