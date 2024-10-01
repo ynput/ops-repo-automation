@@ -123,8 +123,9 @@ jobs:
           ref: ${{ env.DEFAULT_BRANCH }}
 
       - name: Add PR Template
+        # TODO change develop to main
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/.github/pull_request_template.md
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/.github/pull_request_template.md
 
           mv pull_request_template.md ./.github/pull_request_template.md
 
@@ -136,8 +137,9 @@ jobs:
           git push origin ${{ env.DEFAULT_BRANCH }}
 
       - name: Add initial-release workflow
+        # TODO change develop to main
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/caller_workflows/addon_repo_initial_release.yml
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/caller_workflows/addon_repo_initial_release.yml
 
           mv addon_repo_initial_release.yml ./.github/workflows/initial_release.yml
 
@@ -150,7 +152,7 @@ jobs:
 
       - name: Add release workflow
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/caller_workflows/addon_repo_release_trigger.yml
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/caller_workflows/addon_repo_release_trigger.yml
 
           mv addon_repo_release_trigger.yml ./.github/workflows/release_trigger.yml
 
