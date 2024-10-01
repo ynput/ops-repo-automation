@@ -5,13 +5,7 @@ on:
     inputs:
       draft:
         type: boolean
-      major:
-        type: string
-      minor:
-        type: string
-      patch:
-        type: string
-      name:
+      release_overwrite:
         type: string
 
     secrets:
@@ -28,9 +22,7 @@ env:
   GH_USER: ${{ secrets.user || secrets.CI_USER }}
   GH_EMAIL: ${{ secrets.email || secrets.CI_EMAIL }}
   DRAFT: ${{ inputs.draft }}
-  MAJOR: ${{ inputs.major || vars.MAJOR }}
-  MINOR: ${{ inputs.minor || vars.MINOR }}
-  PATCH: ${{ inputs.patch || vars.PATCH }}
+  NEXT_RELEASE: ${{ inputs.release_overwrite }}
   RELEASE_NAME: ${{ inputs.name || '' }}
   ARTIFACT_NAME: "${{ vars.PROJECT_NAME }}-package"
   PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
@@ -80,6 +72,7 @@ jobs:
 
   # TODO Move release query logic into github action
   get-latest-release:
+    if: ${{ ! inputs.release_overwrite }}
     runs-on: ubuntu-latest
     needs: 
       - verify_repo_vars_and_secrets
@@ -139,6 +132,7 @@ jobs:
 
 
   increment-version:
+    if: ${{ ! inputs.release_overwrite }}
     runs-on: ubuntu-latest
     needs: get-latest-release
     env:
@@ -228,7 +222,7 @@ jobs:
       - merge-to-main
     env:
       OUTPUT_DIR: "artifact"
-      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
+      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version || inputs.release_overwrite }}"
     outputs:
       artifact_file: ${{ steps.create-artifact.outputs.file_name }}
 
@@ -283,8 +277,8 @@ jobs:
       - increment-version
     env:
       OUTPUT_DIR: "artifact"
-      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
-      NEXT_PACKAGE_VERSION: "${{ needs.increment-version.outputs.next-version }}+dev"
+      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version || inputs.release_overwrite }}"
+      NEXT_PACKAGE_VERSION: "${{ needs.increment-version.outputs.next-version || inputs.release_overwrite }}+dev"
 
     steps:
       - name: ⬇️ Checkout ${{ github.ref_name }}
@@ -339,7 +333,7 @@ jobs:
       - build-from-main
       - increment-version
     env:
-      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
+      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version || inputs.release_overwrite }}"
 
     steps:
       - name: 🔽 Download zip artifacts
@@ -364,7 +358,7 @@ jobs:
       - create-release
       - increment-version
     env:
-      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
+      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version || inputs.release_overwrite }}"
     steps:
       - name: Fetch Latest Release Draft
         id: fetch-latest-release-draft
