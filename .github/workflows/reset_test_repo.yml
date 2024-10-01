@@ -180,7 +180,7 @@ jobs:
           git config --global user.name "${{ secrets.CI_USER }}"
           git config --global user.email "${{ secrets.CI_EMAIL }}"
 
-          echo -e "# Not intended for Development\nThis is a testing repository for github actions.<br>Changes in this repository are likely to be reset by automanted testing procedures.<br>Don't use this repository for any development - use [ayon/ci-testing](https://github.com/ynput/ci-testing) instead." > README.md
+          echo -e "# Not intended for Development\nThis is a testing repository for github actions.<br>Changes in this repository are likely to be reset by automanted testing procedures.<br>Don't use this repository for any development - use [ynput/ci-testing](https://github.com/ynput/ci-testing) instead." > README.md
           git add README.md
 
           git commit -m "Add warning information to readme"
