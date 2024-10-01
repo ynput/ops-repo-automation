@@ -1,4 +1,4 @@
-name: 🌟 Intial Release Trigger
+name: 🌟 Initial Release Trigger
 
 on:
   workflow_dispatch:

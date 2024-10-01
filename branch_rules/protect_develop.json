@@ -46,17 +46,17 @@
   ],
   "bypass_actors": [
     {
-      "actor_id": 5,
+      "actor_id": "{{ secrets.ACTOR_ID_REPO_ROLE }}",
       "actor_type": "RepositoryRole",
       "bypass_mode": "always"
     },
     {
-      "actor_id": 10997209,
+      "actor_id": "${{ secrets.ACTOR_ID_TEAM }}",
       "actor_type": "Team",
       "bypass_mode": "always"
     },
     {
-      "actor_id": 1,
+      "actor_id": "{{ secrets.ACTOR_ID_ORG_ADMIN }}",
       "actor_type": "OrganizationAdmin",
       "bypass_mode": "always"
     }
