@@ -108,7 +108,7 @@ jobs:
           echo "$(gh label list --repo ${{ env.TARGET_REPO }})"
 
 
-  run-local-changes:
+  local-changes:
     runs-on: ubuntu-latest
     needs: prepare-repo
 
@@ -189,7 +189,7 @@ jobs:
 
   update-repo:
     runs-on: ubuntu-latest
-    needs: run-local-changes
+    needs: local-changes
 
     steps:
       - name: Get latest sha from ${{ env.DEFAULT_BRANCH }}
@@ -208,8 +208,9 @@ jobs:
             -f sha="${{ steps.latest-sha.outputs.sha }}"
 
       - name: Apply ruleset for '${{ env.MAIN_BRANCH }}'
+        # TODO change develop to main
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/${{ env.MAIN_BRANCH }}/branch_rules/protect_main.json
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/branch_rules/protect_main.json
           gh api \
             --method POST \
             -H "Accept: application/vnd.github+json" \
@@ -218,8 +219,9 @@ jobs:
             --input protect_main.json
 
       - name: Apply ruleset for 'develop'
+        # TODO change develop to main
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/${{ env.MAIN_BRANCH }}/branch_rules/protect_develop.json
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/branch_rules/protect_develop.json
           gh api \
             --method POST \
             -H "Accept: application/vnd.github+json" \
