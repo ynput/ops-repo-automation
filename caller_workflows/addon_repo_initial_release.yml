@@ -11,7 +11,7 @@ on:
 
 jobs:
   call-release-trigger:
-    uses: ynput/ops-repo-automation/.github/workflows/initial_release.yml@main
+    uses: ${{ vars.WORKFLOW_REPO }}/.github/workflows/initial_release.yml@{{ vars.WORKFLOW_CHECKOUT }}
     with:
       draft: ${{ inputs.draft }}
     secrets:
