@@ -190,7 +190,7 @@ jobs:
           TAG: "${{ steps.calculated_version_tag.outputs.major-version }}.${{ steps.calculated_version_tag.outputs.minor-version }}.${{ steps.calculated_version_tag.outputs.patch-version }}"
         run: |
           next_tag=${{ env.TAG || inputs.release_overwrite }}
-          echo "NEXT_TAG=$next_tag" >> GITHUB_OUTPUT
+          echo "NEXT_TAG=$next_tag" >> $GITHUB_OUTPUT
 
 
   merge-to-main:
