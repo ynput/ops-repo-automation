@@ -7,6 +7,8 @@ on:
         type: boolean
       release_overwrite:
         type: string
+      release_name:
+        type: string
 
     secrets:
       token:
@@ -23,7 +25,7 @@ env:
   GH_EMAIL: ${{ secrets.email || secrets.CI_EMAIL }}
   DRAFT: ${{ inputs.draft }}
   NEXT_RELEASE: ${{ inputs.release_overwrite }}
-  RELEASE_NAME: ${{ inputs.name || '' }}
+  RELEASE_NAME: ${{ inputs.release_name || '' }}
   ARTIFACT_NAME: "${{ vars.PROJECT_NAME }}-package"
   PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
   REQUIRED_VARS: MAIN_BRANCH,MINOR_BUMP_LABEL,PATCH_BUMP_LABEL,PROJECT_NAME
@@ -72,7 +74,6 @@ jobs:
 
   # TODO Move release query logic into github action
   get-latest-release:
-    if: ${{ ! inputs.release_overwrite }}
     runs-on: ubuntu-latest
     needs: 
       - verify_repo_vars_and_secrets
@@ -132,13 +133,12 @@ jobs:
 
 
   increment-version:
-    if: ${{ ! inputs.release_overwrite }}
     runs-on: ubuntu-latest
     needs: get-latest-release
     env:
       release_date: ${{ needs.get-latest-release.outputs.date_published }}
     outputs:
-      next-version: "${{ steps.calculated_version_tag.outputs.major-version }}.${{ steps.calculated_version_tag.outputs.minor-version }}.${{ steps.calculated_version_tag.outputs.patch-version }}"
+      next-version: "${{ steps.set-tag.outputs.NEXT_TAG }}"
 
     steps:
       - name: Query PR data
@@ -175,6 +175,7 @@ jobs:
           exit 1
 
       - name: 🔼 Get next Version Tag
+        if: ${{ ! inputs.release_overwrite }}
         uses: reecetech/version-increment@2024.4.4
         id: calculated_version_tag
         with:
@@ -182,6 +183,14 @@ jobs:
           increment: ${{ steps.pr-query.outputs.bump-increment }}
           release_branch: ${{ vars.MAIN_BRANCH }}
           use_api: true
+
+      - name: Set next version tag
+        id: set-tag
+        env:
+          TAG: "${{ steps.calculated_version_tag.outputs.major-version }}.${{ steps.calculated_version_tag.outputs.minor-version }}.${{ steps.calculated_version_tag.outputs.patch-version }}"
+        run: |
+          next_tag=${{ env.TAG || inputs.release_overwrite }}
+          echo "NEXT_TAG=$next_tag" >> GITHUB_OUTPUT
 
 
   merge-to-main:
@@ -222,7 +231,7 @@ jobs:
       - merge-to-main
     env:
       OUTPUT_DIR: "artifact"
-      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version || inputs.release_overwrite }}"
+      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
     outputs:
       artifact_file: ${{ steps.create-artifact.outputs.file_name }}
 
@@ -277,8 +286,8 @@ jobs:
       - increment-version
     env:
       OUTPUT_DIR: "artifact"
-      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version || inputs.release_overwrite }}"
-      NEXT_PACKAGE_VERSION: "${{ needs.increment-version.outputs.next-version || inputs.release_overwrite }}+dev"
+      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
+      NEXT_PACKAGE_VERSION: "${{ needs.increment-version.outputs.next-version }}+dev"
 
     steps:
       - name: ⬇️ Checkout ${{ github.ref_name }}
@@ -333,7 +342,7 @@ jobs:
       - build-from-main
       - increment-version
     env:
-      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version || inputs.release_overwrite }}"
+      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
 
     steps:
       - name: 🔽 Download zip artifacts
@@ -358,7 +367,7 @@ jobs:
       - create-release
       - increment-version
     env:
-      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version || inputs.release_overwrite }}"
+      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
     steps:
       - name: Fetch Latest Release Draft
         id: fetch-latest-release-draft
