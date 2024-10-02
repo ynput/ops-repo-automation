@@ -189,8 +189,13 @@ jobs:
         env:
           TAG: "${{ steps.calculated_version_tag.outputs.major-version }}.${{ steps.calculated_version_tag.outputs.minor-version }}.${{ steps.calculated_version_tag.outputs.patch-version }}"
         run: |
-          next_tag=${{ env.TAG || inputs.release_overwrite }}
-          echo "NEXT_TAG=$next_tag" >> $GITHUB_OUTPUT
+          if [ "${{ env.TAG }}" == ".." ]; then
+            echo "NEXT_TAG=${{ inputs.release_overwrite }}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "NEXT_TAG=${{ env.TAG }}" >> $GITHUB_OUTPUT
+          exit 0
 
 
   merge-to-main:
