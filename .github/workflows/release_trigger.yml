@@ -385,6 +385,7 @@ jobs:
         id: check-release-tag
         env:
           latest_release_draft: ${{ steps.fetch-latest-release-draft.outputs.current_release_name }}
+        # TODO notification should show if it was a draft or is a release already
         run: |
           if [ "${{ env.NEXT_VERSION }}" == "${{ env.latest_release_draft }}" ]; then
             echo "::notice::Success, release-draft found with the expected name ${{ env.NEXT_VERSION }}."
