@@ -246,6 +246,7 @@ jobs:
         with:
           ref: ${{ vars.MAIN_BRANCH }}
           fetch-depth: 0
+          submodules: true
 
       - name: Update package.py version to ${{ env.NEXT_VERSION }}
         run: |
