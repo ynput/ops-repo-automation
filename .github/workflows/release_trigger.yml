@@ -274,7 +274,7 @@ jobs:
         with:
           token: ${{ env.GH_TOKEN }}
           branch: ${{ vars.MAIN_BRANCH }}
-          tags: true
+          tags: false
           unprotect_reviews: false
 
       - name: 🔼 Upload package zip artifacts
