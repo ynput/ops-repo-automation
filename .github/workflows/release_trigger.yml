@@ -239,6 +239,7 @@ jobs:
       NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
     outputs:
       artifact_file: ${{ steps.create-artifact.outputs.file_name }}
+      latest_commit: ${{ steps.get-commit-hash.outputs.latest_commit}}
 
     steps:
       - name: ⬇️ Checkout ${{ vars.MAIN_BRANCH }}
@@ -267,7 +268,7 @@ jobs:
       - name: Add changed files from ${{ vars.MAIN_BRANCH }}
         run: |
           git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}'
-          git commit -m "[Automated] Add generated package files from ${{ vars.MAIN_BRANCH }}"
+          git commit -m "[Automated] Add generated package files to ${{ vars.MAIN_BRANCH }}"
 
       - name: 🔏 Push to protected ${{ vars.MAIN_BRANCH }} branch
         uses: CasperWA/push-protected@v2.16.0
@@ -276,6 +277,12 @@ jobs:
           branch: ${{ vars.MAIN_BRANCH }}
           tags: false
           unprotect_reviews: false
+
+      - name: Get latest commit hash on ${{ vars.MAIN_BRANCH }}
+        id: get-commit-hash
+        run: |
+          latest_commit_hash=$(git rev-parse HEAD)
+          echo "latest_commit=$latest_commit" >> GITHUB_OUPUT
 
       - name: 🔼 Upload package zip artifacts
         uses: actions/upload-artifact@v4
@@ -349,6 +356,7 @@ jobs:
       - increment-version
     env:
       NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
+      RELEASE_COMMIT: "${{ needs.build-from-main.outputs.latest_commit }}"
 
     steps:
       - name: 🔽 Download zip artifacts
@@ -359,6 +367,7 @@ jobs:
       - name: 🚀 Create Github Release Draft
         uses: ncipollo/release-action@v1
         with:
+          commit: "${{ env.RELEASE_COMMIT }}"
           tag: "${{ env.NEXT_VERSION }}"
           generateReleaseNotes: true
           artifacts: |

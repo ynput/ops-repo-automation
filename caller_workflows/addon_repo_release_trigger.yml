@@ -15,10 +15,10 @@ on:
 
 jobs:
   call-release-trigger:
-    uses: ynput/ops-repo-automation/.github/workflows/release_trigger.yml@0.1.0
+    uses: ynput/ops-repo-automation/.github/workflows/release_trigger.yml@develop
     with:
       draft: ${{ inputs.draft }}
-      # release_overwrite: ${{ inputs.release_overwrite }}
+      release_overwrite: ${{ inputs.release_overwrite }}
     secrets:
       token: ${{ secrets.YNPUT_BOT_TOKEN }}
       email: ${{ secrets.CI_EMAIL }}
