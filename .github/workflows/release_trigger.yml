@@ -282,7 +282,7 @@ jobs:
         id: get-commit-hash
         run: |
           latest_commit_hash=$(git rev-parse HEAD)
-          echo "latest_commit=$latest_commit" >> GITHUB_OUPUT
+          echo "latest_commit=$latest_commit" >> $GITHUB_OUPUT
 
       - name: 🔼 Upload package zip artifacts
         uses: actions/upload-artifact@v4
@@ -364,10 +364,10 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_NAME }}
 
-      - name: 🚀 Create Github Release Draft
+      - name: 🚀 Create Github Release
         uses: ncipollo/release-action@v1
         with:
-          commit: "${{ env.RELEASE_COMMIT }}"
+          commit: "${{ vars.MAIN_BRANCH }}"
           tag: "${{ env.NEXT_VERSION }}"
           generateReleaseNotes: true
           artifacts: |
