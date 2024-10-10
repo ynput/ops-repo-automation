@@ -289,9 +289,10 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_NAME }}
           
-      - name: 🚀 Create Github Release Draft
+      - name: 🚀 Create Github Release
         uses: ncipollo/release-action@v1
         with:
+          commit: ${{ vars.MAIN_BRANCH }}
           tag: "${{ env.INIT_VERSION }}"
           generateReleaseNotes: true
           artifacts: ${{ needs.build-from-main.outputs.artifact_file }}
