@@ -282,7 +282,7 @@ jobs:
         id: get-commit-hash
         run: |
           latest_commit_hash=$(git rev-parse HEAD)
-          echo "latest_commit=$latest_commit" >> $GITHUB_OUPUT
+          echo "latest_commit=$latest_commit" >> $GITHUB_OUTPUT
 
       - name: 🔼 Upload package zip artifacts
         uses: actions/upload-artifact@v4
