@@ -278,6 +278,7 @@ jobs:
           tags: false
           unprotect_reviews: false
 
+      # TODO remove obsolete step
       - name: Get latest commit hash on ${{ vars.MAIN_BRANCH }}
         id: get-commit-hash
         run: |
@@ -354,6 +355,7 @@ jobs:
     needs:
       - build-from-main
       - increment-version
+    # TODO remove obsolete env var
     env:
       NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
       RELEASE_COMMIT: "${{ needs.build-from-main.outputs.latest_commit }}"
