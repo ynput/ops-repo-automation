@@ -155,6 +155,7 @@ jobs:
         run: |
           echo "label-list: ${{ steps.pr-query.outputs.label-list }}"
           echo "bump-increment: ${{ steps.pr-query.outputs.bump-increment }}"
+          echo "changelog: ${{ steps.pr-query.outputs.changelog-markdown }}"
 
       - name: Check for existing PRs
         if: ${{ !fromJson(steps.pr-query.outputs.raw-output) }}
