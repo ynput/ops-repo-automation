@@ -148,7 +148,7 @@ jobs:
         with:
           repo: "${{ github.repository }}"
           date: "${{ env.release_date }}"
-          query_parameters: "body,labels,title"
+          query_parameters: "body,labels,title,id,number,url"
           changelog_labels: "${{ env.CHANGELOG_ORDER }}"
 
       - name: Show debug output
