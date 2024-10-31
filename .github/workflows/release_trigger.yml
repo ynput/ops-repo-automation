@@ -31,33 +31,18 @@ env:
   CHANGELOG_ORDER: "${{ vars.CHANGELOG_ORDER || false }}"
 
 jobs:
-  verify_repo_vars_and_secrets:
+  verify-repo-secrets:
+    uses: ynput/ops-repo-automation/.github/workflows/verify_secrets.yml@refactor-release-workflow-structure
+    secrets:
+      gh_token: ${{ env.GH_TOKEN }}
+      gh_user: ${{ env.GH_USER }}
+      gh_mail: ${{ env.GH_EMAIL }}
+
+
+  verify-repo-vars:
     runs-on: ubuntu-latest
 
-    # TODO include orgnaistion secrets - needs actions [secrets fine-grained permission](https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28)
-    # TODO move verification into github action
-    # TODO RnD more efficient way for secret checks without converting them to values
     steps:
-      - name: 🔎 Verify secret 'GH_TOKEN' for ${{ github.repository }}
-        if: ${{ !env.GH_TOKEN }}
-        run: |
-          echo "::error::Secret 'GH_TOKEN' is not set or empty"
-
-      - name: 🔎 Verify secret 'GH_USER' for ${{ github.repository }}
-        if: ${{ !env.GH_USER }}
-        run: |
-          echo "::error::Secret 'GH_USER' is not set or empty"
-
-      - name: 🔎 Verify secret 'GH_EMAIL' for ${{ github.repository }}
-        if: ${{ !env.GH_EMAIL }}
-        run: |
-          echo "::error::Secret 'GH_EMAIL' is not set or empty"
-
-      - name: 🔎 Secrets verified
-        if: ${{ env.GH_TOKEN && env.GH_USER && env.GH_EMAIL }} 
-        run: |
-          echo "::notice::All required secrets are present."
-
       - name: 🔎 Verify repo variables for ${{ github.repository }}
         run: |
           missing_vars=$(echo ${{ env.REQUIRED_VARS }} | tr ',' '\n' | while read var; do
@@ -76,7 +61,8 @@ jobs:
   get-latest-release:
     runs-on: ubuntu-latest
     needs: 
-      - verify_repo_vars_and_secrets
+      - verify-repo-secrets
+      - verify-repo-vars
     outputs:
       id: ${{ steps.latest-release.outputs.id }}
       name: ${{ steps.latest-release.outputs.name }}
