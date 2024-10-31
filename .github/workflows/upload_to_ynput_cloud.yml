@@ -1,4 +1,4 @@
-name: 📤 Upload to YnputCloud
+name: 📤 Upload to Ynput Cloud
 
 on:
   workflow_call:
