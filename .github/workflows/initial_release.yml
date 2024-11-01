@@ -38,9 +38,9 @@ jobs:
   verify_repo_secrets:
     uses: ynput/ops-repo-automation/.github/workflows/initial_release.yml@refactor-release-workflow-structure
     secrets:
-      gh_token: ${{ env.GH_TOKEN }}
-      gh_user: ${{ env.GH_USER }}
-      gh_mail: ${{ env.GH_EMAIL }}
+      token: ${{ env.GH_TOKEN }}
+      user: ${{ env.GH_USER }}
+      email: ${{ env.GH_EMAIL }}
 
 
   verify-repo-vars:
