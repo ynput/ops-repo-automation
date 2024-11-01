@@ -36,7 +36,7 @@ env:
 
 jobs:
   verify_repo_secrets:
-    uses: ynput/ops-repo-automation/.github/workflows/initial_release.yml@refactor-release-workflow-structure
+    uses: ynput/ops-repo-automation/.github/workflows/verify_secrets.yml@refactor-release-workflow-structure
     secrets:
       token: ${{ env.GH_TOKEN }}
       user: ${{ env.GH_USER }}
