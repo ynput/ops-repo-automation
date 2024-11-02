@@ -5,13 +5,7 @@ on:
     inputs:
       draft:
         type: boolean
-      major:
-        type: string
-      minor:
-        type: string
-      patch:
-        type: string
-      name:
+      release_overwrite:
         type: string
 
     secrets:
