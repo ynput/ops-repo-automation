@@ -42,6 +42,19 @@ jobs:
       gh_token: ${{ secrets.token }}
 
 
+  verify-latest-release:
+    runs-on: ubuntu-latest
+    needs:
+      - get-latest-release
+
+    steps:
+      - name: Test existing release
+        if: ${{ needs.get-latest-release.outputs.date_published }}
+        run: |
+          echo "::error::An existing releases was found for ${{ github.repository }}. Please use the general release-trigger for further releases."
+          exit 1
+
+
   verify-repo-secrets:
     uses: ynput/ops-repo-automation/.github/workflows/verify_secrets.yml@refactor-release-workflow-structure
     with:
@@ -60,25 +73,13 @@ jobs:
     secrets:
       gh_token: ${{ secrets.token }}
 
-  verify-latest-release:
-    runs-on: ubuntu-latest
-    needs:
-      - get-latest-release
-
-    steps:
-      - name: Test existing release
-        if: ${{ needs.get-latest-release.outputs.date_published }}
-        run: |
-          echo "::error::An existing releases was found for ${{ github.repository }}. Please use the general release-trigger for further releases."
-          exit 1
-
 
   merge-to-main:
     runs-on: ubuntu-latest
     needs:
+      - verify-latest-release
       - verify-repo-secrets
       - verify-repo-vars
-      - verify-latest-release
 
     steps:
       - name: ⬇️ Checkout ${{ vars.MAIN_BRANCH }}
