@@ -31,8 +31,10 @@ env:
   CHANGELOG_ORDER: "${{ vars.CHANGELOG_ORDER || false }}"
 
 jobs:
-  verify-repo-secrets:
+  verify_repo_secrets:
     uses: ynput/ops-repo-automation/.github/workflows/verify_secrets.yml@refactor-release-workflow-structure
+    with:
+      repo: ${{ github.repository }}
     secrets:
       gh_token: ${{ secrets.token }}
       gh_user: ${{ secrets.user }}
@@ -40,21 +42,10 @@ jobs:
 
 
   verify-repo-vars:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: 🔎 Verify repo variables for ${{ github.repository }}
-        run: |
-          missing_vars=$(echo ${{ env.REQUIRED_VARS }} | tr ',' '\n' | while read var; do
-            gh variable list --repo ${{ github.repository }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
-          done)
-
-          if [ -n "$missing_vars" ]; then
-            echo "::error::The following required variables are missing: $missing_vars for repository ${{ github.repository }}"
-            exit 1
-          else
-            echo "::notice::All required variables are present."
-          fi
+    uses: ynput/ops-repo-automation/.github/workflows/verify_variables.yml@refactor-release-workflow-structure
+    with:
+      variables: "MAIN_BRANCH,MINOR_BUMP_LABEL,PATCH_BUMP_LABEL,PROJECT_NAME"
+      repo: ${{ github.repository }}
 
 
   # TODO Move release query logic into github action

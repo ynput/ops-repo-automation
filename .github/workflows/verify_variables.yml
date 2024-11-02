@@ -1,0 +1,34 @@
+name: Verify repository variables
+
+on:
+  workflow_call:
+    inputs:
+      variables:
+        description: Repository variables as comma separated string without spaces
+        type: string
+        required: true
+      repo:
+        type: string
+        required: false
+
+env:
+  REPO_VARS: ${{ secrets.gh_token || false }}
+  GH_REPO : ${{ inputs.repo || github.repository }}
+
+jobs:
+  verify_variables:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔎 Verify repo variables for ${{ env.GH_REPO }}
+        run: |
+          missing_vars=$(echo ${{ env.REPO_VARS }} | tr ',' '\n' | while read var; do
+            gh variable list --repo ${{ env.GH_REPO }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
+          done)
+
+          if [ -n "$missing_vars" ]; then
+            echo "::error::The following required variables are missing: $missing_vars for repository ${{ env.GH_REPO }}"
+            exit 1
+          else
+            echo "::notice::All required variables are present."
+          fi
