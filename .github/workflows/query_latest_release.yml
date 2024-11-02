@@ -39,7 +39,7 @@ env:
   GH_TOKEN: ${{ secrets.gh_token || false }}
 
 jobs:
-  latest-release:
+  query-latest-release:
 
     runs-on: ubuntu-latest
 
