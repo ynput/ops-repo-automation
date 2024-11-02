@@ -31,6 +31,33 @@ env:
   CHANGELOG_ORDER: "${{ vars.CHANGELOG_ORDER || false }}"
 
 jobs:
+  get-latest-release:
+    uses: ynput/ops-repo-automation/.github/workflows/query_latest_release.yml@refactor-release-workflow-structure
+    with:
+      repo: ${{ github.repository }}
+    secrets:
+      gh_token: ${{ secrets.token }}
+
+
+  verify-latest-release:
+    runs-on: ubuntu-latest
+    needs:
+      - get-latest-release
+
+    steps:
+      - name: Test existing release
+        if: ${{ ! needs.get-latest-release.outputs.date_published }}
+        run: |
+          echo "::warning::No releases found for ${{ github.repository }}. Please use the Initial Release Trigger workflow.
+          exit 1
+
+      - name: Test release drafts
+        if: ${{ fromJson(needs.get-latest-release.outputs.draft) }}
+        run: |
+          echo "::warning::Release draft already present: ${{ needs.get-latest-release.outputs.name }}"
+          exit 0
+
+      
   verify-repo-secrets:
     uses: ynput/ops-repo-automation/.github/workflows/verify_secrets.yml@refactor-release-workflow-structure
     with:
@@ -50,71 +77,13 @@ jobs:
       gh_token: ${{ secrets.token }}
 
 
-  # TODO Move release query logic into github action
-  get-latest-release:
-    runs-on: ubuntu-latest
-
-    outputs:
-      id: ${{ steps.latest-release.outputs.id }}
-      name: ${{ steps.latest-release.outputs.name }}
-      tag: ${{ steps.latest-release.outputs.tag }}
-      date_created: ${{ steps.latest-release.outputs.date_created }}
-      date_published: ${{ steps.latest-release.outputs.date_published }}
-      draft: ${{ steps.latest-release.outputs.draft }}
-      pre_release: ${{ steps.latest-release.outputs.pre_release}}
-
-    steps:
-      - name: Get latest release
-        id: latest-release
-        run: |
-          declare -A release_option_map=(
-            ["id"]="id"
-            ["createdAt"]="date_created"
-            ["publishedAt"]="date_published"
-            ["tagName"]="tag"
-            ["name"]="name"
-            ["isDraft"]="draft"
-            ["isPrerelease"]="pre_release"
-          )
-
-          key_list=$(IFS=,; echo "${!release_option_map[*]}")
-          release=$(gh release view --repo ${{ github.repository }} --json $key_list || true)
-
-          for key in "${!release_option_map[@]}"; do
-            value=$(echo "$release" | jq -r ".$key")
-            echo "${release_option_map[$key]}=$value" >> $GITHUB_OUTPUT
-          done
-
-      - name: Show release data
-        # TODO create a loop for this
-        run: |
-          echo "Release ID: ${{ steps.latest-release.outputs.id }}"
-          echo "Release Name: ${{ steps.latest-release.outputs.name }}"
-          echo "Tag Name: ${{ steps.latest-release.outputs.tag }}"
-          echo "Date Created: ${{ steps.latest-release.outputs.date_created }}"
-          echo "Date Published: ${{ steps.latest-release.outputs.date_published }}"
-          echo "Draft Status: ${{ steps.latest-release.outputs.draft }}"
-          echo "Pre-release Status: ${{ steps.latest-release.outputs.pre_release }}"
-
-      - name: Test existing release
-        if: ${{ ! steps.latest-release.outputs.date_published }}
-        run: |
-          echo "::warning::No releases found for ${{ github.repository }}. Please use the Initial Release Trigger workflow.
-          exit 1
-
-      - name: Test release drafts
-        if: ${{ fromJson(steps.latest-release.outputs.draft) }}
-        run: |
-          echo "::warning::Release draft already present: ${{ steps.latest-release.outputs.name }}"
-          exit 0
-
-
   increment-version:
     runs-on: ubuntu-latest
     needs:
+      - get-latest-release
+      - verify-latest-release
       - verify-repo-secrets
       - verify-repo-vars
-      - get-latest-release
 
     env:
       release_date: ${{ needs.get-latest-release.outputs.date_published }}
