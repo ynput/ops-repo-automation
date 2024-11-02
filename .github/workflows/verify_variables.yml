@@ -16,7 +16,7 @@ on:
         required: true
 
 env:
-  REPO_VARS: ${{ secrets.gh_token || false }}
+  REPO_VARS: ${{ inputs.variables || false }}
   GH_REPO : ${{ inputs.repo || github.repository }}
   GH_TOKEN: ${{ secrets.gh_token }}
 
