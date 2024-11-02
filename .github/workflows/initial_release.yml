@@ -64,8 +64,9 @@ jobs:
   # TODO Move release query logic into github action
   get-latest-release:
     runs-on: ubuntu-latest
-    needs: 
-      - verify_repo_vars_and_secrets
+    needs:
+      - verify_repo_secrets
+      - verify-repo-vars
     outputs:
       id: ${{ steps.latest-release.outputs.id }}
       name: ${{ steps.latest-release.outputs.name }}
