@@ -31,7 +31,7 @@ env:
   CHANGELOG_ORDER: "${{ vars.CHANGELOG_ORDER || false }}"
 
 jobs:
-  verify_repo_secrets:
+  verify-repo-secrets:
     uses: ynput/ops-repo-automation/.github/workflows/verify_secrets.yml@refactor-release-workflow-structure
     with:
       repo: ${{ github.repository }}
@@ -51,9 +51,7 @@ jobs:
   # TODO Move release query logic into github action
   get-latest-release:
     runs-on: ubuntu-latest
-    needs: 
-      - verify-repo-secrets
-      - verify-repo-vars
+
     outputs:
       id: ${{ steps.latest-release.outputs.id }}
       name: ${{ steps.latest-release.outputs.name }}
@@ -111,7 +109,11 @@ jobs:
 
   increment-version:
     runs-on: ubuntu-latest
-    needs: get-latest-release
+    needs:
+      - verify-repo-secrets
+      - verify-repo-vars
+      - get-latest-release
+
     env:
       release_date: ${{ needs.get-latest-release.outputs.date_published }}
     outputs:
