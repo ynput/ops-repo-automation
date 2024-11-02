@@ -10,17 +10,22 @@ on:
       repo:
         type: string
         required: false
+      
+    secrets:
+      gh_token:
+        required: true
 
 env:
   REPO_VARS: ${{ secrets.gh_token || false }}
   GH_REPO : ${{ inputs.repo || github.repository }}
+  GH_TOKEN: ${{ secrets.gh_token }}
 
 jobs:
   verify_variables:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🔎 Verify repo variables for ${{ env.GH_REPO }}
+      - name: Verify repo variables for ${{ env.GH_REPO }}
         run: |
           missing_vars=$(echo ${{ env.REPO_VARS }} | tr ',' '\n' | while read var; do
             gh variable list --repo ${{ env.GH_REPO }} --json name --jq '.[].name' | grep -qx "$var" || echo "$var"
