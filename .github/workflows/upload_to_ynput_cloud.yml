@@ -1,0 +1,57 @@
+name: 📤 Upload to Ynput Cloud
+
+on:
+  workflow_call:
+    secrets:
+      YNPUT_BOT_TOKEN:
+        required: true
+      CI_USER:
+        required: true
+      CI_EMAIL:
+        required: true
+      YNPUT_CLOUD_URL:
+        required: true
+      YNPUT_CLOUD_TOKEN:
+        required: true
+
+env:
+  GH_TOKEN: ${{ secrets.YNPUT_BOT_TOKEN }}
+  GH_USER: ${{ secrets.CI_USER }}
+  GH_EMAIL: ${{ secrets.CI_EMAIL }}
+  YNPUT_CLOUD_URL: ${{ secrets.YNPUT_CLOUD_URL }}
+  YNPUT_CLOUD_TOKEN: ${{ secrets.YNPUT_CLOUD_TOKEN }}
+
+jobs:
+  upload-package:
+    env:
+      OUTPUT_DIR: "artifact"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Download assets
+        id: download-assets
+        uses: robinraju/release-downloader@v1
+        with:
+            token: ${{env.GH_TOKEN}}
+            fileName: "*.zip"
+            out-file-path: ${{env.OUTPUT_DIR}}
+            tag: ${{github.ref_name}}
+
+      - name: Download script
+        run: |
+          curl -o upload_to_ynput_cloud.py https://raw.githubusercontent.com/ynput/ops-repo-automation/main/upload_to_ynput_cloud.py
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Upload to Ynput Cloud
+        run: |
+          python upload_to_ynput_cloud.py
