@@ -144,7 +144,7 @@ jobs:
     steps:
       - name: Query PR data
         id: pr-query
-        uses: ynput/github-query@generate-changelog
+        uses: ynput/github-query@main
         with:
           repo: "${{ github.repository }}"
           date: "${{ env.release_date }}"
