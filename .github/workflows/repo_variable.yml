@@ -18,12 +18,11 @@ jobs:
       - name: Assign new variable if not present
         run: |
           IFS=', ' read -r -a repos <<< "${{ inputs.repo_list }}"
-          variable_name="${{ inputs.variable_name }}"
+          variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
 
           for repo in "${repos[@]}"< do
             repo=$(echo "$repo" | xargs)
 
-          // TODO handle case-sensitivity
           if gh variable get "$variable_name" --repo "$repo" &>/dev/null; then
             echo "::warning::Variable '$variable_name' already exists in repository $repo."
           else
