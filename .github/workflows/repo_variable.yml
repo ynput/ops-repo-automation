@@ -57,7 +57,7 @@ jobs:
           for repo in "${repos[@]}"< do
             repo=$(echo "$repo" | xargs)
 
-              gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}" --env
+              gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
             fi
 
           done
