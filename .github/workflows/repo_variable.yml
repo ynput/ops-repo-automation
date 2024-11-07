@@ -37,10 +37,11 @@ jobs:
 
             if gh variable get "$variable_name" --repo "$repo" &>/dev/null; then
               echo "::warning::Variable '$variable_name' already exists in repository $repo."
-            else
-              gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
-              echo "::notice::Variable '$variable_name' set in repository $repo."
+              continue
             fi
+
+            gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
+            echo "::notice::Variable '$variable_name' set in repository $repo."
 
           done
 
