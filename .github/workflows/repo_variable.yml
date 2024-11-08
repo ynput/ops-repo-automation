@@ -35,12 +35,15 @@ jobs:
           for repo in "${repos[@]}"; do
             repo=$(echo "$repo" | xargs)
 
+            echo "repo: ynput/$repo"
+            echo "$(gh repo view "ynput/$repo")"
+
             if ! gh repo view "ynput/$repo" &>/dev/null; then
               echo "::warning::Repository $repo was not found."
               continue
             fi
 
-            if gh variable get "$variable_name" --repo "$repo" &>/dev/null; then
+            if gh variable get "$variable_name" --repo "ynput/$repo" &>/dev/null; then
               echo "::warning::Variable '$variable_name' already exists in repository $repo."
               continue
             fi
