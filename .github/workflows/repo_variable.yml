@@ -21,6 +21,9 @@ on:
         required: false
         default: false
 
+env:
+  GH_TOKEN: ${{ github.token }}
+
 jobs:
   variable-present:
     if: ${{ !inputs.overwrite }}
