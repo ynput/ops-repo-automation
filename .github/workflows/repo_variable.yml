@@ -12,11 +12,11 @@ on:
         type: string
         required: true
       repo_list:
-        description: "Comma seperated string of repository names"
+        description: "Repo names as comma seperated strings"
         type: string
         required: true
       overwrite:
-        description: "Overwrite repository variables even if they exist"
+        description: "Overwrite repo variable"
         type: boolean
         required: false
         default: false
