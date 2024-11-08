@@ -22,6 +22,7 @@ on:
         default: false
 
 jobs:
+  # TODO continue and log iff repo was not found
   variable-present:
     if: ${{ !inputs.overwrite }}
     runs-on: ubuntu-latest
@@ -32,8 +33,13 @@ jobs:
           IFS=', ' read -r -a repos <<< "${{ inputs.repo_list }}"
           variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
 
-          for repo in "${repos[@]}"< do
+          for repo in "${repos[@]}"; do
             repo=$(echo "$repo" | xargs)
+
+            if ! gh repo view "ynput/$repo" &>/dev/null; then
+              echo "::warning::Repository $repo was not found."
+              continue
+            fi
 
             if gh variable get "$variable_name" --repo "$repo" &>/dev/null; then
               echo "::warning::Variable '$variable_name' already exists in repository $repo."
@@ -55,10 +61,15 @@ jobs:
           IFS=', ' read -r -a repos <<< "${{ inputs.repo_list }}"
           variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
 
-          for repo in "${repos[@]}"< do
+          for repo in "${repos[@]}"; do
             repo=$(echo "$repo" | xargs)
 
-              gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
+            if ! gh repo view "ynput/$repo" &>/dev/null; then
+              echo "::warning::Repository $repo was not found."
+              continue
             fi
+
+            gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
+
 
           done
