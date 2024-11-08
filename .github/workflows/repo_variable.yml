@@ -71,5 +71,4 @@ jobs:
 
             gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
 
-
           done
