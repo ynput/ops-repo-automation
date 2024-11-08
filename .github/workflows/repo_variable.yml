@@ -75,5 +75,6 @@ jobs:
             fi
 
             gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
+            echo "::notice::Variable '$variable_name' was overwritten in repository $repo."
 
           done
