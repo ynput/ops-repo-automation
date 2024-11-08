@@ -1,0 +1,64 @@
+name: Assign repo var
+
+on:
+  workflow_dispatch:
+    inputs:
+      variable_name:
+        description: "Variable name"
+        type: string
+        required: true
+      varibale_value:
+        description: "Value the to assign to the variable"
+        type: string
+        required: true
+      repo_list:
+        description: "Comma seperated string of repository names"
+        type: string
+        required: true
+      overwrite:
+        description: "Overwrite repository variables even if they exist"
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  variable-present:
+    if: ${{ !inputs.overwrite }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Assign new variable if not present
+        run: |
+          IFS=', ' read -r -a repos <<< "${{ inputs.repo_list }}"
+          variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
+
+          for repo in "${repos[@]}"< do
+            repo=$(echo "$repo" | xargs)
+
+            if gh variable get "$variable_name" --repo "$repo" &>/dev/null; then
+              echo "::warning::Variable '$variable_name' already exists in repository $repo."
+              continue
+            fi
+
+            gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
+            echo "::notice::Variable '$variable_name' set in repository $repo."
+
+          done
+
+  variable-overwite:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.overwrite }}
+
+    steps:
+      - name: Assign new variable even if already present
+        run: |
+          IFS=', ' read -r -a repos <<< "${{ inputs.repo_list }}"
+          variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
+
+          for repo in "${repos[@]}"< do
+            repo=$(echo "$repo" | xargs)
+
+              gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
+            fi
+
+          done
