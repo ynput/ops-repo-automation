@@ -22,7 +22,6 @@ on:
         default: false
 
 jobs:
-  # TODO continue and log iff repo was not found
   variable-present:
     if: ${{ !inputs.overwrite }}
     runs-on: ubuntu-latest
