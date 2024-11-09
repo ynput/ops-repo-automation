@@ -26,7 +26,6 @@ env:
 
 jobs:
   variable-present:
-    if: ${{ !inputs.overwrite }}
     runs-on: ubuntu-latest
 
     steps:
