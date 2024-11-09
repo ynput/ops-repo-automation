@@ -47,7 +47,7 @@ jobs:
 
             if ${{ inputs.overwrite }}; then
               gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
-              echo "::notice::Variable '$variable_name' set in repository $repo."
+              echo "::notice::Variable '$variable_name' set to value '${{ inputs.varibale_value }}' in repository $repo."
               continue
             fi
 
@@ -57,6 +57,6 @@ jobs:
             fi
 
             gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
-            echo "::notice::Variable '$variable_name' set in repository $repo."
+            echo "::notice::Variable '$variable_name' set to value '${{ inputs.varibale_value }}' in repository $repo."
 
           done
