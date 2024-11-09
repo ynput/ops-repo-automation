@@ -46,6 +46,12 @@ jobs:
               continue
             fi
 
+            if ${{ inputs.overwrite }}; then
+              gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
+              echo "::notice::Variable '$variable_name' set in repository $repo."
+              continue
+            fi
+
             if gh variable get "$variable_name" --repo "ynput/$repo" &>/dev/null; then
               echo "::warning::Variable '$variable_name' already exists in repository $repo."
               continue
@@ -53,28 +59,5 @@ jobs:
 
             gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
             echo "::notice::Variable '$variable_name' set in repository $repo."
-
-          done
-
-  variable-overwite:
-    runs-on: ubuntu-latest
-    if: ${{ inputs.overwrite }}
-
-    steps:
-      - name: Assign new variable even if already present
-        run: |
-          IFS=', ' read -r -a repos <<< "${{ inputs.repo_list }}"
-          variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
-
-          for repo in "${repos[@]}"; do
-            repo=$(echo "$repo" | xargs)
-
-            if ! gh repo view "ynput/$repo" &>/dev/null; then
-              echo "::warning::Repository $repo was not found."
-              continue
-            fi
-
-            gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.varibale_value }}"
-            echo "::notice::Variable '$variable_name' was overwritten in repository $repo."
 
           done
