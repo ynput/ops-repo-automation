@@ -1,4 +1,4 @@
-name: 📥 Assign repo var
+name: ✏️ Assign repo var
 
 on:
   workflow_dispatch:
