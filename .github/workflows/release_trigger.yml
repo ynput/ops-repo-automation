@@ -13,9 +13,9 @@ on:
     secrets:
       token:
         required: true
-      email:
-        required: true
       user:
+        required: true
+      email:
         required: true
 
 env:
