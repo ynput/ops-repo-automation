@@ -165,7 +165,7 @@ jobs:
           exit 1
 
       - name: Check for existing PR labels
-        if: ${{ !fromJson(steps.pr-query.outputs.label-list) }}
+        if: ${{ !(steps.pr-query.outputs.label-list) }}
         # TODO enhance output to show wich PR
         run: |
           echo "::error:: No PR labels found. Can't create a new release."
