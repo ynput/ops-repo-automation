@@ -168,7 +168,7 @@ jobs:
         if: ${{ !(steps.pr-query.outputs.label-list) }}
         # TODO enhance output to show wich PR
         run: |
-          echo "::error:: No PR labels found. Can't create a new release."
+          echo "::error:: No release related PR labels found. Can't create a new release."
           exit 1
 
       - name: ❗ Validate labels
