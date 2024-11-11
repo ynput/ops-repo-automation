@@ -45,8 +45,11 @@ The repository calling the release-workflow should provide these repository vari
 ### Custom Changelog
 
 Requires the repository variable `CHANGELOG_ORDER` to be set.
-Based on this order of pull request labels a changelog containing pull request titles and their descriptions will be created and assigned to the release on github.
-This is just looks for the label names so any typos might causes missing information in the generated changelog.
+Example: `feature,enhancement,bugfix`
+
+Based on this order of pull-request labels a changelog containing pull-request titles and their descriptions will be created and assigned to the release on github.
+This just looks for the label names. So any typos might causes missing information in the generated changelog.
+It uses the pull-request titles for the changelog entries and adds any found changelog description as details.
 
 ## Workflow Structure
 
