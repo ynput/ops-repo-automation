@@ -22,7 +22,7 @@ on:
         default: false
 
 env:
-  GH_TOKEN: ${{ secrets.REPO_CTRL_TOKEN }}
+  GH_TOKEN: ${{ secrets.YNPUT_BOT_TOKEN }}
 
 jobs:
   set-repo-var:
