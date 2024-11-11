@@ -6,7 +6,6 @@ on:
 
 jobs:
   auto-assign-pr:
-    runs-on: ubuntu-latest
     uses: ynput/ops-repo-automation/.github/workflows/pr-to-project.yml@develop
     with:
       project_url: "{{ inputs.project_url }}"
