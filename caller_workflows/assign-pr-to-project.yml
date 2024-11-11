@@ -8,7 +8,8 @@ jobs:
   auto-assign-pr:
     uses: ynput/ops-repo-automation/.github/workflows/pr-to-project.yml@develop
     with:
-      project_url: "{{ inputs.project_url }}"
+      repo: "${{ github.repository }}"
+      project_url: "https://github.com/orgs/ynput/projects/16"
       pull_request_number: ${{ github.event.pull_request.number }}
     secrets:
       token: ${{ secrets.YNPUT_BOT_TOKEN }}

@@ -2,6 +2,9 @@ name: Auto assign pr
 on:
   workflow_call:
     inputs:
+      repo:
+        type: string
+        required: true
       project_url:
         type: string
         required: true
@@ -23,4 +26,4 @@ jobs:
           GH_TOKEN: ${{ secrets.token }}
           PROJECT_URL: ${{ inputs.project_url }}
         run: |
-          gh project item-add "${{ env.PROJECT_URL }}" --item "$(gh pr view ${{ inputs.pull_request_number }} --json id -q '.id')"
+          gh project item-add "${{ env.PROJECT_URL }}" --item "$(gh pr view ${{ inputs.pull_request_number }} --json id -q '.id')" --repo "${{ inputs.repo }}"
