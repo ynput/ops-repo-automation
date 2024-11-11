@@ -25,11 +25,11 @@ env:
   GH_TOKEN: ${{ secrets.REPO_CTRL_TOKEN }}
 
 jobs:
-  variable-present:
+  set-repo-var:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Assign new variable if not present
+      - name: Assign repository variable
         run: |
           IFS=', ' read -r -a repos <<< "${{ inputs.repo_list }}"
           variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
