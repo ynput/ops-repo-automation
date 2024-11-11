@@ -1,4 +1,4 @@
-name: Auto assign pr
+name: 🔸Auto assign pr
 on:
   pull_request:
       types:
