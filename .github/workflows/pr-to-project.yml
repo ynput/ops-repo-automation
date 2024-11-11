@@ -5,8 +5,8 @@ on:
       repo:
         type: string
         required: true
-      project_url:
-        type: string
+      project_id:
+        type: number
         required: true
       pull_request_number:
         type: number
@@ -24,6 +24,5 @@ jobs:
       - name: Assign PR to project
         env:
           GH_TOKEN: ${{ secrets.token }}
-          PROJECT_URL: ${{ inputs.project_url }}
         run: |
-          gh project item-add "${{ env.PROJECT_URL }}" --item "$(gh pr view ${{ inputs.pull_request_number }} --json id -q '.id')" --repo "${{ inputs.repo }}"
+          gh project item-add ${{ inputs.project_id }} --owner ynput --url "$(gh pr view ${{ inputs.pull_request_number }} --json url -q '.url' --repo '${{ inputs.repo }}')"
