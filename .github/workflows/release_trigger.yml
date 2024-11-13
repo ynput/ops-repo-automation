@@ -77,18 +77,17 @@ jobs:
       gh_token: ${{ secrets.token }}
 
 
-  increment-version:
+  get-pr-information:
     runs-on: ubuntu-latest
     needs:
-      - get-latest-release
       - verify-latest-release
-      - verify-repo-secrets
-      - verify-repo-vars
 
     env:
       release_date: ${{ needs.get-latest-release.outputs.date_published }}
+
     outputs:
-      next-version: "${{ steps.set-tag.outputs.NEXT_TAG }}"
+      label-list: "${{ steps.pr-query.outputs.label-list }}"
+      bump-increment: "${{ steps.pr-query.outputs.bump-increment }}"
       changelog: "${{ steps.pr-query.outputs.changelog-markdown }}"
 
     steps:
@@ -107,6 +106,21 @@ jobs:
           echo "bump-increment: ${{ steps.pr-query.outputs.bump-increment }}"
           echo "changelog: ${{ steps.pr-query.outputs.changelog-markdown }}"
 
+  validate-pr-information:
+
+
+  increment-version:
+    runs-on: ubuntu-latest
+    needs:
+      - get-pr-information
+      - verify-latest-release
+      - verify-repo-secrets
+      - verify-repo-vars
+
+    outputs:
+      next-version: "${{ steps.set-tag.outputs.NEXT_TAG }}"
+
+    steps:
       - name: Check for existing PRs
         if: ${{ !fromJson(steps.pr-query.outputs.raw-output) }}
         run: |
@@ -115,7 +129,7 @@ jobs:
           exit 1
 
       - name: Check for existing PR labels
-        if: ${{ !fromJson(steps.pr-query.outputs.label-list) }}
+        if: ${{ !steps.pr-query.outputs.label-list }}
         # TODO enhance output to show wich PR
         run: |
           echo "::error:: No PR labels found. Can't create a new release."
