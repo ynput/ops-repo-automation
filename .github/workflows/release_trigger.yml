@@ -31,7 +31,7 @@ env:
   CHANGELOG_ORDER: "${{ vars.CHANGELOG_ORDER || false }}"
 
 jobs:
-  get-latest-release:
+  verify-latest-release:
     uses: ynput/ops-repo-automation/.github/workflows/query_latest_release.yml@refactor-release-workflow-structure
     with:
       repo: ${{ github.repository }}
@@ -39,25 +39,6 @@ jobs:
       gh_token: ${{ secrets.token }}
 
 
-  verify-latest-release:
-    runs-on: ubuntu-latest
-    needs:
-      - get-latest-release
-
-    steps:
-      - name: Test existing release
-        if: ${{ ! needs.get-latest-release.outputs.date_published }}
-        run: |
-          echo "::warning::No releases found for ${{ github.repository }}. Please use the Initial Release Trigger workflow.
-          exit 1
-
-      - name: Test release drafts
-        if: ${{ fromJson(needs.get-latest-release.outputs.draft) }}
-        run: |
-          echo "::warning::Release draft already present: ${{ needs.get-latest-release.outputs.name }}"
-          exit 0
-
-      
   verify-repo-secrets:
     uses: ynput/ops-repo-automation/.github/workflows/verify_secrets.yml@refactor-release-workflow-structure
     with:
@@ -77,13 +58,13 @@ jobs:
       gh_token: ${{ secrets.token }}
 
 
-  get-pr-information:
+  validate-pr-information:
     runs-on: ubuntu-latest
     needs:
       - verify-latest-release
 
     env:
-      release_date: ${{ needs.get-latest-release.outputs.date_published }}
+      release_date: ${{ needs.verify-latest-release.outputs.date_published }}
 
     outputs:
       label-list: "${{ steps.pr-query.outputs.label-list }}"
@@ -106,35 +87,20 @@ jobs:
           echo "bump-increment: ${{ steps.pr-query.outputs.bump-increment }}"
           echo "changelog: ${{ steps.pr-query.outputs.changelog-markdown }}"
 
-  validate-pr-information:
-
-
-  increment-version:
-    runs-on: ubuntu-latest
-    needs:
-      - get-pr-information
-      - verify-latest-release
-      - verify-repo-secrets
-      - verify-repo-vars
-
-    outputs:
-      next-version: "${{ steps.set-tag.outputs.NEXT_TAG }}"
-
-    steps:
       - name: Check for existing PRs
         if: ${{ !fromJson(steps.pr-query.outputs.raw-output) }}
         run: |
           echo "pr_list: ${{ steps.pr-query.outputs.raw-output }}"
           echo "::error::No merged PRs found since last release."
           exit 1
-
+  
       - name: Check for existing PR labels
         if: ${{ !steps.pr-query.outputs.label-list }}
         # TODO enhance output to show wich PR
         run: |
           echo "::error:: No PR labels found. Can't create a new release."
           exit 1
-
+  
       - name: ❗ Validate labels
         if: ${{ !steps.pr-query.outputs.bump-increment }}
         run: |
@@ -142,13 +108,23 @@ jobs:
           echo "::error:: No valid versioning labels found in PRs. Only found these labels: ${{ steps.pr-query.outputs.label-list }}. Are you sure you want to create a new release?"
           exit 1
 
+
+  increment-version:
+    runs-on: ubuntu-latest
+    needs:
+      - validate-pr-information
+
+    outputs:
+      next-version: "${{ steps.set-tag.outputs.NEXT_TAG }}"
+
+    steps:
       - name: 🔼 Get next Version Tag
         if: ${{ ! inputs.release_overwrite }}
         uses: reecetech/version-increment@2024.4.4
         id: calculated_version_tag
         with:
           scheme: semver
-          increment: ${{ steps.pr-query.outputs.bump-increment }}
+          increment: ${{ needs.validate-pr-information.outputs.bump-increment }}
           release_branch: ${{ vars.MAIN_BRANCH }}
           use_api: true
 
@@ -168,7 +144,11 @@ jobs:
 
   merge-to-main:
     runs-on: ubuntu-latest
-    needs: increment-version
+    needs: 
+      - increment-version
+      - verify-repo-secrets
+      - verify-repo-vars
+      - verify-latest-release
 
     steps:
       - name: ⬇️ Checkout ${{ vars.MAIN_BRANCH }}
@@ -199,7 +179,6 @@ jobs:
   build-from-main:
     runs-on: ubuntu-latest
     needs:
-      - get-latest-release
       - increment-version
       - merge-to-main
     env:
@@ -321,13 +300,14 @@ jobs:
   create-release:
     runs-on: ubuntu-latest
     needs:
+      - validate-pr-information
       - build-from-main
       - increment-version
     # TODO remove obsolete env var
     env:
       NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
       RELEASE_COMMIT: "${{ needs.build-from-main.outputs.latest_commit }}"
-      CHANGELOG: "${{ needs.increment-version.outputs.changelog }}"
+      CHANGELOG: "${{ needs.validate-pr-information.outputs.changelog }}"
 
     steps:
       - name: 🔽 Download zip artifacts

@@ -14,25 +14,25 @@ on:
     outputs:
         id:
           description: Release ID
-          value: ${{ jobs.latest-release.outputs.id }}
+          value: ${{ jobs.query-latest-release.outputs.id }}
         name:
           description: Release name
-          value: ${{ jobs.latest-release.outputs.name }}
+          value: ${{ jobs.query-latest-release.outputs.name }}
         tag:
           description: Release ID
-          value: ${{ jobs.latest-release.outputs.tag }}
+          value: ${{ jobs.query-latest-release.outputs.tag }}
         date_created:
           description: Release name
-          value: ${{ jobs.latest-release.outputs.date_created }}
+          value: ${{ jobs.query-latest-release.outputs.date_created }}
         date_published:
           description: Release ID
-          value: ${{ jobs.latest-release.outputs.date_published }}
+          value: ${{ jobs.query-latest-release.outputs.date_published }}
         draft:
           description: Release name
-          value: ${{ jobs.latest-release.outputs.draft }}
+          value: ${{ jobs.query-latest-release.outputs.draft }}
         pre_release:
           description: Release name
-          value: ${{ jobs.latest-release.outputs.pre_release }}
+          value: ${{ jobs.query-latest-release.outputs.pre_release }}
 
 env:
   GH_REPO : ${{ inputs.repo || github.repository }}
@@ -83,3 +83,15 @@ jobs:
             echo "Date Published: ${{ steps.latest-release.outputs.date_published }}"
             echo "Draft Status: ${{ steps.latest-release.outputs.draft }}"
             echo "Pre-release Status: ${{ steps.latest-release.outputs.pre_release }}"
+
+      - name: Test existing release
+        if: ${{ ! steps.latest-release.outputs.date_published }}
+        run: |
+          echo "::warning::No releases found for ${{ github.repository }}. Please use the Initial Release Trigger workflow.
+          exit 1
+
+      - name: Test release drafts
+        if: ${{ fromJson(steps.latest-release.outputs.draft) }}
+        run: |
+          echo "::warning::Release draft already present: ${{ steps.latest-release.outputs.name }}"
+          exit 0
