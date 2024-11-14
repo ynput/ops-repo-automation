@@ -59,54 +59,13 @@ jobs:
 
 
   validate-pr-information:
-    runs-on: ubuntu-latest
     needs:
       - verify-latest-release
-
-    env:
-      release_date: ${{ needs.verify-latest-release.outputs.date_published }}
-
-    outputs:
-      label-list: "${{ steps.pr-query.outputs.label-list }}"
-      bump-increment: "${{ steps.pr-query.outputs.bump-increment }}"
-      changelog: "${{ steps.pr-query.outputs.changelog-markdown }}"
-
-    steps:
-      - name: Query PR data
-        id: pr-query
-        uses: ynput/github-query@generate-changelog
-        with:
-          repo: "${{ github.repository }}"
-          date: "${{ env.release_date }}"
-          query_parameters: "body,labels,title,id,number,url"
-          changelog_labels: "${{ env.CHANGELOG_ORDER }}"
-
-      - name: Show debug output
-        run: |
-          echo "label-list: ${{ steps.pr-query.outputs.label-list }}"
-          echo "bump-increment: ${{ steps.pr-query.outputs.bump-increment }}"
-          echo "changelog: ${{ steps.pr-query.outputs.changelog-markdown }}"
-
-      - name: Check for existing PRs
-        if: ${{ !fromJson(steps.pr-query.outputs.raw-output) }}
-        run: |
-          echo "pr_list: ${{ steps.pr-query.outputs.raw-output }}"
-          echo "::error::No merged PRs found since last release."
-          exit 1
-  
-      - name: Check for existing PR labels
-        if: ${{ !steps.pr-query.outputs.label-list }}
-        # TODO enhance output to show wich PR
-        run: |
-          echo "::error:: No PR labels found. Can't create a new release."
-          exit 1
-  
-      - name: ❗ Validate labels
-        if: ${{ !steps.pr-query.outputs.bump-increment }}
-        run: |
-          # TODO Format using line breaks - not supported by annotations
-          echo "::error:: No valid versioning labels found in PRs. Only found these labels: ${{ steps.pr-query.outputs.label-list }}. Are you sure you want to create a new release?"
-          exit 1
+    uses: ynput/ops-repo-automation/.github/workflows/verify_pr_data.yml@refactor-release-workflow-structure
+    with:
+      repo: ${{ github.repository }}
+      latest-release: ${{ needs.verify-latest-release.outputs.date_published }}
+      changelog_order: ${{ vars.CHANGELOG_ORDER || false }}
 
 
   increment-version:
