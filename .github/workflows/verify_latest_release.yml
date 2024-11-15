@@ -88,19 +88,19 @@ jobs:
             echo "Pre-release Status: ${{ steps.latest-release.outputs.pre_release }}"
 
       - name: Test non-existing release
-        if: steps.latest-release.outputs.date_published && !inputs.expect_release
+        if: ${{ steps.latest-release.outputs.date_published && !inputs.expect_release }}
         run: |
           echo "::error::Release already exists, but wasn't expected for ${{ inputs.repo }}. - Please use the release-trigger workflow instead"
           exit 1
 
       - name: Test existing release
-        if: !steps.latest-release.outputs.date_published && inputs.expect_release
+        if: ${{ !steps.latest-release.outputs.date_published && inputs.expect_release }}
         run: |
           echo "::error::No release found, but was expected for ${{ inputs.repo }}. - Please use the initial-release workflow instead"
           exit 1
 
       - name: Test release drafts
-        if: fromJson(steps.latest-release.outputs.draft)
+        if: ${{ fromJson(steps.latest-release.outputs.draft) }}
         run: |
           echo "::warning::Release draft already present: ${{ steps.latest-release.outputs.name }}"
           exit 0
