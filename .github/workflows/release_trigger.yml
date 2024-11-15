@@ -32,9 +32,10 @@ env:
 
 jobs:
   verify-latest-release:
-    uses: ynput/ops-repo-automation/.github/workflows/query_latest_release.yml@refactor-release-workflow-structure
+    uses: ynput/ops-repo-automation/.github/workflows/verify_latest_release.yml@refactor-release-workflow-structure
     with:
       repo: ${{ github.repository }}
+      expect_release: true
     secrets:
       gh_token: ${{ secrets.token }}
 
@@ -64,7 +65,7 @@ jobs:
     uses: ynput/ops-repo-automation/.github/workflows/verify_pr_data.yml@refactor-release-workflow-structure
     with:
       repo: ${{ github.repository }}
-      latest-release: ${{ needs.verify-latest-release.outputs.date_published }}
+      latest_release: ${{ needs.verify-latest-release.outputs.date_published }}
       changelog_order: ${{ vars.CHANGELOG_ORDER || false }}
 
 
