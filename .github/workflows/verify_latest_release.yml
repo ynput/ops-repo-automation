@@ -1,4 +1,4 @@
-name: Query latest release
+name: verify latest release
 
 on:
   workflow_call:
@@ -17,32 +17,32 @@ on:
     outputs:
         id:
           description: Release ID
-          value: ${{ jobs.query-latest-release.outputs.id }}
+          value: ${{ jobs.verify-release.outputs.id }}
         name:
           description: Release name
-          value: ${{ jobs.query-latest-release.outputs.name }}
+          value: ${{ jobs.verify-release.outputs.name }}
         tag:
           description: Release ID
-          value: ${{ jobs.query-latest-release.outputs.tag }}
+          value: ${{ jobs.verify-release.outputs.tag }}
         date_created:
           description: Release name
-          value: ${{ jobs.query-latest-release.outputs.date_created }}
+          value: ${{ jobs.verify-release.outputs.date_created }}
         date_published:
           description: Release ID
-          value: ${{ jobs.query-latest-release.outputs.date_published }}
+          value: ${{ jobs.verify-release.outputs.date_published }}
         draft:
           description: Release name
-          value: ${{ jobs.query-latest-release.outputs.draft }}
+          value: ${{ jobs.verify-release.outputs.draft }}
         pre_release:
           description: Release name
-          value: ${{ jobs.query-latest-release.outputs.pre_release }}
+          value: ${{ jobs.verify-release.outputs.pre_release }}
 
 env:
   GH_REPO : ${{ inputs.repo || github.repository }}
   GH_TOKEN: ${{ secrets.gh_token || false }}
 
 jobs:
-  query-latest-release:
+  verify-release:
 
     runs-on: ubuntu-latest
 
