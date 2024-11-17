@@ -14,6 +14,8 @@ on:
       gh_token:
         required: true
 
+
+
     outputs:
         id:
           description: Release ID

@@ -17,6 +17,9 @@ on:
       gh_token:
         required: true
 
+env:
+    GH_TOKEN: ${{ secrets.gh_token }}
+
 jobs:
   verify-created-release:
     runs-on: ubuntu-latest
