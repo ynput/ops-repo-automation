@@ -39,7 +39,7 @@ on:
 
 env:
   GH_REPO : ${{ inputs.repo || github.repository }}
-  GH_TOKEN: ${{ secrets.gh_token || false }}
+  GH_TOKEN: ${{ secrets.gh_token }}
 
 jobs:
   verify-release:

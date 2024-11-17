@@ -57,37 +57,20 @@ jobs:
 
 
   merge-to-main:
-    runs-on: ubuntu-latest
     needs:
       - verify-latest-release
       - verify-repo-secrets
       - verify-repo-vars
 
-    steps:
-      - name: ⬇️ Checkout ${{ vars.MAIN_BRANCH }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ vars.MAIN_BRANCH }}
-          fetch-depth: 0
-
-      - name: 🔑 Set Bot Authentication
-        run: |
-          git config --global user.name "${{ env.GH_USER }}"
-          git config --global user.email "${{ env.GH_EMAIL }}"
-
-      - name: 🔀 Merge ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}
-        run: |
-          git pull origin ${{ github.ref_name }}
-          git merge --no-ff origin/${{ github.ref_name }} -m "[Automated] Merged ${{ github.ref_name }} -> ${{ vars.MAIN_BRANCH }}"
-
-      # TODO implement this using gh command
-      - name: 🔏 Push to protected main branch
-        uses: CasperWA/push-protected@v2.15.0
-        with:
-          token: ${{ env.GH_TOKEN }}
-          branch: ${{ vars.MAIN_BRANCH }}
-          tags: false
-          unprotect_reviews: false
+    uses: ynput/ops-repo-automation/.github/workflows/merge_branch.yml@refactor-release-workflow-structure
+    with:
+      repo: ${{ github.repository }}
+      checkout_branch: ${{ vars.MAIN_BRANCH }}
+      merge_from_branch: ${{ github.ref_name }}
+    secrets:
+      gh_token: ${{ secrets.token }}
+      gh_user: ${{ secrets.user }}
+      gh_email: ${{ secrets.email }}
 
 
   build-from-main:
