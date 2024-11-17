@@ -100,7 +100,7 @@ jobs:
           exit 1
 
       - name: Test release drafts
-        if: ${{ fromJson(steps.latest-release.outputs.draft) }}
+        if: ${{ inputs.expect_release && fromJson(steps.latest-release.outputs.draft) }}
         run: |
           echo "::warning::Release draft already present: ${{ steps.latest-release.outputs.name }}"
           exit 0
