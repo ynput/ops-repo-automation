@@ -48,7 +48,7 @@ jobs:
       - name: Test repo exists
         run: |
           if ! gh repo view "ynput/${{ matrix.repo_name }}" &>/dev/null; then
-            echo "::error::Repository ${{ matrix.repo_name }} was not found."
+            echo "::error::Repository ynput/${{ matrix.repo_name }} was not found."
             exit 1
           fi
 
@@ -56,9 +56,9 @@ jobs:
         id: poll-workflows
         run: |
           for i in {1..20}; do
-              running_workflows=$(gh run list --repo ${{ matrix.repo_name }} -L 100 --status in_progress --json name | jq -r 'map(.name) | join(", ")')
+              running_workflows=$(gh run list --repo ynput/${{ matrix.repo_name }} -L 100 --status in_progress --json name | jq -r 'map(.name) | join(", ")')
               if [[ -n "$running_workflows" ]]; then
-                echo "::warning::Repo ${{ matrix.repo_name }} currently has running workflows: $running_workflows"
+                echo "::warning::Repo ynput/${{ matrix.repo_name }} currently has running workflows: $running_workflows"
                 sleep 15
                 continue
               fi
@@ -66,10 +66,10 @@ jobs:
               break
           done
 
-          running_workflows=$(gh run list --repo ${{ matrix.repo_name }} --status in_progress --json name | jq -r 'map(.name) | join(", ")')
+          running_workflows=$(gh run list --repo ynput/${{ matrix.repo_name }} --status in_progress --json name | jq -r 'map(.name) | join(", ")')
           if [[ -n "$running_workflows" ]]; then
-            echo "::error::Repo ${{ matrix.repo_name }} currently has running workflows: $running_workflows"
-            echo "::error::Repo ${{ matrix.repo_name }} has been running workflows since more then 5 minutes, please check the repo"
+            echo "::error::Repo ynput/${{ matrix.repo_name }} currently has running workflows: $running_workflows"
+            echo "::error::Repo ynput/${{ matrix.repo_name }} has been running workflows since more then 5 minutes, please check the repo"
             exit 1
           fi
 
@@ -77,7 +77,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ env.GH_TOKEN }}
-          repository: ${{ matrix.repo_name }}
+          repository: ynput/${{ matrix.repo_name }}
           ref: ${{ inputs.target_branch }}
           fetch-depth: 0
 
