@@ -277,7 +277,7 @@ jobs:
     needs:
       - create-release
       - increment-version
-    uses: ynput/ops-repo-automation/.github/workflows/verify_release.yml@refactor-release-workflow-structure
+    uses: ynput/ops-repo-automation/.github/workflows/verify_created_release.yml@refactor-release-workflow-structure
     with:
       repo: ${{ github.repository }}
       # TODO figure out dynamic solution
