@@ -94,8 +94,8 @@ jobs:
 
       - name: Set repo description and topic
         run: |
-          gh repo edit ${{ env.TARGET_REPO }}" --description Repository for automated action testing
-          gh repo edit ${{ env.TARGET_REPO }}" --add-topic testing 
+          gh repo edit "${{ env.TARGET_REPO }}" --description Repository for automated action testing
+          gh repo edit "${{ env.TARGET_REPO }}" --add-topic testing 
 
       - name: Set repo variables
         run: |
