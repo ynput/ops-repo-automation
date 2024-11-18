@@ -1,0 +1,62 @@
+name:  Push Caller Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_group:
+        description: Repository group to batch process
+        type: string
+        required: true
+      target_branch:
+        description: Branch the workflow should be pushed to
+        type: string
+        required: true
+      caller_workflow_name:
+        description: 
+        type: string
+        required: true
+
+env:
+  GH_TOKEN: ${{ secrets.YNPUT_BOT_TOKEN }}
+
+jobs:
+  get-repos:
+    runs-on: ubuntu-latest
+    outputs:
+        repo_matrix: ${{ steps.build-matrix.outputs.matrix }}
+
+    steps:
+      # Read repos from organization
+      # compare to combined list
+      # add missing ones to unassigned group in json file
+      # download json file
+      - name: Get json file
+        # TODO update branch name in url
+        run: |
+          curl -O https://raw.githubusercontent.com/ops-repo-automation/push-caller-workflow/ayon_repo_groups.json
+        
+         # read json file and build matrix
+      - name: Build matrix
+        id: build-matrix
+        run: |
+          MATRIX=$(jq -c --arg group "${{ inputs.repo_group }}" '.[$group]' matrix-config.json)
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+
+  update-repos:
+    needs:
+        - get-repos
+    runs-on: ubuntu-latest
+    strategy:
+        matrix: ${{ fromJson(needs.get-repos.outputs.repo_matrix) }}
+
+    steps:
+      - name: Process Matrix Value
+        run: |
+          echo "Processing value: ${{ matrix.value }}"
+
+          if ! gh repo view "ynput/$repo" &>/dev/null; then
+            echo "::warning::Repository $repo was not found."
+            continue
+          fi
+        # skip repo and output warning in doesn't exist
+    
