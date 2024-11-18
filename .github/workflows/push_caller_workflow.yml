@@ -37,12 +37,13 @@ jobs:
         - get-repos
     runs-on: ubuntu-latest
     strategy:
-        matrix: ${{ fromJson(needs.get-repos.outputs.repo_matrix) }}
+        matrix:
+          repo_name: ${{ fromJson(needs.get-repos.outputs.repo_matrix) }}
 
     steps:
       - name: Process Matrix Value
         run: |
-          echo "Processing value: ${{ matrix.value }}"
+          echo "Processing value: ${{ matrix.repo_name }}"
 
           if ! gh repo view "ynput/$repo" &>/dev/null; then
             echo "::warning::Repository $repo was not found."
