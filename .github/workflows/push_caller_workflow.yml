@@ -45,7 +45,7 @@ jobs:
         run: |
           echo "Processing value: ${{ matrix.repo_name }}"
 
-          if ! gh repo view "ynput/$repo" &>/dev/null; then
+          if ! gh repo view "ynput/${{ matrix.repo_name }}" &>/dev/null; then
             echo "::warning::Repository $repo was not found."
             continue
           fi
