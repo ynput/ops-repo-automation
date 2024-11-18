@@ -2,22 +2,23 @@ name: ⬆️ Push Caller Workflow
 
 on:
   workflow_dispatch:
-    # inputs:
-    #   repo_group:
-    #     description: Repository group to batch process
-    #     type: string
-    #     required: true
-    #   target_branch:
-    #     description: Branch the workflow should be pushed to
-    #     type: string
-    #     required: true
-    #   caller_workflow_name:
-    #     description: 
-    #     type: string
-    #     required: true
+    inputs:
+      repo_topic:
+        description: Filter by topics assigned to repositories
+        type: string
+        required: true
+      target_branch:
+        description: Branch the workflow should be pushed to
+        type: string
+        required: true
+      caller_workflow_name:
+        description: 
+        type: string
+        required: true
 
 env:
   GH_TOKEN: ${{ secrets.YNPUT_BOT_TOKEN }}
+  AUTOMATION-REPO: "ops-repo-automation"
 
 jobs:
   get-repos:
@@ -26,13 +27,16 @@ jobs:
         repo_matrix: ${{ steps.build-matrix.outputs.matrix }}
 
     steps:
-      # TODO Get repos sorted by topics from organization
       - name: Build matrix
         id: build-matrix
+        # TODO update list variable
         run: |
+          repo_list=$(gh repo list ynput --json name,repositoryTopics | jq -r '[.[] | select(.repositoryTopics != null) | select(any(.repositoryTopics[]; .name == "${{ inputs.repo_topic }}")) | .name]')
+          echo "$repo_list"
           echo 'matrix=["ayon-addon-action-testing", "ayon-sample"]' >> $GITHUB_OUTPUT
 
-  update-repos:
+
+  Update-workflow:
     needs:
         - get-repos
     runs-on: ubuntu-latest
@@ -43,11 +47,51 @@ jobs:
     steps:
       - name: Process Matrix Value
         run: |
-          echo "Processing value: ${{ matrix.repo_name }}"
-
           if ! gh repo view "ynput/${{ matrix.repo_name }}" &>/dev/null; then
-            echo "::warning::Repository $repo was not found."
-            continue
+            echo "::warning::Repository ${{ matrix.repo_name }} was not found."
+            exit 0
           fi
-        # skip repo and output warning in doesn't exist
-    
+
+      - name: Check for running workflows
+        id: poll-workflows
+        run: |
+          for i in {1..20}; do
+              running_workflows=$(gh run list --repo ${{ matrix.repo_name }} -L 100 --status in_progress --json name | jq -r 'map(.name) | join(", ")')
+              if $running_workflows; then
+                echo "::warning::Repo ${{ matrix.repo_name }} currently has running workflows: $running_workflows"
+                sleep 15
+                continue
+
+              break
+          done
+
+          running_workflows=$(gh run list --repo ${{ matrix.repo_name }} --status in_progress --json name | jq -r 'map(.name) | join(", ")')
+          if $running_workflows; then
+            echo "::error::Repo ${{ matrix.repo_name }} currently has running workflows: $running_workflows"
+            echo "::error::Repo ${{ matrix.repo_name }} has been running workflows since more then 5 minutes, please check the repo"
+            exit 1
+          fi
+
+      - name: ⬇️ Checkout ${{ matrix.repo_name }} at ${{ inputs.target_branch }}
+        uses: actions/checkout@v4
+        with:
+          token: ${{ env.GH_TOKEN }}
+          repository: ${{ matrix.repo_name }}
+          ref: ${{ inputs.target_branch }}
+          fetch-depth: 0
+
+      - name: Get caller workflow
+        # TODO update branch
+        run: |
+          curl -O https://raw.githubusercontent.com/${{ env.AUTOMATION-REPO }}/push-caller-workflow/caller_workflows/${{ inputs.caller_workflow_name }}.yml
+
+          mv ${{ inputs.caller_workflow_name }}.yml ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
+
+      - name: Push caller workflow
+        run: |
+          git config --global user.name "${{ secrets.CI_USER }}"
+          git config --global user.email "${{ secrets.CI_EMAIL }}"
+
+          git add ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
+          git commit -m "[Automated] Add ${{ inputs.caller_workflow_name }} caller workflow"
+          git push origin ${{ inputs.target_branch }}
