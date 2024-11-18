@@ -17,6 +17,7 @@ on:
         required: true
 
 env:
+  # TODO update token to one with enabled workflow permission
   GH_TOKEN: ${{ secrets.REPO_CTRL_TOKEN }}
   AUTOMATION-REPO: "ops-repo-automation"
 
