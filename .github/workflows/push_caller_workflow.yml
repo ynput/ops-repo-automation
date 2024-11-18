@@ -2,7 +2,7 @@ name: ⬆️ Push Caller Workflow
 
 on:
   workflow_dispatch:
-    inputs:
+    # inputs:
     #   repo_group:
     #     description: Repository group to batch process
     #     type: string
