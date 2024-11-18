@@ -30,7 +30,7 @@ jobs:
       - name: Build matrix
         id: build-matrix
         run: |
-          echo "matrix=['ayon-addon-action-testing', 'ayon-sample']" >> $GITHUB_OUTPUT
+          echo 'matrix=["ayon-addon-action-testing", "ayon-sample"]' >> $GITHUB_OUTPUT
 
   update-repos:
     needs:
