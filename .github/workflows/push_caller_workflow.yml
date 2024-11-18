@@ -3,10 +3,10 @@ name: ⬆️ Push Caller Workflow
 on:
   workflow_dispatch:
     inputs:
-      repo_group:
-        description: Repository group to batch process
-        type: string
-        required: true
+    #   repo_group:
+    #     description: Repository group to batch process
+    #     type: string
+    #     required: true
     #   target_branch:
     #     description: Branch the workflow should be pushed to
     #     type: string
