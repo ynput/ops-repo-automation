@@ -97,4 +97,4 @@ jobs:
 
           git add ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
           git commit -m "[Automated] Add ${{ inputs.caller_workflow_name }} caller workflow"
-          git push origin ${{ inputs.target_branch }}
+          git push origin ${{ inputs.target_branch }} || echo "No changes to push."
