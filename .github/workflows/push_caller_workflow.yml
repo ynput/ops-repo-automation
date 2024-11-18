@@ -26,21 +26,11 @@ jobs:
         repo_matrix: ${{ steps.build-matrix.outputs.matrix }}
 
     steps:
-      # Read repos from organization
-      # compare to combined list
-      # add missing ones to unassigned group in json file
-      # download json file
-      - name: Get json file
-        # TODO update branch name in url
-        run: |
-          curl -O https://raw.githubusercontent.com/ops-repo-automation/push-caller-workflow/ayon_repo_groups.json
-        
-         # read json file and build matrix
+      # TODO Get repos sorted by topics from organization
       - name: Build matrix
         id: build-matrix
         run: |
-          MATRIX=$(jq -c --arg group "${{ inputs.repo_group }}" '.[$group]' ayon_repo_groups.json)
-          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          echo "matrix=['ayon-addon-action-testing', 'ayon-sample']" >> $GITHUB_OUTPUT
 
   update-repos:
     needs:
