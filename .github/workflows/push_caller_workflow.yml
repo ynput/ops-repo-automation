@@ -41,6 +41,7 @@ jobs:
         - get-repos
     runs-on: ubuntu-latest
     strategy:
+        fail-fast: false
         matrix:
           repo_name: ${{ fromJson(needs.get-repos.outputs.repo_matrix) }}
 
