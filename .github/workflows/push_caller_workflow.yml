@@ -39,7 +39,7 @@ jobs:
       - name: Build matrix
         id: build-matrix
         run: |
-          MATRIX=$(jq -c --arg group "${{ inputs.repo_group }}" '.[$group]' matrix-config.json)
+          MATRIX=$(jq -c --arg group "${{ inputs.repo_group }}" '.[$group]' ayon_repo_groups.json)
           echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
 
   update-repos:
