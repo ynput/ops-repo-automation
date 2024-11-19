@@ -1,4 +1,4 @@
-name: 🔸Auto assign pr
+name: 🔎 Validate PR Labels
 on:
   pull_request:
     types:
