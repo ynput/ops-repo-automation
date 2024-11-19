@@ -27,8 +27,6 @@ env:
   # TODO update token to one with enabled workflow permission
   GH_TOKEN: ${{ secrets.REPO_CTRL_TOKEN }}
   AUTOMATION-REPO: "ops-repo-automation"
-  # REPO_TOPIC: "addon"
-  # TARGET_BRANCH: "develop"
 
 jobs:
   get-repos:
@@ -39,7 +37,6 @@ jobs:
     steps:
       - name: Build matrix
         id: build-matrix
-        # TODO update list variable
         run: |
           repo_list=$(gh repo list ynput -L 100 --json name,repositoryTopics | jq -r '[.[] | select(.repositoryTopics != null) | select(any(.repositoryTopics[]; .name == "${{ inputs.repo_topic }}")) | .name]')
           echo "$repo_list"
