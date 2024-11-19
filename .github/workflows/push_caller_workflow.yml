@@ -69,7 +69,7 @@ jobs:
     strategy:
         fail-fast: false
         matrix:
-          repo_name: ${{ fromJson(needs.get-repos.outputs.repo_matrix) }}
+          repo_name: ${{ toJson(needs.get-repos.outputs.repo_matrix) }}
 
     steps:
       - name: Test repo exists
