@@ -7,12 +7,10 @@ on:
         description: "Filter by topics assigned to repositories"
         type: string
         required: true
-        default: "addon"
       target_branch:
         description: "Branch the workflow should be pushed to"
         type: string
         required: true
-        default: "develop"
       caller_workflow_name:
         description: "Caller workflow name without file extension"
         type: string
