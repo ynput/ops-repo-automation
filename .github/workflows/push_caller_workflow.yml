@@ -3,25 +3,32 @@ name: ⬆️ Push Caller Workflow to addons
 on:
   workflow_dispatch:
     inputs:
-      # repo_topic:
-      #   description: Filter by topics assigned to repositories
-      #   type: string
-      #   required: true
-      # target_branch:
-      #   description: Branch the workflow should be pushed to
-      #   type: string
-      #   required: true
-      caller_workflow_name:
-        description: 
+      repo_topic:
+        description: "Filter by topics assigned to repositories"
         type: string
         required: true
+        default: "addon"
+      target_branch:
+        description: "Branch the workflow should be pushed to"
+        type: string
+        required: true
+        default: "develop"
+      caller_workflow_name:
+        description: "Caller workflow name without file extension"
+        type: string
+        required: true
+      dry_run:
+        description: Run workflow without pushing changes
+        type: boolean
+        default: false
+
 
 env:
   # TODO update token to one with enabled workflow permission
   GH_TOKEN: ${{ secrets.REPO_CTRL_TOKEN }}
   AUTOMATION-REPO: "ops-repo-automation"
-  REPO_TOPIC: "addon"
-  TARGET_BRANCH: "develop"
+  # REPO_TOPIC: "addon"
+  # TARGET_BRANCH: "develop"
 
 jobs:
   get-repos:
@@ -34,9 +41,9 @@ jobs:
         id: build-matrix
         # TODO update list variable
         run: |
-          repo_list=$(gh repo list ynput -L 100 --json name,repositoryTopics | jq -r '[.[] | select(.repositoryTopics != null) | select(any(.repositoryTopics[]; .name == "${{ env.REPO_TOPIC }}")) | .name]')
+          repo_list=$(gh repo list ynput -L 100 --json name,repositoryTopics | jq -r '[.[] | select(.repositoryTopics != null) | select(any(.repositoryTopics[]; .name == "${{ inputs.repo_topic }}")) | .name]')
           echo "$repo_list"
-          echo 'matrix=["ayon-addon-action-testing", "ayon-sample"]' >> $GITHUB_OUTPUT
+          echo 'matrix=$repo_list' >> $GITHUB_OUTPUT
 
 
   Update-workflow:
@@ -76,12 +83,12 @@ jobs:
             exit 1
           fi
 
-      - name: ⬇️ Checkout ${{ matrix.repo_name }} at ${{ env.TARGET_BRANCH }}
+      - name: ⬇️ Checkout ${{ matrix.repo_name }} at ${{ inputs.target_branch }}
         uses: actions/checkout@v4
         with:
           token: ${{ env.GH_TOKEN }}
           repository: ynput/${{ matrix.repo_name }}
-          ref: ${{ env.TARGET_BRANCH }}
+          ref: ${{ inputs.target_branch }}
           fetch-depth: 0
 
       - name: Get caller workflow
@@ -96,28 +103,21 @@ jobs:
         run: |
           if [[ `git status --porcelain` ]]; then
             echo "push_required=true" >> $GITHUB_OUTPUT
-            echo "::notice::Changes will be pushed to ${{ matrix.repo_name }} at ${{ env.TARGET_BRANCH }}"
+            echo "::notice::Changes will be pushed to ${{ matrix.repo_name }} at ${{ inputs.target_branch }}"
           else
             echo "No changes to push."
             echo "push_required=false" >> $GITHUB_OUTPUT
-            echo "::warning::No changes found, not pushing to ${{ matrix.repo_name }} at ${{ env.TARGET_BRANCH }}"
+            echo "::warning::No changes found, not pushing to ${{ matrix.repo_name }} at ${{ inputs.target_branch }}"
           fi
 
       - name: Push changes
-        if: steps.check_changes.outputs.push_required == 'true'
+        if: !inputs.dry_run && steps.check_changes.outputs.push_required == 'true'
         run: |
-          git config --global user.name "${{ secrets.CI_USER }}"
-          git config --global user.email "${{ secrets.CI_EMAIL }}"
+          echo "::error::This should not run"
 
-          git add ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
-          git commit -m "[Automated] Update ${{ inputs.caller_workflow_name }} caller workflow"
-          git push origin ${{ env.TARGET_BRANCH }}
+        # git config --global user.name "${{ secrets.CI_USER }}"
+        # git config --global user.email "${{ secrets.CI_EMAIL }}"
 
-      # - name: Push caller workflow
-      #   run: |
-      #     git config --global user.name "${{ secrets.CI_USER }}"
-      #     git config --global user.email "${{ secrets.CI_EMAIL }}"
-
-      #     git add ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
-      #     git commit -m "[Automated] Add ${{ inputs.caller_workflow_name }} caller workflow"
-      #     git push origin ${{ inputs.env.TARGET_BRANCH }} || echo "No changes to push."
+        # git add ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
+        # git commit -m "[Automated] Update ${{ inputs.caller_workflow_name }} caller workflow"
+        # git push origin ${{ inputs.target_branch }}
