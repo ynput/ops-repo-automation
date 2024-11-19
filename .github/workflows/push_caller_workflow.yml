@@ -35,6 +35,26 @@ jobs:
         repo_matrix: ${{ steps.build-matrix.outputs.matrix }}
 
     steps:
+      - name: Query caller workflow exists
+        id: query-caller-workflow
+        run: |
+          caller_workflow_files=$(gh api repos/ynput/ops-repo-automation/contents/caller_workflows --jq '.[].name' | sed 's/\.yml$//')
+          echo "Files: $caller_workflow_files"
+          echo "caller_workflow_list=$caller_workflow_files" >> $GITHUB_OUTPUT
+
+      - name: Check if input matches any file
+        id: check-file
+        run: |
+          input_name="${{ inputs.caller_workflow_name }}"
+
+          if echo "${{ steps.query-caller-workflow.outputs.query-caller-workflow }}" | grep -qw "$input_name"; then
+            echo "File $input_name exists in the caller workflow directory."
+            exit 0
+          fi
+          
+          echo "::error::File $input_name does not exist in the directory."
+          exit 1
+
       - name: Build matrix
         id: build-matrix
         run: |
