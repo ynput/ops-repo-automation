@@ -92,6 +92,11 @@ jobs:
 
           echo "$(gh secret list --repo ${{ env.TARGET_REPO }})"
 
+      - name: Set repo description and topic
+        run: |
+          gh repo edit "${{ env.TARGET_REPO }}" --description "Repository for automated action testing"
+          gh repo edit "${{ env.TARGET_REPO }}" --add-topic testing 
+
       - name: Set repo variables
         run: |
           gh variable set PATCH_BUMP_LABEL --body "bugfix" --repo ${{ env.TARGET_REPO }}
