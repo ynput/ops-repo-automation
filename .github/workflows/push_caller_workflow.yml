@@ -20,7 +20,6 @@ on:
       dry_run:
         description: Run workflow without pushing changes
         type: boolean
-        default: false
 
 
 env:
