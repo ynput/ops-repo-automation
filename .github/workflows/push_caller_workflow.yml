@@ -40,6 +40,7 @@ jobs:
         run: |
           caller_workflow_files=$(gh api repos/ynput/ops-repo-automation/contents/caller_workflows --jq '.[].name' | sed 's/\.yml$//')
           echo "Files: $caller_workflow_files"
+          $input_name="${{ inputs.target_branch }}"
 
           if echo "$caller_workflow_files" | grep -qw "$input_name"; then
             echo "File $input_name exists in the caller workflow directory."
