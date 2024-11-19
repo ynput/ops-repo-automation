@@ -52,10 +52,11 @@ jobs:
 
       - name: Build matrix
         id: build-matrix
+        # TODO update matrix
         run: |
           repo_list=$(gh repo list ynput -L 100 --json name,repositoryTopics | jq -c '[.[] | select(.repositoryTopics != null) | select(any(.repositoryTopics[]; .name == "${{ inputs.repo_topic }}")) | .name]')
           echo "$repo_list"
-          echo "matrix=$repo_list" >> $GITHUB_OUTPUT
+          echo 'matrix=["ayon-addon-action-testing"]' >> $GITHUB_OUTPUT
 
       - name: Debug repo list
         run: |
@@ -134,11 +135,9 @@ jobs:
       - name: Push changes
         if: ${{ ! inputs.dry_run && steps.check_changes.outputs.push_required == 'true' }}
         run: |
-          echo "::error::This should not run"
+          git config --global user.name "${{ secrets.CI_USER }}"
+          git config --global user.email "${{ secrets.CI_EMAIL }}"
 
-# git config --global user.name "${{ secrets.CI_USER }}"
-# git config --global user.email "${{ secrets.CI_EMAIL }}"
-
-# git add ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
-# git commit -m "[Automated] Update ${{ inputs.caller_workflow_name }} caller workflow"
-# git push origin ${{ inputs.target_branch }}
+          git add ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
+          git commit -m "[Automated] Update ${{ inputs.caller_workflow_name }} caller workflow"
+          git push origin ${{ inputs.target_branch }}
