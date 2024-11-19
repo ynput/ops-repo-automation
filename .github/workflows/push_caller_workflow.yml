@@ -114,7 +114,7 @@ jobs:
       - name: Get caller workflow
         # TODO update branch
         run: |
-          curl -O https://raw.githubusercontent.com/${{ env.AUTOMATION-REPO }}/push-caller-workflow/caller_workflows/${{ inputs.caller_workflow_name }}.yml
+          curl -O https://raw.githubusercontent.com/ynput/${{ env.AUTOMATION-REPO }}/push-caller-workflow/caller_workflows/${{ inputs.caller_workflow_name }}.yml
 
           mkdir -p .github/workflows
           mv ${{ inputs.caller_workflow_name }}.yml ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
