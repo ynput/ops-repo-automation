@@ -24,7 +24,6 @@ on:
 
 
 env:
-  # TODO update token to one with enabled workflow permission
   GH_TOKEN: ${{ secrets.WORKFLOW_UPDATE_TOKEN }}
   AUTOMATION-REPO: "ops-repo-automation"
 
