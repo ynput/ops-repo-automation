@@ -42,6 +42,10 @@ jobs:
           echo "$repo_list"
           echo 'matrix=$repo_list' >> $GITHUB_OUTPUT
 
+      - name: Debug repo list
+        run: |
+          echo "${{ steps.build-matrix.outputs.matrix }}"
+
 
   Update-workflow:
     needs:
