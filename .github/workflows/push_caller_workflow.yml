@@ -1,16 +1,16 @@
-name: ⬆️ Push Caller Workflow
+name: ⬆️ Push Caller Workflow to addons
 
 on:
   workflow_dispatch:
     inputs:
-      repo_topic:
-        description: Filter by topics assigned to repositories
-        type: string
-        required: true
-      target_branch:
-        description: Branch the workflow should be pushed to
-        type: string
-        required: true
+      # repo_topic:
+      #   description: Filter by topics assigned to repositories
+      #   type: string
+      #   required: true
+      # target_branch:
+      #   description: Branch the workflow should be pushed to
+      #   type: string
+      #   required: true
       caller_workflow_name:
         description: 
         type: string
@@ -20,6 +20,8 @@ env:
   # TODO update token to one with enabled workflow permission
   GH_TOKEN: ${{ secrets.REPO_CTRL_TOKEN }}
   AUTOMATION-REPO: "ops-repo-automation"
+  REPO_TOPIC: "addon"
+  TARGET_BRANCH: "develop"
 
 jobs:
   get-repos:
@@ -32,7 +34,7 @@ jobs:
         id: build-matrix
         # TODO update list variable
         run: |
-          repo_list=$(gh repo list ynput -L 100 --json name,repositoryTopics | jq -r '[.[] | select(.repositoryTopics != null) | select(any(.repositoryTopics[]; .name == "${{ inputs.repo_topic }}")) | .name]')
+          repo_list=$(gh repo list ynput -L 100 --json name,repositoryTopics | jq -r '[.[] | select(.repositoryTopics != null) | select(any(.repositoryTopics[]; .name == "${{ env.REPO_TOPIC }}")) | .name]')
           echo "$repo_list"
           echo 'matrix=["ayon-addon-action-testing", "ayon-sample"]' >> $GITHUB_OUTPUT
 
@@ -74,12 +76,12 @@ jobs:
             exit 1
           fi
 
-      - name: ⬇️ Checkout ${{ matrix.repo_name }} at ${{ inputs.target_branch }}
+      - name: ⬇️ Checkout ${{ matrix.repo_name }} at ${{ env.TARGET_BRANCH }}
         uses: actions/checkout@v4
         with:
           token: ${{ env.GH_TOKEN }}
           repository: ynput/${{ matrix.repo_name }}
-          ref: ${{ inputs.target_branch }}
+          ref: ${{ env.TARGET_BRANCH }}
           fetch-depth: 0
 
       - name: Get caller workflow
@@ -94,11 +96,11 @@ jobs:
         run: |
           if [[ `git status --porcelain` ]]; then
             echo "push_required=true" >> $GITHUB_OUTPUT
-            echo "::notice::Changes will be pushed to ${{ matrix.repo_name }} at ${{ inputs.target_branch }}"
+            echo "::notice::Changes will be pushed to ${{ matrix.repo_name }} at ${{ env.TARGET_BRANCH }}"
           else
             echo "No changes to push."
             echo "push_required=false" >> $GITHUB_OUTPUT
-            echo "::warning::No changes found, not pushing to ${{ matrix.repo_name }} at ${{ inputs.target_branch }}"
+            echo "::warning::No changes found, not pushing to ${{ matrix.repo_name }} at ${{ env.TARGET_BRANCH }}"
           fi
 
       - name: Push changes
@@ -109,7 +111,7 @@ jobs:
 
           git add ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
           git commit -m "[Automated] Update ${{ inputs.caller_workflow_name }} caller workflow"
-          git push origin ${{ inputs.target_branch }}
+          git push origin ${{ env.TARGET_BRANCH }}
 
       # - name: Push caller workflow
       #   run: |
@@ -118,4 +120,4 @@ jobs:
 
       #     git add ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
       #     git commit -m "[Automated] Add ${{ inputs.caller_workflow_name }} caller workflow"
-      #     git push origin ${{ inputs.target_branch }} || echo "No changes to push."
+      #     git push origin ${{ inputs.env.TARGET_BRANCH }} || echo "No changes to push."
