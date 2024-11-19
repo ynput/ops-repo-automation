@@ -108,7 +108,7 @@ jobs:
           fi
 
       - name: Push changes
-        if: !inputs.dry_run && steps.check_changes.outputs.push_required == 'true'
+        if: inputs.dry_run != 'true' && steps.check_changes.outputs.push_required == 'true'
         run: |
           echo "::error::This should not run"
 
