@@ -18,7 +18,7 @@ on:
         type: string
         required: true
       dry_run:
-        description: Run workflow without pushing changes
+        description: Run workflow without pushing changes (Dry Run)
         type: boolean
         default: false
 
@@ -67,7 +67,6 @@ jobs:
 
 
   Update-workflow:
-    if: false
     needs:
         - get-repos
     runs-on: ubuntu-latest
@@ -133,7 +132,7 @@ jobs:
           fi
 
       - name: Push changes
-        if: inputs.dry_run != 'true' && steps.check_changes.outputs.push_required == 'true'
+        if: !inputs.dry_run && steps.check_changes.outputs.push_required == 'true'
         run: |
           echo "::error::This should not run"
 
