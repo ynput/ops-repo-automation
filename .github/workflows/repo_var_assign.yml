@@ -7,12 +7,12 @@ on:
         description: "Variable name"
         type: string
         required: true
-      varibale_value:
+      variable_value:
         description: "Value the to assign to the variable"
         type: string
         required: true
       repo_list:
-        description: "Repo names as comma seperated strings"
+        description: "Repo names as comma separated strings"
         type: string
         required: true
       overwrite:
