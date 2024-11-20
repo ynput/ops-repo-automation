@@ -86,7 +86,7 @@ jobs:
           gh variable set "$variable_name" --repo "ynput/$repo" --body "${{ inputs.variable_value }}"
           echo "::notice::Variable '$variable_name' set to value '${{ inputs.variable_value }}' in repository ynput/${{ matrix.repo_name }}."
           exit 0
-        
+
       - name: Assign new repository variable
         if: ${{ !inputs.dry_run }}
         run: |
