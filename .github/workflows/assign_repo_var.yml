@@ -70,11 +70,13 @@ jobs:
 
       - name: Query repository variable
         if: ${{ !inputs.overwrite }}
+        id: skip_job
         run: |
           variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
 
           if gh variable get "$variable_name" --repo "ynput/${{ matrix.repo_name }}" &>/dev/null; then
             echo "::warning::Variable '$variable_name' already exists in repository ynput/${{ matrix.repo_name }}, skipping."
+            echo "skip=true" >> $GITHUB_OUTPUT
             exit 0
           fi
 
@@ -94,7 +96,7 @@ jobs:
           exit 0
 
       - name: Assign new repository variable
-        if: ${{ !inputs.dry_run }}
+        if: ${{ !inputs.dry_run && !steps.skip_job.outputs.skip }}
         run: |
           variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
 
