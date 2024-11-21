@@ -77,7 +77,6 @@ jobs:
           if gh variable get "$variable_name" --repo "ynput/${{ matrix.repo_name }}" &>/dev/null; then
             echo "::warning::Variable '$variable_name' already exists in repository ynput/${{ matrix.repo_name }}, skipping."
             echo "skip=true" >> $GITHUB_OUTPUT
-            exit 0
           fi
 
       - name: Log dry-run
@@ -86,16 +85,7 @@ jobs:
           variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
           echo "::notice::Variable '$variable_name' would be set to value '${{ inputs.variable_value }}' in repository ynput/${{ matrix.repo_name }}."
 
-      - name: Override repository variable
-        if: ${{ !inputs.dry_run && inputs.overwrite }}
-        run: |
-          variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
-
-          gh variable set "$variable_name" --repo "ynput/${{ matrix.repo_name }}" --body "${{ inputs.variable_value }}"
-          echo "::notice::Variable '$variable_name' set to value '${{ inputs.variable_value }}' in repository ynput/${{ matrix.repo_name }}."
-          exit 0
-
-      - name: Assign new repository variable
+      - name: Assign repository variable
         if: ${{ !inputs.dry_run && !steps.skip_job.outputs.skip }}
         run: |
           variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
