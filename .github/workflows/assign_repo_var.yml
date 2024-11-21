@@ -80,8 +80,8 @@ jobs:
             exit 0
           fi
 
-      - name: Assign new repository variable
-        if: ${{ inputs.dry_run }}
+      - name: Log dry-run
+        if: ${{ inputs.dry_run && !steps.skip_job.outputs.skip }}
         run: |
           variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
           echo "::notice::Variable '$variable_name' would be set to value '${{ inputs.variable_value }}' in repository ynput/${{ matrix.repo_name }}."
