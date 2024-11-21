@@ -82,7 +82,7 @@ jobs:
         if: ${{ inputs.dry_run }}
         run: |
           variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
-          echo "::notice::Variable '$variable_name'would be set to value '${{ inputs.variable_value }}' in repository ynput/${{ matrix.repo_name }}."
+          echo "::notice::Variable '$variable_name' would be set to value '${{ inputs.variable_value }}' in repository ynput/${{ matrix.repo_name }}."
 
       - name: Override repository variable
         if: ${{ !inputs.dry_run && inputs.overwrite }}
