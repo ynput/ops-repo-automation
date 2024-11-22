@@ -28,7 +28,7 @@ env:
   ARTIFACT_NAME: "${{ vars.PROJECT_NAME }}-package"
   PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
   REQUIRED_VARS: MAIN_BRANCH,MINOR_BUMP_LABEL,PATCH_BUMP_LABEL,PROJECT_NAME
-  CHANGELOG_ORDER: "${{ vars.CHANGELOG_ORDER || false }}"
+  CHANGELOG_ORDER: "${{ vars.CHANGELOG_ORDER || '' }}"
 
 jobs:
   verify_repo_vars_and_secrets:
@@ -376,7 +376,7 @@ jobs:
         with:
           commit: "${{ vars.MAIN_BRANCH }}"
           tag: "${{ env.NEXT_VERSION }}"
-          body: "${{ env.CHANGELOG || false }}"
+          body: ${{ env.CHANGELOG || false }}
           generateReleaseNotes: "${{ !env.CHANGELOG }}"
           artifacts: |
             ${{ needs.build-from-main.outputs.artifact_file }}
