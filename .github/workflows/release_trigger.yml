@@ -64,7 +64,7 @@ jobs:
     with:
       repo: ${{ github.repository }}
       latest_release: ${{ needs.verify-latest-release.outputs.date_published }}
-      changelog_order: ${{ vars.CHANGELOG_ORDER || false }}
+      changelog_order: ${{ vars.CHANGELOG_ORDER || '' }}
     secrets:
       gh_token: ${{ secrets.token }}
 
@@ -104,6 +104,7 @@ jobs:
 
   merge-to-main:
     needs:
+      - increment-version
       - verify-latest-release
       - verify-repo-secrets
       - verify-repo-vars
