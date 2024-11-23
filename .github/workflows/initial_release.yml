@@ -87,7 +87,7 @@ jobs:
     secrets:
       gh_token: ${{ secrets.token }}
       gh_user: ${{ secrets.user }}
-      gh_email: ${{ secrets.email }} 
+      gh_email: ${{ secrets.email }}
 
 
   update-develop:

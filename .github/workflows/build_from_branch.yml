@@ -63,6 +63,9 @@ jobs:
           git config --global user.email "${{ secrets.gh_email }}"
 
       - name: Add changed files from ${{ vars.MAIN_BRANCH }}
+        # INFO wont work in ayon-addon-action testing for initial release
+        # INFO due to no present changes at this point in time
+        # WARNING This will offset the tag by one commit if generated artifact is the only change cause it's excluded
         run: |
           git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}'
           if git diff --cached --exit-code > /dev/null; then
