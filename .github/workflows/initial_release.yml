@@ -96,7 +96,7 @@ jobs:
 
     uses: ynput/ops-repo-automation/.github/workflows/update_branch.yml@refactor-release-workflow-structure
     with:
-      repo:   ${{ github.repository }}
+      repo: ${{ github.repository }}
       checkout_branch: ${{ github.ref_name }}
       update_from_branch: ${{ vars.MAIN_BRANCH }}
       next_version: "${{ inputs.release_overwrite }}"
