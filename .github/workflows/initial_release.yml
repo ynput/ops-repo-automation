@@ -79,7 +79,7 @@ jobs:
 
     uses: ynput/ops-repo-automation/.github/workflows/build_from_branch.yml@refactor-release-workflow-structure
     with:
-      # repo:   ${{ github.repository }}
+      repo:   ${{ github.repository }}
       branch_name: ${{ vars.MAIN_BRANCH }}
       project_name: ${{ vars.PROJECT_NAME }}
       artifact_name: "${{ vars.PROJECT_NAME }}-package"
