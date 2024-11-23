@@ -28,7 +28,7 @@ env:
   ARTIFACT_NAME: "${{ vars.PROJECT_NAME }}-package"
   PROJECT_NAME: "${{ vars.PROJECT_NAME }}"
   REQUIRED_VARS: MAIN_BRANCH,MINOR_BUMP_LABEL,PATCH_BUMP_LABEL,PROJECT_NAME
-  CHANGELOG_ORDER: "${{ vars.CHANGELOG_ORDER || false }}"
+  CHANGELOG_ORDER: "${{ vars.CHANGELOG_ORDER || '' }}"
 
 jobs:
   verify-latest-release:
@@ -170,13 +170,6 @@ jobs:
           tags: false
           unprotect_reviews: false
 
-      # TODO remove obsolete step
-      - name: Get latest commit hash on ${{ vars.MAIN_BRANCH }}
-        id: get-commit-hash
-        run: |
-          latest_commit_hash=$(git rev-parse HEAD)
-          echo "latest_commit=$latest_commit" >> $GITHUB_OUTPUT
-
       - name: 🔼 Upload package zip artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -248,10 +241,8 @@ jobs:
       - validate-pr-information
       - build-from-main
       - increment-version
-    # TODO remove obsolete env var
     env:
       NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
-      RELEASE_COMMIT: "${{ needs.build-from-main.outputs.latest_commit }}"
       CHANGELOG: "${{ needs.validate-pr-information.outputs.changelog }}"
 
     steps:
@@ -265,7 +256,7 @@ jobs:
         with:
           commit: "${{ vars.MAIN_BRANCH }}"
           tag: "${{ env.NEXT_VERSION }}"
-          body: "${{ env.CHANGELOG || false }}"
+          body: ${{ env.CHANGELOG || false }}
           generateReleaseNotes: "${{ !env.CHANGELOG }}"
           artifacts: |
             ${{ needs.build-from-main.outputs.artifact_file }}
