@@ -99,7 +99,7 @@ jobs:
       repo: ${{ github.repository }}
       checkout_branch: ${{ github.ref_name }}
       update_from_branch: ${{ vars.MAIN_BRANCH }}
-      next_version: "${{ inputs.release_overwrite }}"
+      next_version: ${{ inputs.release_overwrite }}
     secrets:
       gh_token: ${{ secrets.token }}
       gh_user: ${{ secrets.user }}
