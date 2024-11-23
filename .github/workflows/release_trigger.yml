@@ -227,11 +227,11 @@ jobs:
     needs:
       - create-release
       - increment-version
+
     uses: ynput/ops-repo-automation/.github/workflows/verify_created_release.yml@refactor-release-workflow-structure
     with:
       repo: ${{ github.repository }}
-      # TODO figure out dynamic solution
-      expected_release_name: "0.1.0"  # ${{ env.INIT_VERSION }}
+      expected_release_name: ${{ needs.increment-version.outputs.next-version }}
       draft_release: ${{ inputs.draft }}
     secrets:
       gh_token: ${{ secrets.token }}

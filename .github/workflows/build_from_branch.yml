@@ -1,4 +1,4 @@
-name: merge branch
+name: Build from Branch
 
 on:
   workflow_call:
@@ -27,6 +27,11 @@ on:
       gh_email:
         required: true
 
+    outputs:
+      artifact_file:
+        description: List of unique labels
+        value: ${{ jobs.build-from-branch.outputs.artifact_file }}
+
 env:
     GH_TOKEN: ${{ secrets.gh_token }}
     OUTPUT_DIR: "artifact"
@@ -37,6 +42,9 @@ env:
 jobs:
  build-from-branch:
     runs-on: ubuntu-latest
+
+    outputs:
+      artifact_file: ${{ steps.create-artifact.outputs.file_name }}
 
     steps:
       - name: ⬇️ Checkout ${{ inputs.branch_name }}

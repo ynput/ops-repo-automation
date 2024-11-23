@@ -91,61 +91,19 @@ jobs:
 
 
   update-develop:
-    runs-on: ubuntu-latest
-    env:
-      OUTPUT_DIR: "artifact"
     needs:
       - build-from-main
 
-    steps:
-      - name: ⬇️ Checkout ${{ github.ref_name }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref_name }}
-
-      - name: 🔀 Merge ${{ vars.MAIN_BRANCH }} -> ${{ github.ref_name }}
-        run: |
-          git pull origin ${{ vars.MAIN_BRANCH }}
-          git merge --no-ff origin/${{ vars.MAIN_BRANCH }} -m "[Automated] Merged ${{ vars.MAIN_BRANCH }} -> ${{ github.ref_name }}"
-
-      - name: Read version from package.py
-        id: package-version
-        run: |
-          version=$(sed -n 's/^version *= *"\(.*\)"/\1/p' package.py)
-          echo "version=$version" >> $GITHUB_OUTPUT
-
-      - name: Update package version for ${{ github.ref_name }}
-        id: develop-version
-        run: |
-          echo "develop_version=${{ env.INIT_VERSION }}-dev" >> $GITHUB_OUTPUT
-
-      - name: Update package version for 
-        run: |
-          sed -i "s/^version = \".*\"/version = \"${{ steps.develop-version.outputs.develop_version }}\"/" package.py
-
-      - name: Create artifacts
-        id: create-artifact
-        run: |
-          python create_package.py --output ${{ env.OUTPUT_DIR }}
-
-      - name: 🔑 Set Bot Authentication
-        run: |
-          git config --global user.email "${{ env.GH_EMAIL }}"
-          git config --global user.name "${{ env.GH_USER }}"
-
-      - name: Update package.py version to ${{ steps.develop-version.outputs.develop_version }}
-        if: ${{ steps.package-version.outputs.version != steps.develop-version.outputs.develop_version }}
-        run: |
-          git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}'
-          git commit -m "[Automated] Update version in package.py for develop"
-
-      - name: 🔏 Push to protected ${{ github.ref_name }} branch
-        uses: CasperWA/push-protected@v2.16.0
-        with:
-          token: ${{ env.GH_TOKEN }}
-          branch: ${{ github.ref_name }}
-          tags: false
-          unprotect_reviews: false
+    uses: ynput/ops-repo-automation/.github/workflows/update_branch.yml@refactor-release-workflow-structure
+    with:
+      repo:   ${{ github.repository }}
+      checkout_branch: ${{ github.ref_name }}
+      update_from_branch: ${{ vars.MAIN_BRANCH }}
+      next_version: "${{ inputs.release_overwrite }}"
+    secrets:
+      gh_token: ${{ secrets.token }}
+      gh_user: ${{ secrets.user }}
+      gh_email: ${{ secrets.email }}
 
 
   create-release:
