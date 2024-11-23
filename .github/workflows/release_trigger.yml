@@ -131,7 +131,6 @@ jobs:
       NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
     outputs:
       artifact_file: ${{ steps.create-artifact.outputs.file_name }}
-      latest_commit: ${{ steps.get-commit-hash.outputs.latest_commit}}
 
     steps:
       - name: ⬇️ Checkout ${{ vars.MAIN_BRANCH }}
