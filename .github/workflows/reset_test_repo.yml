@@ -294,31 +294,24 @@ jobs:
           git push -u origin test_feature01
 
           pr_body="
-          # Date file added
-      
-          ## Summary
-      
-          Got a date file included
-      
-          ## Root Cause Analysis
-      
-          [Issue Link](https://github.com/ynput/ci-testing/blob/develop/.github/ISSUE_TEMPLATE/bug_report.yml)
-      
-          ## Changelog
-      
-          * Add date file
-          * Commit it
-          * Fix no date file
-      
-          ## Testing Strategy
-      
-          Tested all the way.
-      
-          ## Checklist
-      
-          * [x] The fix has been locally tested
-          * [x] New unit tests have been added to prevent future regressions
-          * [x] The documentation has been updated if necessary
+          ## Changelog Description
+          Add temp directory for deadline submission so that it would not error out during deadline submission.
+          Continuity of https://github.com/ynput/ayon-blender/pull/17
+          *Support different system platform
+
+
+          ## Additional info
+          n/a
+
+
+          ## Testing notes:
+
+          1. Launch Blender
+          2. Create Render Instance
+          3. Publish
+          4. If validate render output for deadline errors out, make sure you perform repair action
+          5. Publish
+          6. It should be rendered successfully.
           "
           gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature01 --title "Add date file" --body "$pr_body" --label "bugfix" --assignee "${{ github.actor }}"
 
@@ -336,30 +329,20 @@ jobs:
           git push -u origin test_feature02
 
           pr_body="
-          # Memory usage check added
-      
-          ## Summary
-      
-          Got a check for memory usage implemented
-      
-          ## Root Cause Analysis
-      
-          [Issue Link](https://github.com/ynput/ci-testing/blob/develop/.github/ISSUE_TEMPLATE/bug_report.yml)
-      
-          ## Changelog
-      
-          * Add text file
-          * Commit it the memory check
-          * Fix no memory usage file
-      
-          ## Testing Strategy
-      
-          Tested all the way.
-      
-          ## Checklist
-      
-          * [x] The fix has been locally tested
-          * [x] New unit tests have been added to prevent future regressions
-          * [x] The documentation has been updated if necessary
+          ## Changelog Description
+          <!-- Paragraphs contain detailed information on the changes made to the product or service, providing an in-depth description of the updates and enhancements. They can be used to explain the reasoning behind the changes, or to highlight the importance of the new features. Paragraphs can often include links to further information or support documentation. -->
+
+          - Prototype loading of USD references into a Maya USD proxy while keeping it managed by the pipeline
+          - Prototype loading of Maya references into a Maya USD proxy while keeping it managed by the pipeline
+
+          ## Additional info
+          <!-- Paragraphs of text giving context of additional technical information or code examples. -->
+
+          Separated from #2 
+
+          ## Testing notes:
+
+          1. Loading of the USD data should work as intended into Maya USD Proxy Shapes.
+          2. Managing (updating) and removal via scene inventory should also do what is expected.
           "
           gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature02 --title "Add mem file" --body "$pr_body" --label "enhancement" --assignee "${{ github.actor }}"
