@@ -3,3 +3,10 @@
 * package.py wont create any additional files in this repo
 * Therefore no changes happen in this step and no commit
 * Version tag gets set one commit behind
+
+## Testing notes
+
+* Test version overwrite
+* Test PR-label validation
+* Test missing repo vars
+* Add tag to hash verification to release workflow
