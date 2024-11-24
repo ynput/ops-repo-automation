@@ -248,7 +248,7 @@ jobs:
     steps:
       - name: Create GitHub Release
         run: |
-          gh workflow run initial_release.yml --repo ${{ env.TARGET_REPO }}
+          gh workflow run initial_release.yml --repo ${{ env.TARGET_REPO }} --inputs draft=false
 
       - name: Poll for Draft Release
         # TODO check if draft release creation emmits a signal or something to avoid this kind of pulling
@@ -266,11 +266,6 @@ jobs:
               sleep 15
             fi
           done
-
-      - name: Publish Release
-        if: steps.poll-release.outputs.release_tag
-        run: |
-          gh release edit ${{ steps.poll-release.outputs.release_tag }} --draft=false --repo ${{ env.TARGET_REPO }}
 
 
   create-dummy-prs:
