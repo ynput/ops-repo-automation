@@ -119,11 +119,11 @@ jobs:
       - name: 🚀 Create Github Release
         uses: ncipollo/release-action@v1
         with:
-          tag: "${{ inputs.release_overwrite }}"  # string conversion is mandatory here
+          tag: ${{ inputs.release_overwrite }}
           generateReleaseNotes: true
           artifacts: ${{ needs.build-from-main.outputs.artifact_file }}
           token: ${{ env.GH_TOKEN }}
-          draft: true
+          draft: ${{ inputs.draft }}
 
 
   verify-release:
