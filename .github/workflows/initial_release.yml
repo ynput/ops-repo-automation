@@ -21,7 +21,6 @@ env:
   GH_TOKEN: ${{ secrets.token || secrets.YNPUT_BOT_TOKEN}}
   GH_USER: ${{ secrets.user || secrets.CI_USER }}
   GH_EMAIL: ${{ secrets.email || secrets.CI_EMAIL }}
-  INIT_VERSION: "0.1.0"
   RELEASE_NAME: ${{ inputs.name || '' }}
   DRAFT: ${{ inputs.draft }}
   ARTIFACT_NAME: "${{ vars.PROJECT_NAME }}-package"
@@ -121,7 +120,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           commit: ${{ vars.MAIN_BRANCH }}
-          tag: "${{ env.INIT_VERSION }}"
+          tag: "${{ inputs.release_overwrite }}"
           generateReleaseNotes: true
           artifacts: ${{ needs.build-from-main.outputs.artifact_file }}
           token: ${{ env.GH_TOKEN }}
