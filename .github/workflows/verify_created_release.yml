@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Fetch Latest Release Draft
+      - name: Fetch Latest Release
         id: fetch-latest-release
         run: |
           current_release_name="$(gh release list --repo ${{ inputs.repo }} --json isDraft,name,createdAt --jq '[.[] | select(.isDraft == ${{ inputs.draft_release }})] | sort_by(.createdAt) | reverse | .[0].name')"

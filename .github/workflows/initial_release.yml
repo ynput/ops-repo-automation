@@ -119,7 +119,6 @@ jobs:
       - name: 🚀 Create Github Release
         uses: ncipollo/release-action@v1
         with:
-          commit: ${{ vars.MAIN_BRANCH }}
           tag: "${{ inputs.release_overwrite }}"  # string conversion is mandatory here
           generateReleaseNotes: true
           artifacts: ${{ needs.build-from-main.outputs.artifact_file }}
