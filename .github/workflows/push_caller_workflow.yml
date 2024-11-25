@@ -118,16 +118,22 @@ jobs:
         run: |
           if [[ `git status --porcelain` ]]; then
             echo "push_required=true" >> $GITHUB_OUTPUT
-            echo "::notice::Changes will be pushed to ${{ matrix.repo_name }} at ${{ inputs.target_branch }}"
           else
             echo "No changes to push."
             echo "push_required=false" >> $GITHUB_OUTPUT
             echo "::warning::No changes found, not pushing to ${{ matrix.repo_name }} at ${{ inputs.target_branch }}"
           fi
 
+      - name: Dry-Run log push
+        if: ${{ inputs.dry_run && steps.check_changes.outputs.push_required == 'true' }}
+        run: |
+          echo "::notice::[DRY RUN] Changes would have been pushed to ${{ matrix.repo_name }} at ${{ inputs.target_branch }}"
+
       - name: Push changes
         if: ${{ ! inputs.dry_run && steps.check_changes.outputs.push_required == 'true' }}
         run: |
+          echo "::notice::Pushing changes to ${{ matrix.repo_name }} at ${{ inputs.target_branch }}"
+
           git config --global user.name "${{ secrets.CI_USER }}"
           git config --global user.email "${{ secrets.CI_EMAIL }}"
 
