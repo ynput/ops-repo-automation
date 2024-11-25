@@ -1,4 +1,4 @@
-name: 🔸Auto assign pr
+name: 🔎 Validate pr labels
 on:
   pull_request:
     types:
@@ -8,7 +8,7 @@ on:
       - unlabeled
 
 jobs:
-  auto-assign-pr:
+  validate-type-label:
     uses: ynput/ops-repo-automation/.github/workflows/validate_pr_labels.yml@develop
     with:
       repo: "${{ github.repository }}"
