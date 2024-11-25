@@ -8,6 +8,10 @@ on:
       pull_request_number:
         type: number
         required: true
+      query_prefix:
+        type: string
+        required: true
+        default: "type: "
 
     secrets:
       token:
@@ -23,17 +27,20 @@ jobs:
         run: |
           pr_labels=$(gh pr view ${{ inputs.pull_request_number }} --json labels --jq '.labels[].name' --repo "${{ inputs.repo }}")
 
-          if echo "$pr_labels" | grep -q '^type: '; then
+          if echo "$pr_labels" | grep -q '^${{ inputs.query_prefix }}'; then
             echo "type_label_found=true" >> $GITHUB_OUTPUT
           else
-            echo "type_label_found=false" >> $GITHUB_OUTPUT
+            echo "type_label_found=''" >> $GITHUB_OUTPUT
           fi
 
       - name: Act on label Presence
+        if: ${{ !steps.query_labels.outputs.type_label_found }}
         run: |
-          if [ "${{ steps.query_labels.outputs.type_label_found }}" = "true" ]; then
-            echo "Label with prefix 'type:' found."
-          else
-            echo "::error::No label with prefix 'type:' found on this PR."
-            exit 1
-          fi
+          echo "::error::No label with prefix 'type:' found on this PR."
+          exit 1
+
+      - name: Act on label Presence
+        if: ${{ steps.query_labels.outputs.type_label_found }}
+        run: |
+          echo "::notice::Label with prefix 'type:' found on this PR."
+          exit 0
