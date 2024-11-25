@@ -58,7 +58,7 @@ jobs:
 
       - name: Debug repo list
         run: |
-          echo "${{ fromJson(steps.build-matrix.outputs.matrix) }}"
+          echo "${{ steps.build-matrix.outputs.matrix }}"
 
 
   Update-workflow:
