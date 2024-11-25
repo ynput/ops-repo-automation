@@ -36,11 +36,11 @@ jobs:
       - name: Act on label Presence
         if: ${{ !steps.query_labels.outputs.label_found }}
         run: |
-          echo "::error::No label with prefix 'type:' found on this PR."
+          echo "::error::No label with prefix '${{ inputs.query_prefix }}' found on this PR."
           exit 1
 
       - name: Act on label Presence
         if: ${{ steps.query_labels.outputs.label_found }}
         run: |
-          echo "::notice::Label with prefix 'type:' found on this PR."
+          echo "::notice::Label with prefix '${{ inputs.query_prefix }}' found on this PR."
           exit 0
