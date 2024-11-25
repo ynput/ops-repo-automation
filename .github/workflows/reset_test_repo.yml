@@ -94,18 +94,18 @@ jobs:
 
       - name: Set repo variables
         run: |
-          gh variable set PATCH_BUMP_LABEL --body "bugfix" --repo ${{ env.TARGET_REPO }}
-          gh variable set MINOR_BUMP_LABEL --body "feature, enhancement" --repo ${{ env.TARGET_REPO }}
+          gh variable set PATCH_BUMP_LABEL --body "type: bugfix" --repo ${{ env.TARGET_REPO }}
+          gh variable set MINOR_BUMP_LABEL --body "type: feature, type: enhancement" --repo ${{ env.TARGET_REPO }}
           gh variable set MAIN_BRANCH --body "main" --repo ${{ env.TARGET_REPO }}
           gh variable set PROJECT_NAME --body ${{ env.TARGET_REPO_PROJECT_NAME }} --repo ${{ env.TARGET_REPO }}
-          gh variable set CHANGELOG_ORDER --body "feature,enhancement,bugfix,refactor,docs,test,pr" --repo ${{ env.TARGET_REPO }}
+          gh variable set CHANGELOG_ORDER --body "type: feature,type: enhancement,type: bugfix,refactor,docs,test,pr" --repo ${{ env.TARGET_REPO }}
 
           echo "$(gh variable list --repo ${{ env.TARGET_REPO }})"
 
       - name: Add repo labels
         run: |
-          gh label create "feature" --color "#008672" --description "New functionality which is not present so far" --repo ${{ env.TARGET_REPO }}
-          gh label create "bugfix" --color "#f96713" --description "Something got fixed" --repo ${{ env.TARGET_REPO }}
+          gh label create "type: feature" --color "#008672" --description "New functionality which is not present so far" --repo ${{ env.TARGET_REPO }}
+          gh label create "type: bugfix" --color "#f96713" --description "Something got fixed" --repo ${{ env.TARGET_REPO }}
           echo "$(gh label list --repo ${{ env.TARGET_REPO }})"
 
 
@@ -313,7 +313,7 @@ jobs:
           5. Publish
           6. It should be rendered successfully.
           "
-          gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature01 --title "Add date file" --body "$pr_body" --label "bugfix" --assignee "${{ github.actor }}"
+          gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature01 --title "Add date file" --body "$pr_body" --label "type: bugfix" --assignee "${{ github.actor }}"
 
       - name: Create second feature branch
         run: |
@@ -345,4 +345,4 @@ jobs:
           1. Loading of the USD data should work as intended into Maya USD Proxy Shapes.
           2. Managing (updating) and removal via scene inventory should also do what is expected.
           "
-          gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature02 --title "Add mem file" --body "$pr_body" --label "enhancement" --assignee "${{ github.actor }}"
+          gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature02 --title "Add mem file" --body "$pr_body" --label "type: enhancement" --assignee "${{ github.actor }}"
