@@ -33,17 +33,17 @@ jobs:
           if echo "$pr_labels" | grep -q '^${{ inputs.query_prefix }}'; then
             echo "label_found=true" >> $GITHUB_OUTPUT
           else
-            echo "label_found=''" >> $GITHUB_OUTPUT
+            echo "label_found=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Act on label Presence
-        if: ${{ !steps.query_labels.outputs.label_found }}
+      - name: Act on label absence
+        if: ${{ steps.query_labels.outputs.label_found == 'false' }}
         run: |
           echo "::error::No label with prefix '${{ inputs.query_prefix }}' found on this PR."
           exit 1
 
-      - name: Act on label Presence
-        if: ${{ steps.query_labels.outputs.label_found }}
+      - name: Act on label presence
+        if: ${{ steps.query_labels.outputs.label_found == 'true' }}
         run: |
           echo "::notice::Label with prefix '${{ inputs.query_prefix }}' found on this PR."
           exit 0
