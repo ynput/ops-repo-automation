@@ -105,6 +105,7 @@ jobs:
       - name: Add repo labels
         run: |
           gh label create "type: feature" --color "#008672" --description "New functionality which is not present so far" --repo ${{ env.TARGET_REPO }}
+          gh label create "type: enhancement" --color "#b9f29d" --description "Something got fixed" --repo ${{ env.TARGET_REPO }}
           gh label create "type: bugfix" --color "#f96713" --description "Something got fixed" --repo ${{ env.TARGET_REPO }}
           echo "$(gh label list --repo ${{ env.TARGET_REPO }})"
 
