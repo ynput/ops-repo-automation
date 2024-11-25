@@ -16,6 +16,9 @@ on:
       token:
         required: true
 
+env:
+  GH_TOKEN: ${{ secrets.token }}
+
 jobs:
   auto-assign-pr:
     runs-on: ubuntu-latest

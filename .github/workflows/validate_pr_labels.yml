@@ -17,6 +17,9 @@ on:
       token:
         required: true
 
+env:
+  GH_TOKEN: ${{ secrets.token }}
+
 jobs:
   validate-pr-labels:
     runs-on: ubuntu-latest
