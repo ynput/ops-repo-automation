@@ -44,7 +44,7 @@ jobs:
             echo "::notice::File $input_name exists in the caller workflow directory."
             exit 0
           fi
-          
+
           echo "::error::File $input_name does not exist in the directory."
           exit 1
 
