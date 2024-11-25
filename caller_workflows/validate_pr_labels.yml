@@ -13,5 +13,6 @@ jobs:
     with:
       repo: "${{ github.repository }}"
       pull_request_number: ${{ github.event.pull_request.number }}
+      query_prefix: "type: "
     secrets:
       token: ${{ secrets.YNPUT_BOT_TOKEN }}
