@@ -1,0 +1,95 @@
+name: ✏️ Assign repo var
+
+on:
+  workflow_dispatch:
+    inputs:
+      variable_name:
+        description: "Variable name"
+        type: string
+        required: true
+      variable_value:
+        description: "Value to assign to the variable"
+        type: string
+        required: true
+      repo_topic:
+        description: Repository group to batch process
+        type: string
+        required: true
+        default: "addon"
+      overwrite:
+        description: "Overwrite repo variable in case it already exists"
+        type: boolean
+        required: false
+        default: false
+      dry_run:
+        description: Run workflow without assigning variables (Dry Run)
+        type: boolean
+        default: false
+
+env:
+  GH_TOKEN: ${{ secrets.YNPUT_BOT_TOKEN }}
+
+jobs:
+  get-repos:
+    runs-on: ubuntu-latest
+    outputs:
+        repo_matrix: ${{ steps.build-matrix.outputs.matrix }}
+
+    steps:
+      - name: Build matrix
+        id: build-matrix
+        # TODO switch to actual addons topic
+        run: |
+          repo_list=$(gh repo list ynput -L 100 --json name,repositoryTopics | jq -c '[.[] | select(.repositoryTopics != null) | select(any(.repositoryTopics[]; .name == "${{ inputs.repo_topic }}")) | .name]')
+          echo "$repo_list"
+          echo 'matrix=["ayon-addon-action-testing", "ops-repo-automation", "ayon-maya"]' >> $GITHUB_OUTPUT
+
+      - name: Debug repo list
+        run: |
+          echo "${{ fromJson(steps.build-matrix.outputs.matrix) }}"
+
+      - name: Debug dry run value
+        run: |
+          echo ${{ inputs.dry_run }}
+
+  set-repo-var:
+    needs:
+        - get-repos
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        repo_name: ${{ fromJson(needs.get-repos.outputs.repo_matrix) }}
+
+    steps:
+      - name: Test repo exists
+        run: |
+          if ! gh repo view "ynput/${{ matrix.repo_name }}" &>/dev/null; then
+            echo "::error::Repository ynput/${{ matrix.repo_name }} was not found."
+            exit 1
+          fi
+
+      - name: Query repository variable
+        if: ${{ !inputs.overwrite }}
+        id: skip_job
+        run: |
+          variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
+
+          if gh variable get "$variable_name" --repo "ynput/${{ matrix.repo_name }}" &>/dev/null; then
+            echo "::warning::Variable '$variable_name' already exists in repository ynput/${{ matrix.repo_name }}, skipping."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Log dry-run
+        if: ${{ inputs.dry_run && !steps.skip_job.outputs.skip }}
+        run: |
+          variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
+          echo "::notice::Variable '$variable_name' would be set to value '${{ inputs.variable_value }}' in repository ynput/${{ matrix.repo_name }}."
+
+      - name: Assign repository variable
+        if: ${{ !inputs.dry_run && !steps.skip_job.outputs.skip }}
+        run: |
+          variable_name=$(echo "${{ inputs.variable_name }}" | tr '[:lower:]' '[:upper:]')
+
+          gh variable set "$variable_name" --repo "ynput/${{ matrix.repo_name }}" --body "${{ inputs.variable_value }}"
+          echo "::notice::Variable '$variable_name' set to value '${{ inputs.variable_value }}' in repository ynput/${{ matrix.repo_name }}."

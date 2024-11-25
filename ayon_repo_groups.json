@@ -1,0 +1,17 @@
+{
+    "testing": [
+        "ayon-addon-action-testing"
+    ],
+    "addon": [
+        "ayon-maya",
+        "ayon-blender",
+        "ayon-usd",
+        "ayon-photoshop",
+        "ayon-sample"
+    ],
+    "exclude": [
+        "ayon-backend",
+        "ayon-frontend",
+        "ynput-cloud-frontend"
+    ]
+}

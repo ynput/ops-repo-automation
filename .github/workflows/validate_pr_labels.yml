@@ -1,0 +1,49 @@
+name: Validate PR labels
+on:
+  workflow_call:
+    inputs:
+      repo:
+        type: string
+        required: true
+      pull_request_number:
+        type: number
+        required: true
+      query_prefix:
+        type: string
+        required: true
+        default: "type: "
+
+    secrets:
+      token:
+        required: true
+
+env:
+  GH_TOKEN: ${{ secrets.token }}
+
+jobs:
+  validate-pr-labels:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Query PR Labels
+        id: query_labels
+        run: |
+          pr_labels=$(gh pr view ${{ inputs.pull_request_number }} --json labels --jq '.labels[].name' --repo "${{ inputs.repo }}")
+
+          if echo "$pr_labels" | grep -q '^${{ inputs.query_prefix }}'; then
+            echo "label_found=true" >> $GITHUB_OUTPUT
+          else
+            echo "label_found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Act on label absence
+        if: ${{ steps.query_labels.outputs.label_found == 'false' }}
+        run: |
+          echo "::error::No label with prefix '${{ inputs.query_prefix }}' found on this PR."
+          exit 1
+
+      - name: Act on label presence
+        if: ${{ steps.query_labels.outputs.label_found == 'true' }}
+        run: |
+          echo "::notice::Label with prefix '${{ inputs.query_prefix }}' found on this PR."
+          exit 0
