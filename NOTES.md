@@ -6,6 +6,5 @@
 
 ## Testing notes
 
-* Test version overwrite
 * Test missing repo vars
 * Add tag to hash verification to release workflow

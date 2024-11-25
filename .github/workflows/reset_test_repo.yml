@@ -98,7 +98,7 @@ jobs:
           gh variable set MINOR_BUMP_LABEL --body "type: feature, type: enhancement" --repo ${{ env.TARGET_REPO }}
           gh variable set MAIN_BRANCH --body "main" --repo ${{ env.TARGET_REPO }}
           gh variable set PROJECT_NAME --body ${{ env.TARGET_REPO_PROJECT_NAME }} --repo ${{ env.TARGET_REPO }}
-          gh variable set CHANGELOG_ORDER --body "type: feature,type: enhancement,type: bugfix,refactor,docs,test,pr" --repo ${{ env.TARGET_REPO }}
+          gh variable set CHANGELOG_ORDER --body "type: feature(🎉),type: enhancement(💚),type: bugfix(🐛),refactor,docs,test,pr" --repo ${{ env.TARGET_REPO }}
 
           echo "$(gh variable list --repo ${{ env.TARGET_REPO }})"
 
