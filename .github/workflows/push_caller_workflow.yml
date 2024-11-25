@@ -38,7 +38,6 @@ jobs:
         id: query-caller-workflow
         run: |
           caller_workflow_files=$(gh api repos/ynput/ops-repo-automation/contents/caller_workflows --jq '.[].name' | sed 's/\.yml$//')
-          echo "Files: $caller_workflow_files"
           input_name="${{ inputs.caller_workflow_name }}"
 
           if echo "$caller_workflow_files" | grep -qw "$input_name"; then
@@ -55,15 +54,11 @@ jobs:
         run: |
           repo_list=$(gh repo list ynput -L 100 --json name,repositoryTopics | jq -c '[.[] | select(.repositoryTopics != null) | select(any(.repositoryTopics[]; .name == "${{ inputs.repo_topic }}")) | .name]')
           echo "$repo_list"
-          echo 'matrix=["ayon-maya"]' >> $GITHUB_OUTPUT
+          echo 'matrix=["ayon-addon-action-testing"]' >> $GITHUB_OUTPUT
 
       - name: Debug repo list
         run: |
           echo "${{ fromJson(steps.build-matrix.outputs.matrix) }}"
-
-      - name: Debug dry run value
-        run: |
-          echo ${{ inputs.dry_run }}
 
 
   Update-workflow:
@@ -112,9 +107,8 @@ jobs:
           fetch-depth: 0
 
       - name: Get caller workflow
-        # TODO update branch
         run: |
-          curl -O https://raw.githubusercontent.com/ynput/${{ env.AUTOMATION-REPO }}/push-caller-workflow/caller_workflows/${{ inputs.caller_workflow_name }}.yml
+          curl -O https://raw.githubusercontent.com/ynput/${{ env.AUTOMATION-REPO }}/develop/caller_workflows/${{ inputs.caller_workflow_name }}.yml
 
           mkdir -p .github/workflows
           mv ${{ inputs.caller_workflow_name }}.yml ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
