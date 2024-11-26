@@ -17,7 +17,7 @@ on:
         required: true
 
 env:
-  GH_TOKEN: ${{ secrets.token }}
+  GH_TOKEN: ${{ secrets.token || github.token }}
 
 jobs:
   validate-pr-labels:
@@ -33,7 +33,7 @@ jobs:
             echo "GH_TOKEN is set"
           fi
         env:
-          GH_TOKEN: ${{ secrets.token }}
+          GH_TOKEN: ${{ secrets.token || github.token }}
 
       - name: Query PR Labels
         id: query_labels
