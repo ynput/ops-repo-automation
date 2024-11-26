@@ -99,18 +99,19 @@ jobs:
 
       - name: Set repo variables
         run: |
-          gh variable set PATCH_BUMP_LABEL --body "bugfix" --repo ${{ env.TARGET_REPO }}
-          gh variable set MINOR_BUMP_LABEL --body "feature, enhancement" --repo ${{ env.TARGET_REPO }}
+          gh variable set PATCH_BUMP_LABEL --body "type: bugfix" --repo ${{ env.TARGET_REPO }}
+          gh variable set MINOR_BUMP_LABEL --body "type: feature, type: enhancement" --repo ${{ env.TARGET_REPO }}
           gh variable set MAIN_BRANCH --body "main" --repo ${{ env.TARGET_REPO }}
           gh variable set PROJECT_NAME --body ${{ env.TARGET_REPO_PROJECT_NAME }} --repo ${{ env.TARGET_REPO }}
-          gh variable set CHANGELOG_ORDER --body "feature(🎉),enhancement(💚),bugfix(🐛),refactor,docs,test,pr" --repo ${{ env.TARGET_REPO }}
+          gh variable set CHANGELOG_ORDER --body "type: feature(🎉),type: enhancement(💚),type: bugfix(🐛),refactor,docs,test,pr" --repo ${{ env.TARGET_REPO }}
 
           echo "$(gh variable list --repo ${{ env.TARGET_REPO }})"
 
       - name: Add repo labels
         run: |
-          gh label create "feature" --color "#008672" --description "New functionality which is not present so far" --repo ${{ env.TARGET_REPO }}
-          gh label create "bugfix" --color "#f96713" --description "Something got fixed" --repo ${{ env.TARGET_REPO }}
+          gh label create "type: feature" --color "#008672" --description "New functionality which is not present so far" --repo ${{ env.TARGET_REPO }}
+          gh label create "type: enhancement" --color "#b9f29d" --description "Something got fixed" --repo ${{ env.TARGET_REPO }}
+          gh label create "type: bugfix" --color "#f96713" --description "Something got fixed" --repo ${{ env.TARGET_REPO }}
           echo "$(gh label list --repo ${{ env.TARGET_REPO }})"
 
 
@@ -141,9 +142,9 @@ jobs:
           git push origin ${{ env.DEFAULT_BRANCH }}
 
       - name: Add initial-release workflow
-        # TODO change develop to main
+        # TODO change branch to main
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/caller_workflows/addon_repo_initial_release.yml
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/refactor-release-workflow-structure/caller_workflows/addon_repo_initial_release.yml
 
           mv addon_repo_initial_release.yml ./.github/workflows/initial_release.yml
 
@@ -156,7 +157,7 @@ jobs:
 
       - name: Add release workflow
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/caller_workflows/addon_repo_release_trigger.yml
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/refactor-release-workflow-structure/caller_workflows/addon_repo_release_trigger.yml
 
           mv addon_repo_release_trigger.yml ./.github/workflows/release_trigger.yml
 
@@ -266,7 +267,7 @@ jobs:
     steps:
       - name: Create GitHub Release
         run: |
-          gh workflow run initial_release.yml --repo ${{ env.TARGET_REPO }}
+          gh workflow run initial_release.yml --repo ${{ env.TARGET_REPO }} --field draft=false
 
       - name: Poll for Draft Release
         # TODO check if draft release creation emmits a signal or something to avoid this kind of pulling
@@ -284,11 +285,6 @@ jobs:
               sleep 15
             fi
           done
-
-      - name: Publish Release
-        if: steps.poll-release.outputs.release_tag
-        run: |
-          gh release edit ${{ steps.poll-release.outputs.release_tag }} --draft=false --repo ${{ env.TARGET_REPO }}
 
 
   create-dummy-prs:
@@ -335,8 +331,26 @@ jobs:
           4. If validate render output for deadline errors out, make sure you perform repair action
           5. Publish
           6. It should be rendered successfully.
+          ## Changelog Description
+          Add temp directory for deadline submission so that it would not error out during deadline submission.
+          Continuity of https://github.com/ynput/ayon-blender/pull/17
+          *Support different system platform
+
+
+          ## Additional info
+          n/a
+
+
+          ## Testing notes:
+
+          1. Launch Blender
+          2. Create Render Instance
+          3. Publish
+          4. If validate render output for deadline errors out, make sure you perform repair action
+          5. Publish
+          6. It should be rendered successfully.
           "
-          gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature01 --title "Add date file" --body "$pr_body" --label "bugfix" --assignee "${{ github.actor }}"
+          gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature01 --title "Add date file" --body "$pr_body" --label "type: bugfix" --assignee "${{ github.actor }}"
 
       - name: Create second feature branch
         run: |
@@ -367,5 +381,20 @@ jobs:
 
           1. Loading of the USD data should work as intended into Maya USD Proxy Shapes.
           2. Managing (updating) and removal via scene inventory should also do what is expected.
+          ## Changelog Description
+          <!-- Paragraphs contain detailed information on the changes made to the product or service, providing an in-depth description of the updates and enhancements. They can be used to explain the reasoning behind the changes, or to highlight the importance of the new features. Paragraphs can often include links to further information or support documentation. -->
+
+          - Prototype loading of USD references into a Maya USD proxy while keeping it managed by the pipeline
+          - Prototype loading of Maya references into a Maya USD proxy while keeping it managed by the pipeline
+
+          ## Additional info
+          <!-- Paragraphs of text giving context of additional technical information or code examples. -->
+
+          Separated from #2 
+
+          ## Testing notes:
+
+          1. Loading of the USD data should work as intended into Maya USD Proxy Shapes.
+          2. Managing (updating) and removal via scene inventory should also do what is expected.
           "
-          gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature02 --title "Add mem file" --body "$pr_body" --label "enhancement" --assignee "${{ github.actor }}"
+          gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature02 --title "Add mem file" --body "$pr_body" --label "type: enhancement" --assignee "${{ github.actor }}"
