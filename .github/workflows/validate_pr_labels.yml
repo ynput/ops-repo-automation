@@ -28,6 +28,8 @@ jobs:
       - name: Query PR Labels
         id: query_labels
         run: |
+          echo "${{ secrets.YNPUT_BOT_TOKEN }}"
+
           pr_labels=$(gh pr view ${{ inputs.pull_request_number }} --json labels --jq '.labels[].name' --repo "${{ inputs.repo }}")
 
           if echo "$pr_labels" | grep -q '^${{ inputs.query_prefix }}'; then
