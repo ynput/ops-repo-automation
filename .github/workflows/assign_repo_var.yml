@@ -42,7 +42,7 @@ jobs:
         run: |
           repo_list=$(gh repo list ynput -L 100 --json name,repositoryTopics | jq -c '[.[] | select(.repositoryTopics != null) | select(any(.repositoryTopics[]; .name == "${{ inputs.repo_topic }}")) | .name]')
           echo "$repo_list"
-          echo 'matrix=["ayon-addon-action-testing", "ops-repo-automation", "ayon-maya"]' >> $GITHUB_OUTPUT
+          echo "matrix=$repo_list" >> $GITHUB_OUTPUT
 
       - name: Debug repo list
         run: |

@@ -7,7 +7,7 @@ on:
         description: "Filter by topics assigned to repositories"
         type: string
         required: true
-        default: "testing"
+        default: "addon"
       target_branch:
         description: "Branch the workflow should be pushed to"
         type: string

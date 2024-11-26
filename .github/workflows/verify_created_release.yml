@@ -1,0 +1,44 @@
+name: verify created release
+
+on:
+  workflow_call:
+    inputs:
+      repo:
+        type: string
+        required: true
+      expected_release_name:
+        type: string
+        required: true
+      draft_release:
+        type: boolean
+        required: true
+
+    secrets:
+      gh_token:
+        required: true
+
+env:
+    GH_TOKEN: ${{ secrets.gh_token }}
+
+jobs:
+  verify-created-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Latest Release
+        id: fetch-latest-release
+        run: |
+          current_release_name="$(gh release list --repo ${{ inputs.repo }} --json isDraft,name,createdAt --jq '[.[] | select(.isDraft == ${{ inputs.draft_release }})] | sort_by(.createdAt) | reverse | .[0].name')"
+          echo "current_release_name=$current_release_name" >> $GITHUB_OUTPUT
+
+      - name: Verify Release Name
+        env:
+          latest_release: ${{ steps.fetch-latest-release.outputs.current_release_name }}
+        run: |
+          if [ "${{ inputs.expected_release_name }}" == "${{ env.latest_release }}" ]; then
+            echo "::notice::Success, release$( [ '${{ inputs.draft_release }}' = 'true' ] && echo '-draft' ) found with the expected name ${{ inputs.expected_release_name }}."
+            exit 0
+          fi
+
+          echo "::error::Expected tag ${{ inputs.expected_release_name }}, but found ${{ env.latest_release }}."
+          exit 1
