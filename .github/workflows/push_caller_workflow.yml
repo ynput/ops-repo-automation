@@ -1,0 +1,141 @@
+name: ⬆️ Push Caller Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_topic:
+        description: "Filter by topics assigned to repositories"
+        type: string
+        required: true
+        default: "addon"
+      target_branch:
+        description: "Branch the workflow should be pushed to"
+        type: string
+        required: true
+        default: "develop"
+      caller_workflow_name:
+        description: "Caller workflow name without file extension"
+        type: string
+        required: true
+      dry_run:
+        description: Run workflow without pushing changes (Dry Run)
+        type: boolean
+        default: false
+
+
+env:
+  GH_TOKEN: ${{ secrets.WORKFLOW_UPDATE_TOKEN }}
+  AUTOMATION-REPO: "ops-repo-automation"
+
+jobs:
+  get-repos:
+    runs-on: ubuntu-latest
+    outputs:
+        repo_matrix: ${{ steps.build-matrix.outputs.matrix }}
+
+    steps:
+      - name: Query caller workflow exists
+        id: query-caller-workflow
+        run: |
+          caller_workflow_files=$(gh api repos/ynput/ops-repo-automation/contents/caller_workflows --jq '.[].name' | sed 's/\.yml$//')
+          input_name="${{ inputs.caller_workflow_name }}"
+
+          if echo "$caller_workflow_files" | grep -qw "$input_name"; then
+            echo "::notice::File $input_name exists in the caller workflow directory."
+            exit 0
+          fi
+
+          echo "::error::File $input_name does not exist in the directory."
+          exit 1
+
+      - name: Build matrix
+        id: build-matrix
+        run: |
+          repo_list=$(gh repo list ynput -L 100 --json name,repositoryTopics | jq -c '[.[] | select(.repositoryTopics != null) | select(any(.repositoryTopics[]; .name == "${{ inputs.repo_topic }}")) | .name]')
+          echo "$repo_list"
+          echo "matrix=$repo_list" >> $GITHUB_OUTPUT
+
+      - name: Debug repo list
+        run: |
+          echo "${{ steps.build-matrix.outputs.matrix }}"
+
+
+  Update-workflow:
+    needs:
+        - get-repos
+    runs-on: ubuntu-latest
+    strategy:
+        fail-fast: false
+        matrix:
+          repo_name: ${{ fromJson(needs.get-repos.outputs.repo_matrix) }}
+
+    steps:
+      - name: Test repo exists
+        run: |
+          if ! gh repo view "ynput/${{ matrix.repo_name }}" &>/dev/null; then
+            echo "::error::Repository ynput/${{ matrix.repo_name }} was not found."
+            exit 1
+          fi
+
+      - name: Check for running workflows
+        run: |
+          for i in {1..20}; do
+              running_workflows=$(gh run list --repo ynput/${{ matrix.repo_name }} -L 100 --status in_progress --json name | jq -r 'map(.name) | join(", ")')
+              if [[ -n "$running_workflows" ]]; then
+                echo "::warning::Repo ynput/${{ matrix.repo_name }} currently has running workflows: $running_workflows"
+                sleep 15
+                continue
+              fi
+
+              break
+          done
+
+          running_workflows=$(gh run list --repo ynput/${{ matrix.repo_name }} --status in_progress --json name | jq -r 'map(.name) | join(", ")')
+          if [[ -n "$running_workflows" ]]; then
+            echo "::error::Repo ynput/${{ matrix.repo_name }} currently has running workflows: $running_workflows"
+            echo "::error::Repo ynput/${{ matrix.repo_name }} has been running workflows since more then 5 minutes, please check the repo"
+            exit 1
+          fi
+
+      - name: ⬇️ Checkout ${{ matrix.repo_name }} at ${{ inputs.target_branch }}
+        uses: actions/checkout@v4
+        with:
+          token: ${{ env.GH_TOKEN }}
+          repository: ynput/${{ matrix.repo_name }}
+          ref: ${{ inputs.target_branch }}
+          fetch-depth: 0
+
+      - name: Get caller workflow
+        run: |
+          curl -O https://raw.githubusercontent.com/ynput/${{ env.AUTOMATION-REPO }}/develop/caller_workflows/${{ inputs.caller_workflow_name }}.yml
+
+          mkdir -p .github/workflows
+          mv ${{ inputs.caller_workflow_name }}.yml ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if [[ `git status --porcelain` ]]; then
+            echo "push_required=true" >> $GITHUB_OUTPUT
+          else
+            echo "No changes to push."
+            echo "push_required=false" >> $GITHUB_OUTPUT
+            echo "::warning::No changes found, not pushing to ${{ matrix.repo_name }} at ${{ inputs.target_branch }}"
+          fi
+
+      - name: Dry-Run log push
+        if: ${{ inputs.dry_run && steps.check_changes.outputs.push_required == 'true' }}
+        run: |
+          echo "::notice::[DRY RUN] Changes would have been pushed to ${{ matrix.repo_name }} at ${{ inputs.target_branch }}"
+
+      - name: Push changes
+        if: ${{ ! inputs.dry_run && steps.check_changes.outputs.push_required == 'true' }}
+        run: |
+          echo "::notice::Pushing changes to ${{ matrix.repo_name }} at ${{ inputs.target_branch }}"
+
+          git config --global user.name "${{ secrets.CI_USER }}"
+          git config --global user.email "${{ secrets.CI_EMAIL }}"
+
+          git add ./.github/workflows/${{ inputs.caller_workflow_name }}.yml
+          git commit -m "[Automated] Update ${{ inputs.caller_workflow_name }} caller workflow"
+          git push origin ${{ inputs.target_branch }}

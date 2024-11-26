@@ -7,6 +7,50 @@ Meant to automate any tasks related to release creation.
 The Release Workflow is meant to have a one-click solution to handling all release related tasks.
 This includes validation, merging branches, creating artifacts and so on.
 
+## Requirements
+
+Repository Secrets
+
+* token - usually a bot token - Enables automated pushing and repository administration
+* user - usually a bot username - Used for commit authentication
+* email - usually a bot email - Used for commit authentication
+
+Inputs
+
+* draft - Create release as a draft or publish right away (Tag gets created when release is published - Drafts are not tagged)
+* release_overwrite - Set the release tag right away - overwrites calculated one
+* release_name - Set release name (usually same as tag)
+
+Repository Variables
+
+* PROJECT_NAME - used for package name when running *create_package.py*
+* MAIN_BRANCH - name of the main branch (usually 'main')
+* PATCH_BUMP_LABEL - comma separated list of PR-Labels to bump patch version (supports "," and ", " separation)
+* MINOR_BUMP_LABEL - comma separated list of PR-Labels to bump minor version (supports "," and ", " separation)
+* CHANGELOG_ORDER - if present custom changelog will be created based on this comma separated label order (supports "," and ", " separation)
+
+## Main Features
+
+### Automatic version increment
+
+Uses a github [action](https://github.com/ynput/github-query) to calculate an expected version increment.
+For this to work it requires repository variables to be set.
+
+The repository calling the release-workflow should provide these repository variables
+
+* **PATCH_BUMP_LABEL** - <mark>Required</mark> list of PR-Labels to bump patch version
+* **MINOR_BUMP_LABEL** - <mark>Required</mark> list of PR-Labels to bump minor version
+* **MAJOR_BUMP_LABEL** - <mark>Optional</mark> list of PR-Labels to bump major version (Will just be skipped if not set)
+
+### Custom Changelog
+
+Requires the repository variable `CHANGELOG_ORDER` to be set.
+Example: `feature,enhancement,bugfix`
+
+Based on this order of pull-request labels a changelog containing pull-request titles and their descriptions will be created and assigned to the release on github.
+This just looks for the label names. So any typos might causes missing information in the generated changelog.
+It uses the pull-request titles for the changelog entries and adds any found changelog description as details.
+
 ## Workflow Structure
 
 The workflow is split into multiple jobs, each handlings a different kind of logic.

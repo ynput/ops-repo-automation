@@ -92,6 +92,11 @@ jobs:
 
           echo "$(gh secret list --repo ${{ env.TARGET_REPO }})"
 
+      - name: Set repo description and topic
+        run: |
+          gh repo edit "${{ env.TARGET_REPO }}" --description "Repository for automated action testing"
+          gh repo edit "${{ env.TARGET_REPO }}" --add-topic testing 
+
       - name: Set repo variables
         run: |
           gh variable set PATCH_BUMP_LABEL --body "type: bugfix" --repo ${{ env.TARGET_REPO }}
@@ -161,6 +166,19 @@ jobs:
 
           git add ./.github/workflows/release_trigger.yml
           git commit -m "Add release trigger workflow"
+          git push origin ${{ env.DEFAULT_BRANCH }}
+
+      - name: Add pr-to-project caller workflow
+        run: |
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/caller_workflows/assign-pr-to-project.yml
+
+          mv assign-pr-to-project.yml ./.github/workflows/assign-pr-to-project.yml
+
+          git config --global user.name "${{ secrets.CI_USER }}"
+          git config --global user.email "${{ secrets.CI_EMAIL }}"
+
+          git add ./.github/workflows/assign-pr-to-project.yml
+          git commit -m "Add pr-to-project workflow"
           git push origin ${{ env.DEFAULT_BRANCH }}
 
       - name: 🗒️ Adjust package.py
@@ -313,6 +331,24 @@ jobs:
           4. If validate render output for deadline errors out, make sure you perform repair action
           5. Publish
           6. It should be rendered successfully.
+          ## Changelog Description
+          Add temp directory for deadline submission so that it would not error out during deadline submission.
+          Continuity of https://github.com/ynput/ayon-blender/pull/17
+          *Support different system platform
+
+
+          ## Additional info
+          n/a
+
+
+          ## Testing notes:
+
+          1. Launch Blender
+          2. Create Render Instance
+          3. Publish
+          4. If validate render output for deadline errors out, make sure you perform repair action
+          5. Publish
+          6. It should be rendered successfully.
           "
           gh pr create --base ${{ env.DEFAULT_BRANCH }} --head test_feature01 --title "Add date file" --body "$pr_body" --label "type: bugfix" --assignee "${{ github.actor }}"
 
@@ -330,6 +366,21 @@ jobs:
           git push -u origin test_feature02
 
           pr_body="
+          ## Changelog Description
+          <!-- Paragraphs contain detailed information on the changes made to the product or service, providing an in-depth description of the updates and enhancements. They can be used to explain the reasoning behind the changes, or to highlight the importance of the new features. Paragraphs can often include links to further information or support documentation. -->
+
+          - Prototype loading of USD references into a Maya USD proxy while keeping it managed by the pipeline
+          - Prototype loading of Maya references into a Maya USD proxy while keeping it managed by the pipeline
+
+          ## Additional info
+          <!-- Paragraphs of text giving context of additional technical information or code examples. -->
+
+          Separated from #2 
+
+          ## Testing notes:
+
+          1. Loading of the USD data should work as intended into Maya USD Proxy Shapes.
+          2. Managing (updating) and removal via scene inventory should also do what is expected.
           ## Changelog Description
           <!-- Paragraphs contain detailed information on the changes made to the product or service, providing an in-depth description of the updates and enhancements. They can be used to explain the reasoning behind the changes, or to highlight the importance of the new features. Paragraphs can often include links to further information or support documentation. -->
 

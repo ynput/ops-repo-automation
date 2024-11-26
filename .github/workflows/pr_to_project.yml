@@ -1,0 +1,31 @@
+name: Auto assign pr
+on:
+  workflow_call:
+    inputs:
+      repo:
+        type: string
+        required: true
+      project_id:
+        type: number
+        required: true
+      pull_request_number:
+        type: number
+        required: true
+
+    secrets:
+      token:
+        required: true
+
+env:
+  GH_TOKEN: ${{ secrets.token }}
+
+jobs:
+  auto-assign-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Assign PR to project
+        env:
+          GH_TOKEN: ${{ secrets.token }}
+        run: |
+          gh project item-add ${{ inputs.project_id }} --owner ynput --url "$(gh pr view ${{ inputs.pull_request_number }} --json url -q '.url' --repo '${{ inputs.repo }}')"

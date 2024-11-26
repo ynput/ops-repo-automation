@@ -1,4 +1,4 @@
-name: 📤 Upload to YnputCloud
+name: 📤 Upload to Ynput Cloud
 
 on:
   workflow_call:
@@ -44,7 +44,14 @@ jobs:
             out-file-path: ${{env.OUTPUT_DIR}}
             tag: ${{github.ref_name}}
 
-      - name: Upload to Ynput Cloud
+      - name: Download script
+        run: |
+          curl -o upload_to_ynput_cloud.py https://raw.githubusercontent.com/ynput/ops-repo-automation/main/upload_to_ynput_cloud.py
+
+      - name: Install dependencies
         run: |
           pip install requests
+
+      - name: Upload to Ynput Cloud
+        run: |
           python upload_to_ynput_cloud.py
