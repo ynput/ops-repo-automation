@@ -11,7 +11,6 @@ on:
       pull_request_number:
         type: number
         required: true
-
     secrets:
       token:
         required: true

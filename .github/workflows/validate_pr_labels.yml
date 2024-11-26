@@ -12,7 +12,6 @@ on:
         type: string
         required: true
         default: "type: "
-
     secrets:
       token:
         required: true
