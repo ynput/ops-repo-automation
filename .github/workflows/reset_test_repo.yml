@@ -266,7 +266,7 @@ jobs:
         run: |
           for i in {1..20}; do
             DRAFT_RELEASE=$(gh release list --repo ${{ env.TARGET_REPO }} --limit 1 --json isDraft --jq '.[0].isDraft')
-            if [[ "$DRAFT_RELEASE" == "true" ]]; then
+            if [[ "$DRAFT_RELEASE" == "false" ]]; then
               echo "Draft release found."
               release_tag=$(gh release list --repo ${{ env.TARGET_REPO }} --limit 1 --json tagName --jq '.[0].tagName')
               echo "release_tag=$release_tag" >> $GITHUB_OUTPUT
