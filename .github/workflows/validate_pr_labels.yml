@@ -18,18 +18,27 @@ on:
         required: true
 
 env:
-  GH_TOKEN: ${{ secrets.token || secrets.YNPUT_BOT_TOKEN }}
+  GH_TOKEN: ${{ secrets.token }}
 
 jobs:
   validate-pr-labels:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Verify Token
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "GH_TOKEN is not set"
+            exit 1
+          else
+            echo "GH_TOKEN is set"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.token }}
+
       - name: Query PR Labels
         id: query_labels
         run: |
-          echo "${{ secrets.YNPUT_BOT_TOKEN }}"
-
           pr_labels=$(gh pr view ${{ inputs.pull_request_number }} --json labels --jq '.labels[].name' --repo "${{ inputs.repo }}")
 
           if echo "$pr_labels" | grep -q '^${{ inputs.query_prefix }}'; then

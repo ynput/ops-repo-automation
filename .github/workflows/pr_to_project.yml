@@ -24,6 +24,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Verify Token
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "GH_TOKEN is not set"
+            exit 1
+          else
+            echo "GH_TOKEN is set"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.token }}
+
       - name: Assign PR to project
         run: |
           gh project item-add ${{ inputs.project_id }} --owner ynput --url "$(gh pr view ${{ inputs.pull_request_number }} --json url -q '.url' --repo '${{ inputs.repo }}')"
