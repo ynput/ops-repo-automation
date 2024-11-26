@@ -15,8 +15,9 @@ on:
       token:
         required: true
 
+# TODO default token github.token should not be required here something is odd about YNPUT_BOT_TOKEN cause it is empty in some repos (ayon-houdini, ayon-fusion)
 env:
-  GH_TOKEN: ${{ secrets.token || secrets.YNPUT_BOT_TOKEN }}
+  GH_TOKEN: ${{ secrets.token || github.token }}
 
 jobs:
   auto-assign-pr:
@@ -31,8 +32,6 @@ jobs:
           else
             echo "GH_TOKEN is set"
           fi
-        env:
-          GH_TOKEN: ${{ secrets.token }}
 
       - name: Assign PR to project
         run: |
