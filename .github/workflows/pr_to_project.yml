@@ -15,7 +15,8 @@ on:
       token:
         required: true
 
-# TODO default token github.token should not be required here something is odd about YNPUT_BOT_TOKEN cause it is empty in some repos (ayon-houdini, ayon-fusion)
+# INFO fallback to default `github.token` is required for PRs from folks
+# INFO organization secrets won't be available to forks
 env:
   GH_TOKEN: ${{ secrets.token || github.token }}
 
