@@ -58,9 +58,10 @@ jobs:
 
 
   validate-pr-information:
+    # TODO update branch ref
     needs:
       - verify-latest-release
-    uses: ynput/ops-repo-automation/.github/workflows/verify_pr_data.yml@main
+    uses: ynput/ops-repo-automation/.github/workflows/verify_pr_data.yml@develop
     with:
       repo: ${{ github.repository }}
       base_branch: "develop"
