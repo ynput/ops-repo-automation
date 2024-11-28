@@ -17,7 +17,6 @@ on:
         required: true
 
 env:
-  LABEL_DELIMITTER: ", "
   GH_TOKEN: ${{ secrets.token || secrets.YNPUT_BOT_TOKEN}}
   GH_USER: ${{ secrets.user || secrets.CI_USER }}
   GH_EMAIL: ${{ secrets.email || secrets.CI_EMAIL }}
@@ -28,7 +27,7 @@ env:
 
 jobs:
   verify-latest-release:
-    uses: ynput/ops-repo-automation/.github/workflows/verify_latest_release.yml@refactor-release-workflow-structure
+    uses: ynput/ops-repo-automation/.github/workflows/verify_latest_release.yml@main
     with:
       repo: ${{ github.repository }}
       expect_release: false
@@ -37,7 +36,7 @@ jobs:
 
 
   verify-repo-secrets:
-    uses: ynput/ops-repo-automation/.github/workflows/verify_secrets.yml@refactor-release-workflow-structure
+    uses: ynput/ops-repo-automation/.github/workflows/verify_secrets.yml@main
     with:
       repo: ${{ github.repository }}
     secrets:
@@ -47,7 +46,7 @@ jobs:
 
 
   verify-repo-vars:
-    uses: ynput/ops-repo-automation/.github/workflows/verify_variables.yml@refactor-release-workflow-structure
+    uses: ynput/ops-repo-automation/.github/workflows/verify_variables.yml@main
     with:
       variables: "MAIN_BRANCH,MINOR_BUMP_LABEL,PATCH_BUMP_LABEL,PROJECT_NAME"
       repo: ${{ github.repository }}
@@ -61,7 +60,7 @@ jobs:
       - verify-repo-secrets
       - verify-repo-vars
 
-    uses: ynput/ops-repo-automation/.github/workflows/merge_branch.yml@refactor-release-workflow-structure
+    uses: ynput/ops-repo-automation/.github/workflows/merge_branch.yml@main
     with:
       repo: ${{ github.repository }}
       checkout_branch: ${{ vars.MAIN_BRANCH }}
@@ -76,7 +75,7 @@ jobs:
     needs:
       - merge-to-main
 
-    uses: ynput/ops-repo-automation/.github/workflows/build_from_branch.yml@refactor-release-workflow-structure
+    uses: ynput/ops-repo-automation/.github/workflows/build_from_branch.yml@main
     with:
       repo:   ${{ github.repository }}
       branch_name: ${{ vars.MAIN_BRANCH }}
@@ -93,7 +92,7 @@ jobs:
     needs:
       - build-from-main
 
-    uses: ynput/ops-repo-automation/.github/workflows/update_branch.yml@refactor-release-workflow-structure
+    uses: ynput/ops-repo-automation/.github/workflows/update_branch.yml@main
     with:
       repo: ${{ github.repository }}
       checkout_branch: ${{ github.ref_name }}
@@ -130,7 +129,7 @@ jobs:
     needs:
       - create-release
 
-    uses: ynput/ops-repo-automation/.github/workflows/verify_created_release.yml@refactor-release-workflow-structure
+    uses: ynput/ops-repo-automation/.github/workflows/verify_created_release.yml@main
     with:
       repo: ${{ github.repository }}
       expected_release_name: "${{ inputs.release_overwrite }}"
