@@ -6,6 +6,9 @@ on:
       repo:
         type: string
         required: false
+      base_branch:
+        type: string
+        required: true
       latest_release:
         type: string
         required: true
@@ -29,7 +32,8 @@ on:
         value: ${{ jobs.validate-pr-information.outputs.changelog }}
 
 env:
-  GH_REPO : ${{ inputs.repo || github.repository }}
+  GH_REPO: ${{ inputs.repo || github.repository }}
+  BASE_BRANCH: ${{ inputs.base_branch }}
   GH_TOKEN: ${{ secrets.gh_token || false }}
   RELEASE_DATE: ${{inputs.latest_release }}
 
@@ -48,6 +52,7 @@ jobs:
         uses: ynput/github-query@main
         with:
           repo: "${{ env.GH_REPO }}"
+          base_branch: "${{ env.BASE_BRANCH }}"
           date: "${{ env.RELEASE_DATE }}"
           query_parameters: "body,labels,title,id,number,url"
           changelog_labels: "${{ inputs.changelog_order }}"
