@@ -34,6 +34,13 @@ jobs:
             echo "GH_TOKEN is set"
           fi
 
+      - name: Validate PR Source
+        if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+        run: |
+            echo "::Warning::This workflow cannot handle PRs from forks."
+            exit 0
+
       - name: Assign PR to project
+        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
         run: |
           gh project item-add ${{ inputs.project_id }} --owner ynput --url "$(gh pr view ${{ inputs.pull_request_number }} --json url -q '.url' --repo '${{ inputs.repo }}')"
