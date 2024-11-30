@@ -161,14 +161,14 @@ jobs:
 
       - name: Add pr-to-project caller workflow
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/caller_workflows/assign-pr-to-project.yml
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/caller_workflows/assign_pr_to_project.yml
 
-          mv assign-pr-to-project.yml ./.github/workflows/assign-pr-to-project.yml
+          mv assign_pr_to_project.yml ./.github/workflows/assign_pr_to_project.yml
 
           git config --global user.name "${{ secrets.CI_USER }}"
           git config --global user.email "${{ secrets.CI_EMAIL }}"
 
-          git add ./.github/workflows/assign-pr-to-project.yml
+          git add ./.github/workflows/assign_pr_to_project.yml
           git commit -m "Add pr-to-project workflow"
           git push origin ${{ env.DEFAULT_BRANCH }}
 
