@@ -24,6 +24,7 @@ jobs:
     outputs:
       pr_repo_name: ${{ steps.get-repo-name.outputs.repo_name || github.event.pull_request.head.repo.full_name }}
 
+    # INFO `github.event.pull_request.head.repo.full_name` is not available on manual triggered (dispatched) runs
     steps:
       - name: Get PR repo name
         if: ${{ github.event_name == 'workflow_dispatch' }}
