@@ -22,4 +22,4 @@ Provide inputs:
 * variable_value to assign
 * repo_topic
 * Optional overwrite - in case existing values need to be replaced
-* dry_run
+* dry_run yes/no
