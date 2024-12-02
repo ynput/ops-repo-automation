@@ -6,9 +6,9 @@
 
 ## Docs notes
 
+* Explain concepts of reusability amongst existing workflows
 * Document repo reset workflow
 * Document push workflows like caller push_caller_workflow and assign_repo_var
-* Explain concepts uf reusability amongst existing workflows
 
 * Add basic troubleshooting instructions especially towards github-query action
 * Explain visible output in runs and how to interpret it
@@ -19,7 +19,7 @@
     * Workflow nesting limitations
     * Type conversions and how most data will be interpreted as strings
     * dispatch_workflow converts all inputs to strings
-    * [from_json](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/evaluate-expressions-in-workflows-and-actions#operators) can be used to convert strings to numbers or booleann
+    * [from_json](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/evaluate-expressions-in-workflows-and-actions#operators) can be used to convert strings to numbers or boolean
 
 * Document important todos
   * Full integration testing still missing
