@@ -8,7 +8,6 @@
 
 * Explain concepts of reusability amongst existing workflows
 * Document repo reset workflow
-* Document push workflows like caller push_caller_workflow and assign_repo_var
 
 * Add basic troubleshooting instructions especially towards github-query action
 * Explain visible output in runs and how to interpret it
