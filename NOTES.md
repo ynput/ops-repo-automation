@@ -6,7 +6,6 @@
 
 ## Docs notes
 
-* Explain concepts of reusability amongst existing workflows
 * Document repo reset workflow
 
 * Add basic troubleshooting instructions especially towards github-query action
