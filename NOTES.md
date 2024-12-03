@@ -6,8 +6,8 @@
 
 ## Docs notes
 
-* Document repo reset workflow
-
+* Add flowchart overview of current release workflow
+* Add flowchart of current ops-repo-automation-structure
 * Add basic troubleshooting instructions especially towards github-query action
 * Explain visible output in runs and how to interpret it
 
@@ -27,4 +27,5 @@
 
 ## Development notes
 
+* FIx repo rule-set
 * Add tag to hash verification to release workflow

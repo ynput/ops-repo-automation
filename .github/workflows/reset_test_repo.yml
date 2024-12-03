@@ -261,7 +261,7 @@ jobs:
           gh workflow run initial_release.yml --repo ${{ env.TARGET_REPO }} --field draft=false
 
       - name: Poll for Draft Release
-        # TODO check if draft release creation emmits a signal or something to avoid this kind of pulling
+        # TODO check if draft release creation emits a signal or something to avoid this kind of pulling
         id: poll-release
         run: |
           for i in {1..20}; do
