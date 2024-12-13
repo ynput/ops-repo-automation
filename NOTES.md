@@ -14,10 +14,7 @@
 * Explain intended workflow limitation
   * From github
     * Org secrets not available to workflow runs started by Prs from forks
-    * Workflow nesting limitations
-    * Type conversions and how most data will be interpreted as strings
-    * dispatch_workflow converts all inputs to strings
-    * [from_json](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/evaluate-expressions-in-workflows-and-actions#operators) can be used to convert strings to numbers or boolean
+    * multiline outputs
 
 * Document important todos
   * Full integration testing still missing
@@ -27,5 +24,5 @@
 
 ## Development notes
 
-* FIx repo rule-set
+* Fix repo rule-set
 * Add tag to hash verification to release workflow
