@@ -8,13 +8,7 @@
 
 * Add flowchart overview of current release workflow
 * Add flowchart of current ops-repo-automation-structure
-* Add basic troubleshooting instructions especially towards github-query action
 * Explain visible output in runs and how to interpret it
-
-* Explain intended workflow limitation
-  * From github
-    * Org secrets not available to workflow runs started by Prs from forks
-    * multiline outputs
 
 * Document important todos
   * Full integration testing still missing
