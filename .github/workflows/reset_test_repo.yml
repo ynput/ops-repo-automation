@@ -223,8 +223,7 @@ jobs:
       - name: Update protect_main.json file
         run: |
           curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/branch_rules/protect_main.json
-          cat protect_main.json | jq '.bypass_actors[0].actor_id = ${{ secrets.ACTOR_ID_REPO_ROLE }}' > protect_main_insert.json
-          cat protect_main.json | jq '.bypass_actors[1].actor_id = ${{ secrets.ACTOR_ID_ORG_ADMIN }}' > protect_main_insert.json
+          cat protect_main.json | jq '.bypass_actors[0].actor_id = ${{ secrets.ACTOR_ID_REPO_ROLE }} | .bypass_actors[1].actor_id = ${{ secrets.ACTOR_ID_ORG_ADMIN }}' > protect_main_insert.json
 
       - name: Apply rule set for '${{ env.MAIN_BRANCH }}'
         run: |
