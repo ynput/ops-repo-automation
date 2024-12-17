@@ -119,9 +119,8 @@ jobs:
           ref: ${{ env.DEFAULT_BRANCH }}
 
       - name: Add PR Template
-        # TODO change develop to main
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/.github/pull_request_template.md
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/.github/pull_request_template.md
 
           mv pull_request_template.md ./.github/pull_request_template.md
 
@@ -133,9 +132,8 @@ jobs:
           git push origin ${{ env.DEFAULT_BRANCH }}
 
       - name: Add initial-release workflow
-        # TODO change branch to main
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/refactor-release-workflow-structure/caller_workflows/addon_repo_initial_release.yml
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/caller_workflows/addon_repo_initial_release.yml
 
           mv addon_repo_initial_release.yml ./.github/workflows/initial_release.yml
 
@@ -159,18 +157,19 @@ jobs:
           git commit -m "Add release trigger workflow"
           git push origin ${{ env.DEFAULT_BRANCH }}
 
-      - name: Add pr-to-project caller workflow
-        run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/caller_workflows/assign_pr_to_project.yml
+      # INFO supposed to be carried over from ayon-addon-template repo
+      # - name: Add pr-to-project caller workflow
+      #   run: |
+      #     curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/caller_workflows/assign_pr_to_project.yml
 
-          mv assign_pr_to_project.yml ./.github/workflows/assign_pr_to_project.yml
+      #     mv assign_pr_to_project.yml ./.github/workflows/assign_pr_to_project.yml
 
-          git config --global user.name "${{ secrets.CI_USER }}"
-          git config --global user.email "${{ secrets.CI_EMAIL }}"
+      #     git config --global user.name "${{ secrets.CI_USER }}"
+      #     git config --global user.email "${{ secrets.CI_EMAIL }}"
 
-          git add ./.github/workflows/assign_pr_to_project.yml
-          git commit -m "Add pr-to-project workflow"
-          git push origin ${{ env.DEFAULT_BRANCH }}
+      #     git add ./.github/workflows/assign_pr_to_project.yml
+      #     git commit -m "Add pr-to-project workflow"
+      #     git push origin ${{ env.DEFAULT_BRANCH }}
 
       - name: 🗒️ Adjust package.py
         run: |
