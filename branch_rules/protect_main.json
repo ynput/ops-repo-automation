@@ -30,7 +30,12 @@
   "bypass_actors": [
     {
       "actor_id": "<actor_id_placeholder>",
-      "actor_type": "Team",
+      "actor_type": "RepositoryRole",
+      "bypass_mode": "always"
+    },
+    {
+      "actor_id": "<actor_id_placeholder>",
+      "actor_type": "OrganizationAdmin",
       "bypass_mode": "always"
     }
   ]
