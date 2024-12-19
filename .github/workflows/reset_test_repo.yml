@@ -238,7 +238,7 @@ jobs:
         # TODO change develop to main
         run: |
           curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/branch_rules/protect_develop.json
-          cat protect_develop.json | jq '.bypass_actors[0].actor_id = ${{ secrets.ACTOR_ID_REPO_ROLE }} | .bypass_actors[2].actor_id = ${{ secrets.ACTOR_ID_ORG_ADMIN }}' > protect_develop_insert.json
+          cat protect_develop.json | jq '.bypass_actors[0].actor_id = ${{ secrets.ACTOR_ID_REPO_ROLE }} | .bypass_actors[1].actor_id = ${{ secrets.ACTOR_ID_ORG_ADMIN }}' > protect_develop_insert.json
 
       - name: Apply rule set for 'develop'
         run: |
