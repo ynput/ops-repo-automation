@@ -8,11 +8,8 @@
 
 * Add flowchart overview of current release workflow
 * Add flowchart of current ops-repo-automation-structure
-* Explain visible output in runs and how to interpret it
 
 * Document important todos
-  * Full integration testing still missing
-  * Describe how to approach it
   * How to build repo creation workflow from repo reset workflow
   * Add testing workflow for PRs from forks
 
