@@ -52,11 +52,6 @@
     },
     {
       "actor_id": "<actor_id_placeholder>",
-      "actor_type": "Team",
-      "bypass_mode": "always"
-    },
-    {
-      "actor_id": "<actor_id_placeholder>",
       "actor_type": "OrganizationAdmin",
       "bypass_mode": "always"
     }
