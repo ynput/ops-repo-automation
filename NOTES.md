@@ -18,5 +18,4 @@
 
 ## Development notes
 
-* Fix repo rule-set
 * Add tag to hash verification to release workflow
