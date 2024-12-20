@@ -8,11 +8,3 @@
 
 * Add flowchart overview of current release workflow
 * Add flowchart of current ops-repo-automation-structure
-
-* Document important todos
-  * How to build repo creation workflow from repo reset workflow
-  * Add testing workflow for PRs from forks
-
-## Development notes
-
-* Add tag to hash verification to release workflow
