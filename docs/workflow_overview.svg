@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1422 940">
+  <defs>
+    <style>
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5 {
+        isolation: isolate;
+      }
+
+      .cls-1, .cls-2, .cls-4, .cls-5 {
+        font-family: TimesNewRomanPSMT, 'Times New Roman';
+      }
+
+      .cls-1, .cls-3, .cls-6 {
+        font-size: 14px;
+      }
+
+      .cls-7 {
+        fill: #99c9d1;
+      }
+
+      .cls-2 {
+        font-size: 17.64px;
+      }
+
+      .cls-8 {
+        stroke-dasharray: 8 8;
+      }
+
+      .cls-8, .cls-9, .cls-10, .cls-11, .cls-12, .cls-13, .cls-14 {
+        fill: none;
+      }
+
+      .cls-8, .cls-9, .cls-10, .cls-11, .cls-12, .cls-14 {
+        stroke-width: .5px;
+      }
+
+      .cls-8, .cls-9, .cls-11, .cls-13, .cls-14 {
+        stroke: #000;
+      }
+
+      .cls-3, .cls-6 {
+        font-family: TimesNewRomanPS-BoldMT, 'Times New Roman';
+        font-weight: 700;
+      }
+
+      .cls-15 {
+        fill: #cecece;
+      }
+
+      .cls-16 {
+        fill: #a4bef3;
+      }
+
+      .cls-17 {
+        fill: #84abaf;
+      }
+
+      .cls-4 {
+        font-size: 10.86px;
+      }
+
+      .cls-10 {
+        stroke: #e22b2b;
+      }
+
+      .cls-18, .cls-19 {
+        fill: #ffffe0;
+      }
+
+      .cls-20 {
+        fill: #b4eefc;
+      }
+
+      .cls-21 {
+        fill: #fff;
+      }
+
+      .cls-11 {
+        stroke-dasharray: 8.16 8.16;
+      }
+
+      .cls-22 {
+        fill: #deffff;
+      }
+
+      .cls-19 {
+        stroke: #ffffe0;
+      }
+
+      .cls-23 {
+        letter-spacing: -.08em;
+      }
+
+      .cls-24 {
+        letter-spacing: -.08em;
+      }
+
+      .cls-25 {
+        letter-spacing: -.06em;
+      }
+
+      .cls-26 {
+        letter-spacing: -.06em;
+      }
+
+      .cls-27 {
+        letter-spacing: -.13em;
+      }
+
+      .cls-28 {
+        letter-spacing: -.11em;
+      }
+
+      .cls-29 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-30 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-12 {
+        stroke: #312fa5;
+      }
+
+      .cls-31 {
+        letter-spacing: -.06em;
+      }
+
+      .cls-14 {
+        stroke-dasharray: 8.38 8.38;
+      }
+
+      .cls-5 {
+        font-size: 14.5px;
+      }
+    </style>
+  </defs>
+  <polygon class="cls-21" points="0 928 0 130 1422 130 1422 928 0 928"/>
+  <polygon class="cls-22" points="53 477 53 124 456.76 124 456.76 477 53 477"/>
+  <text class="cls-2" transform="translate(139.12 156.54) scale(.83 1)"><tspan x="0" y="0">Reusable</tspan><tspan class="cls-30" x="64.66" y="0"> </tspan><tspan class="cls-24" x="68.75" y="0">W</tspan><tspan x="83.98" y="0">orkflow Dependencies</tspan></text>
+  <polygon class="cls-16" points="562 815 562 126 805.68 126 805.68 815 562 815"/>
+  <polygon class="cls-19" points="786 515 580 515 580 799 786 799 786 515"/>
+  <text class="cls-5" transform="translate(625.61 170.8) scale(.97 1)"><tspan x="0" y="0">ops-repo-automation</tspan></text>
+  <text class="cls-1" transform="translate(632.27 545.3)"><tspan x="0" y="0">Caller</tspan><tspan class="cls-29" x="34.21" y="0"> </tspan><tspan class="cls-23" x="37.45" y="0">W</tspan><tspan x="49.55" y="0">orkflows</tspan></text>
+  <text class="cls-1" transform="translate(96.11 251.76)"><tspan x="0" y="0">release_trigge</tspan><tspan class="cls-31" x="78.51" y="0">r</tspan><tspan x="82.4" y="0">.yml</tspan></text>
+  <polygon class="cls-13" points="426.76 282.71 249.82 282.71 249.82 318.71 426.76 318.71 426.76 282.71"/>
+  <text class="cls-1" transform="translate(256.21 305.76)"><tspan x="0" y="0">verify_variables.yml</tspan></text>
+  <polygon class="cls-13" points="426.76 174.71 249.82 174.71 249.82 210.71 426.76 210.71 426.76 174.71"/>
+  <text class="cls-1" transform="translate(256.35 197.76)"><tspan x="0" y="0">verify_pr_data.yml</tspan></text>
+  <polygon class="cls-22" points="773.26 189.02 591.57 189.02 591.57 359.36 773.26 359.36 773.26 189.02"/>
+  <polygon class="cls-13" points="427 228.71 249.82 228.71 249.82 264.71 427 264.71 427 228.71"/>
+  <text class="cls-1" transform="translate(256.27 251.76)"><tspan x="0" y="0">build_from_branch.yml</tspan></text>
+  <text class="cls-1" transform="translate(96.18 305.76)"><tspan x="0" y="0">initial_release.yml</tspan></text>
+  <polygon class="cls-13" points="212.7 174.71 89.45 174.71 89.45 210.71 212.7 210.71 212.7 174.71"/>
+  <polygon class="cls-13" points="212.7 228.71 89.45 228.71 89.45 264.71 212.7 264.71 212.7 228.71"/>
+  <polygon class="cls-13" points="212.7 283.71 89.45 283.71 89.45 319.71 212.7 319.71 212.7 283.71"/>
+  <text class="cls-1" transform="translate(96.06 197.76)"><tspan x="0" y="0">reset_test_repo.yml</tspan></text>
+  <g id="node7">
+    <polygon class="cls-13" points="748.56 421 619.3 421 619.3 457 748.56 457 748.56 421"/>
+    <text class="cls-1" transform="translate(625.8 444.05)"><tspan x="0" y="0">assign_repo_va</tspan><tspan class="cls-31" x="87.09" y="0">r</tspan><tspan x="90.98" y="0">.yml</tspan></text>
+  </g>
+  <polygon class="cls-13" points="765.06 371 602.8 371 602.8 407 765.06 407 765.06 371"/>
+  <text class="cls-1" transform="translate(608.76 394.05)"><tspan x="0" y="0">push_caller_workflo</tspan><tspan class="cls-26" x="115.86" y="0">w</tspan><tspan x="125.06" y="0">.yml</tspan></text>
+  <g id="node9">
+    <polygon class="cls-13" points="745.56 313 622.3 313 622.3 349 745.56 349 745.56 313"/>
+    <text class="cls-1" transform="translate(628.92 336.05)"><tspan x="0" y="0">reset_test_repo.yml</tspan></text>
+  </g>
+  <g id="node10">
+    <polygon class="cls-13" points="744.43 259 623.43 259 623.43 295 744.43 295 744.43 259"/>
+    <text class="cls-1" transform="translate(630.09 282.05)"><tspan x="0" y="0">release_trigge</tspan><tspan class="cls-31" x="78.51" y="0">r</tspan><tspan x="82.4" y="0">.yml</tspan></text>
+  </g>
+  <polygon class="cls-13" points="742.56 205 625.3 205 625.3 241 742.56 241 742.56 205"/>
+  <text class="cls-1" transform="translate(632.03 228.05)"><tspan x="0" y="0">initial_release.yml</tspan></text>
+  <g id="node12">
+    <polygon class="cls-13" points="777.8 728 590.06 728 590.06 764 777.8 764 777.8 728"/>
+    <text class="cls-1" transform="translate(595.49 751.05)"><tspan x="0" y="0">addon_repo_initial_release.yml</tspan></text>
+  </g>
+  <g id="node13">
+    <polygon class="cls-13" points="779.68 674 588.18 674 588.18 710 779.68 710 779.68 674"/>
+    <text class="cls-1" transform="translate(593.55 697.05)"><tspan x="0" y="0">addon_repo_release_trigge</tspan><tspan class="cls-31" x="151.6" y="0">r</tspan><tspan x="155.49" y="0">.yml</tspan></text>
+  </g>
+  <g id="node14">
+    <polygon class="cls-13" points="761.3 620 606.56 620 606.56 656 761.3 656 761.3 620"/>
+    <text class="cls-1" transform="translate(612.58 643.05)"><tspan x="0" y="0">assign_pr_to_project.yml</tspan></text>
+  </g>
+  <g id="node15">
+    <polygon class="cls-13" points="754.18 566 613.68 566 613.68 602 754.18 602 754.18 566"/>
+    <text class="cls-1" transform="translate(619.98 589.05)"><tspan x="0" y="0">validate_pr_labels.yml</tspan></text>
+  </g>
+  <g>
+    <polygon class="cls-15" points="1005.54 940 1005.54 0 1326.39 0 1326.39 940 1005.54 940"/>
+    <polygon class="cls-17" points="1033.8 884 1033.8 609.77 1303.8 609.77 1303.8 884 1033.8 884"/>
+    <text class="cls-1" transform="translate(1113 32.3)"><tspan x="0" y="0">Addon Repositories</tspan></text>
+    <polygon class="cls-7" points="1033.8 579.41 1033.8 329.77 1303.8 329.77 1303.8 579.41 1033.8 579.41"/>
+    <polygon class="cls-20" points="1033.8 303 1033.8 53.36 1303.8 53.36 1303.8 303 1033.8 303"/>
+    <text class="cls-3" transform="translate(1135.75 77.3)"><tspan x="0" y="0">ayon-maya</tspan></text>
+    <text class="cls-6" transform="translate(1129.12 353.3)"><tspan x="0" y="0">ayon-houdini</tspan></text>
+    <text class="cls-6" transform="translate(1129.24 634.3)"><tspan x="0" y="0">ayon-blende</tspan><tspan class="cls-29" x="73.12" y="0">r</tspan></text>
+    <g id="node17">
+      <polygon class="cls-13" points="1279.93 93 1057.68 93 1057.68 129 1279.93 129 1279.93 93"/>
+      <text class="cls-1" transform="translate(1062.77 116.05)"><tspan class="cls-28" x="0" y="0">V</tspan><tspan x="8.56" y="0">ariables (Example:</tspan><tspan class="cls-29" x="113.9" y="0"> </tspan><tspan class="cls-27" x="117.15" y="0">V</tspan><tspan x="125.45" y="0">AR_1,</tspan><tspan class="cls-29" x="162.4" y="0"> </tspan><tspan class="cls-27" x="165.65" y="0">V</tspan><tspan x="173.95" y="0">AR_2)</tspan></text>
+    </g>
+    <g id="node20">
+      <polygon class="cls-13" points="1279.93 369 1057.68 369 1057.68 405 1279.93 405 1279.93 369"/>
+      <text class="cls-1" transform="translate(1062.77 392.05)"><tspan class="cls-28" x="0" y="0">V</tspan><tspan x="8.56" y="0">ariables (Example:</tspan><tspan class="cls-29" x="113.9" y="0"> </tspan><tspan class="cls-27" x="117.15" y="0">V</tspan><tspan x="125.45" y="0">AR_1,</tspan><tspan class="cls-29" x="162.4" y="0"> </tspan><tspan class="cls-27" x="165.65" y="0">V</tspan><tspan x="173.95" y="0">AR_2)</tspan></text>
+    </g>
+    <g id="node23">
+      <polygon class="cls-13" points="1279.93 650 1057.68 650 1057.68 686 1279.93 686 1279.93 650"/>
+      <text class="cls-1" transform="translate(1062.77 673.05)"><tspan class="cls-28" x="0" y="0">V</tspan><tspan x="8.56" y="0">ariables (Example:</tspan><tspan class="cls-29" x="113.9" y="0"> </tspan><tspan class="cls-27" x="117.15" y="0">V</tspan><tspan x="125.45" y="0">AR_1,</tspan><tspan class="cls-29" x="162.4" y="0"> </tspan><tspan class="cls-27" x="165.65" y="0">V</tspan><tspan x="173.95" y="0">AR_2)</tspan></text>
+    </g>
+    <g id="node16">
+      <polygon class="cls-13" points="1240.55 255 1097.05 255 1097.05 291 1240.55 291 1240.55 255"/>
+      <text class="cls-1" transform="translate(1103.3 278.05)"><tspan x="0" y="0">Repository: ayon-maya</tspan></text>
+    </g>
+    <polygon class="cls-19" points="1264.55 146.75 1073.05 146.75 1073.05 237.25 1264.55 237.25 1264.55 146.75"/>
+    <text class="cls-1" transform="translate(1117.21 164.05)"><tspan x="0" y="0">Caller</tspan><tspan class="cls-29" x="34.21" y="0"> </tspan><tspan class="cls-23" x="37.45" y="0">W</tspan><tspan x="49.55" y="0">orkflows:</tspan></text>
+    <text class="cls-1" transform="translate(1080.37 180.55)"><tspan x="0" y="0">addon_repo_initial_release.yml</tspan></text>
+    <text class="cls-1" transform="translate(1078.43 197.05)"><tspan x="0" y="0">addon_repo_release_trigge</tspan><tspan class="cls-31" x="151.6" y="0">r</tspan><tspan x="155.49" y="0">.yml</tspan></text>
+    <text class="cls-1" transform="translate(1097.46 213.55)"><tspan x="0" y="0">assign_pr_to_project.yml</tspan></text>
+    <text class="cls-1" transform="translate(1104.86 230.05)"><tspan x="0" y="0">validate_pr_labels.yml</tspan></text>
+    <g id="node19">
+      <polygon class="cls-13" points="1246.18 531 1091.43 531 1091.43 567 1246.18 567 1246.18 531"/>
+      <text class="cls-1" transform="translate(1097.06 554.05)"><tspan x="0" y="0">Repository: ayon-houdini</tspan></text>
+    </g>
+    <polygon class="cls-19" points="1264.55 422.75 1073.05 422.75 1073.05 513.25 1264.55 513.25 1264.55 422.75"/>
+    <text class="cls-1" transform="translate(1117.21 440.05)"><tspan x="0" y="0">Caller</tspan><tspan class="cls-29" x="34.21" y="0"> </tspan><tspan class="cls-23" x="37.45" y="0">W</tspan><tspan x="49.55" y="0">orkflows:</tspan></text>
+    <text class="cls-1" transform="translate(1080.37 456.55)"><tspan x="0" y="0">addon_repo_initial_release.yml</tspan></text>
+    <text class="cls-1" transform="translate(1078.43 473.05)"><tspan x="0" y="0">addon_repo_release_trigge</tspan><tspan class="cls-31" x="151.6" y="0">r</tspan><tspan x="155.49" y="0">.yml</tspan></text>
+    <text class="cls-1" transform="translate(1097.46 489.55)"><tspan x="0" y="0">assign_pr_to_project.yml</tspan></text>
+    <text class="cls-1" transform="translate(1104.86 506.05)"><tspan x="0" y="0">validate_pr_labels.yml</tspan></text>
+    <g id="node22">
+      <polygon class="cls-13" points="1245.8 812 1091.8 812 1091.8 848 1245.8 848 1245.8 812"/>
+      <text class="cls-1" transform="translate(1097.46 835.05)"><tspan x="0" y="0">Repository: ayon-blender</tspan></text>
+    </g>
+    <polygon class="cls-19" points="1264.55 703.75 1073.05 703.75 1073.05 794.25 1264.55 794.25 1264.55 703.75"/>
+    <text class="cls-1" transform="translate(1117.21 721.05)"><tspan x="0" y="0">Caller</tspan><tspan class="cls-29" x="34.21" y="0"> </tspan><tspan class="cls-23" x="37.45" y="0">W</tspan><tspan x="49.55" y="0">orkflows:</tspan></text>
+    <text class="cls-1" transform="translate(1080.37 737.55)"><tspan x="0" y="0">addon_repo_initial_release.yml</tspan></text>
+    <text class="cls-1" transform="translate(1078.43 754.05)"><tspan x="0" y="0">addon_repo_release_trigge</tspan><tspan class="cls-31" x="151.6" y="0">r</tspan><tspan x="155.49" y="0">.yml</tspan></text>
+    <text class="cls-1" transform="translate(1097.46 770.55)"><tspan x="0" y="0">assign_pr_to_project.yml</tspan></text>
+    <text class="cls-1" transform="translate(1104.86 787.05)"><tspan x="0" y="0">validate_pr_labels.yml</tspan></text>
+  </g>
+  <g>
+    <line class="cls-9" x1="456.5" y1="123.5" x2="460.1" y2="125.24"/>
+    <line class="cls-14" x1="467.65" y1="128.88" x2="584.63" y2="185.3"/>
+    <line class="cls-9" x1="588.4" y1="187.12" x2="592" y2="188.86"/>
+  </g>
+  <g>
+    <line class="cls-9" x1="456.5" y1="477.5" x2="459.51" y2="474.87"/>
+    <line class="cls-11" x1="465.65" y1="469.5" x2="585.42" y2="364.82"/>
+    <line class="cls-9" x1="588.49" y1="362.13" x2="591.5" y2="359.5"/>
+  </g>
+  <g>
+    <path class="cls-8" d="M765.5,389.5c116.23,0,184.55-84.06,184-162-.28-40.5,3.58-118.4,103.32-121.41"/>
+    <polygon points="1051.46 111.15 1060 106 1051.27 101.18 1051.46 111.15"/>
+  </g>
+  <g>
+    <path class="cls-8" d="M765.5,389.5c113.62,0,188.94,66.59,188.94,142,0,0-1.69,131.65,95.39,137.31"/>
+    <polygon points="1048.2 673.7 1057 669 1048.54 663.73 1048.2 673.7"/>
+  </g>
+  <g>
+    <path class="cls-8" d="M765.5,389.5c155.86,0,152.14-.97,285.32-1"/>
+    <polygon points="1049.38 393.52 1058 388.5 1049.35 383.54 1049.38 393.52"/>
+  </g>
+  <g>
+    <path class="cls-8" d="M787.61,543.41c155.86,0,141.9-78.13,274.72-80.84"/>
+    <polygon points="1060.96 467.64 1069.5 462.5 1060.78 457.67 1060.96 467.64"/>
+  </g>
+  <g>
+    <path class="cls-8" d="M787.61,543.41c155.86,0,141.9-78.13,274.72-80.84"/>
+    <polygon points="1060.96 467.64 1069.5 462.5 1060.78 457.67 1060.96 467.64"/>
+  </g>
+  <g>
+    <path class="cls-8" d="M787.61,543.5c155.86,0,141.9-342.8,274.73-354.68"/>
+    <polygon points="1061.16 193.97 1069.5 188.5 1060.59 184.02 1061.16 193.97"/>
+  </g>
+  <g>
+    <path class="cls-8" d="M787.61,543.5c155.86,0,141.9,202.78,274.72,209.81"/>
+    <polygon points="1060.7 758.19 1069.5 753.5 1061.04 748.22 1060.7 758.19"/>
+  </g>
+  <g>
+    <rect class="cls-18" x="857.12" y="381.94" width="128.81" height="24.05" transform="translate(230.55 1119.9) rotate(-69.56)"/>
+    <text class="cls-4" transform="translate(904.03 448.96) rotate(-69.34)"><tspan x="0" y="0">push_caller_workflo</tspan><tspan class="cls-25" x="89.9" y="0">w</tspan><tspan x="97.04" y="0">.yml</tspan></text>
+  </g>
+  <g>
+    <rect class="cls-18" x="865.77" y="630.2" width="128.81" height="24.05" transform="translate(948.94 -487.96) rotate(56.33)"/>
+    <text class="cls-4" transform="translate(895.88 595.82) rotate(56.55)"><tspan x="0" y="0">push_caller_workflo</tspan><tspan class="cls-25" x="89.9" y="0">w</tspan><tspan x="97.04" y="0">.yml</tspan></text>
+  </g>
+  <g>
+    <rect class="cls-18" x="869.77" y="490.2" width="128.81" height="24.05" transform="translate(-126.36 515.35) rotate(-28.97)"/>
+    <text class="cls-4" transform="translate(885.11 532.61) rotate(-28.76)"><tspan x="0" y="0">push_caller_workflo</tspan><tspan class="cls-25" x="89.9" y="0">w</tspan><tspan x="97.04" y="0">.yml</tspan></text>
+  </g>
+  <polygon class="cls-13" points="426.07 330.06 249.12 330.06 249.12 366.06 426.07 366.06 426.07 330.06"/>
+  <text class="cls-1" transform="translate(256.63 353.11)"><tspan x="0" y="0">update_branch.yml</tspan></text>
+  <polygon class="cls-13" points="426.07 384.06 249.12 384.06 249.12 420.06 426.07 420.06 426.07 384.06"/>
+  <text class="cls-1" transform="translate(255.63 407.11)"><tspan x="0" y="0">verify_created_release.yml</tspan></text>
+  <polygon class="cls-13" points="425.41 430.18 248.47 430.18 248.47 466.18 425.41 466.18 425.41 430.18"/>
+  <text class="cls-1" transform="translate(254.98 453.23)"><tspan x="0" y="0">and more</tspan></text>
+  <line class="cls-9" x1="213.34" y1="248.38" x2="249.76" y2="192.66"/>
+  <line class="cls-9" x1="213.34" y1="248.38" x2="248.77" y2="247.19"/>
+  <line class="cls-9" x1="213.34" y1="248.38" x2="249.34" y2="303.73"/>
+  <line class="cls-9" x1="213.34" y1="248.38" x2="249.34" y2="351.22"/>
+  <line class="cls-9" x1="213.34" y1="248.38" x2="249.34" y2="406.63"/>
+  <line class="cls-9" x1="213.34" y1="248.38" x2="248.21" y2="454.12"/>
+  <line class="cls-12" x1="213.85" y1="302.69" x2="250.27" y2="246.97"/>
+  <line class="cls-12" x1="249.28" y1="301.51" x2="213.85" y2="302.69"/>
+  <line class="cls-12" x1="213.85" y1="302.69" x2="249.85" y2="358.04"/>
+  <line class="cls-12" x1="213.85" y1="302.69" x2="249.85" y2="405.53"/>
+  <line class="cls-12" x1="213.85" y1="302.69" x2="249.85" y2="460.94"/>
+  <line class="cls-12" x1="213.85" y1="302.69" x2="249.01" y2="191.36"/>
+  <line class="cls-10" x1="211.39" y1="192.96" x2="249.5" y2="294.28"/>
+</svg>
