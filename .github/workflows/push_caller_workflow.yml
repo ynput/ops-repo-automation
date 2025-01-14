@@ -107,7 +107,7 @@ jobs:
 
       - name: Get caller workflow
         run: |
-          curl -O https://raw.githubusercontent.com/ynput/${{ env.AUTOMATION-REPO }}/develop/caller_workflows/${{ inputs.caller_workflow_name }}.yml
+          curl -O https://raw.githubusercontent.com/ynput/${{ env.AUTOMATION-REPO }}/main/caller_workflows/${{ inputs.caller_workflow_name }}.yml
 
           mkdir -p .github/workflows
           mv ${{ inputs.caller_workflow_name }}.yml ./.github/workflows/${{ inputs.caller_workflow_name }}.yml

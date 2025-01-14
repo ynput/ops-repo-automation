@@ -8,17 +8,18 @@ Assign new repository variables to a bunch of repositories at once can be q pret
 
 ## Features
 
-* Loop over comma separated value string of ynput owned repository names
-* Skip repo if name was not found and output warning
+* Loop over ynput repositories having a provided topic assigned
 * Skip over repo if variable already exists (and no overwrite options set)
 * Overwrite existing variables in case they already exist
+* Dry Run option to check what repo would get a change and which won't without actually applying changes
 
 ## Usage
 
 Run manually from actions page of [ops-repo-automation](https://github.com/ynput/ops-repo-automation)
 Provide inputs:
 
-* Variable name (will be set to all caps no matter the input casing)
-* Variable value to assign
-* Repository names as comma separated string - comma (",") and comma space (", ") will work here
+* variable_name (will be set to all caps no matter the input casing)
+* variable_value to assign
+* repo_topic
 * Optional overwrite - in case existing values need to be replaced
+* dry_run yes/no

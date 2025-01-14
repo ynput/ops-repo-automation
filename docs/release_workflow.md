@@ -1,6 +1,6 @@
 # Release Workflow
 
-Meant to automate any tasks related to release creation.
+Meant to automate the process of release creation.
 
 ## Intention
 
@@ -9,17 +9,16 @@ This includes validation, merging branches, creating artifacts and so on.
 
 ## Requirements
 
+Inputs
+
+* draft - Create release as a draft or publish right away
+* release_overwrite - Set the release tag right away - overwrites calculated one
+
 Repository Secrets
 
 * token - usually a bot token - Enables automated pushing and repository administration
 * user - usually a bot username - Used for commit authentication
 * email - usually a bot email - Used for commit authentication
-
-Inputs
-
-* draft - Create release as a draft or publish right away (Tag gets created when release is published - Drafts are not tagged)
-* release_overwrite - Set the release tag right away - overwrites calculated one
-* release_name - Set release name (usually same as tag)
 
 Repository Variables
 
@@ -31,16 +30,26 @@ Repository Variables
 
 ## Main Features
 
+Uses a github [action](https://github.com/ynput/github-query) to provide some main features:
+
+* Automatic version increment
+* Custom Changelog
+
+## How to re-run release workflow
+
+First delete the already present release or release draft.
+removing release drafts before hand isn't strictly necessary but we should try to keep it clean and still do it.
+Additionally the tag needs to be deleted otherwise the re-run will be blocked.
+This will cause additional merges from the develop branch to the main branch and back back won't effect the code and version in any way.
+
 ### Automatic version increment
 
 Uses a github [action](https://github.com/ynput/github-query) to calculate an expected version increment.
-For this to work it requires repository variables to be set.
+The repository calling the release-workflow should - as already mentioned - provide these repository variables.
 
-The repository calling the release-workflow should provide these repository variables
-
-* **PATCH_BUMP_LABEL** - <mark>Required</mark> list of PR-Labels to bump patch version
-* **MINOR_BUMP_LABEL** - <mark>Required</mark> list of PR-Labels to bump minor version
-* **MAJOR_BUMP_LABEL** - <mark>Optional</mark> list of PR-Labels to bump major version (Will just be skipped if not set)
+* PATCH_BUMP_LABEL - <mark>Required</mark>
+* MINOR_BUMP_LABEL - <mark>Required</mark>
+* MAJOR_BUMP_LABEL - <mark>Optional</mark>
 
 ### Custom Changelog
 
@@ -51,15 +60,13 @@ Based on this order of pull-request labels a changelog containing pull-request t
 This just looks for the label names. So any typos might causes missing information in the generated changelog.
 It uses the pull-request titles for the changelog entries and adds any found changelog description as details.
 
-## Workflow Structure
+## GitHub Actions in use
 
-The workflow is split into multiple jobs, each handlings a different kind of logic.
-Additionally the jobs run certain dedicated Github Actions which are stand-alone units
-Some examples in use right now (27.09.24)
+Here's an overview of the dedicated GitHub Actions currently used in the release workflow. (02.12.24)
 
 ### Ynput-Owned
 
-* [GitHub-Query](https://github.com/ynput/github-query) - used for pull-re quest data collection
+* [GitHub-Query](https://github.com/ynput/github-query) - used for pull-request data collection
 
 ### Github-Owned
 
@@ -73,60 +80,84 @@ Some examples in use right now (27.09.24)
 * [Push-Protected](https://github.com/casperwa/push-protected) - Push to protected branches
 * [Release-Action](https://github.com/ncipollo/release-action)
 
-### Verification (verify_repo_vars_and_secrets)
+## Workflow Structure
 
-Here the presence of any kind of required repo variables and secrets is checked.
-This is supposed to run at the beginning to make sure any changed to the repo only happen if the required data is available.
-The required data like secrets can be grabbed right from the repositories secrets from from input values, usually supplied by a caller workflow from the repository this workflow is supposed to run on.
+The workflow is split into multiple jobs, each handlings a different kind of logic.
+These logic is run in on of three different ways depending on the job:
+
+* Referencing a Github Actions
+* Referencing a reusable workflow
+* Running the logic right inside the job
+
+Most of the jobs call a reusable workflow tpo provided more easy reusability.
+
+### Verification
+
+job-names:
+
+* verify-latest-release
+* verify-repo-secrets
+* verify-repo-vars
+* validate-pr-information
+
+The verification jobs run right at the beginning and are responsible for checking of the existents of all required information, like repo-vars and secrets.
+Additionally it validates that existing releases are present as well as running a query for present PR-information (using [GitHub-Query](https://github.com/ynput/github-query)) to make sure a new release can be created.
 The verified data is available to upcoming jobs.
-
-### Query Latest Release (get_latest_release)
-
-Next it is mandatory to test if a "latest" release already exist.
-On the one hand to grab data from it like its publish date and the draft flag, on the other hand that this release it not the first one for this repository.
 The queried data is provided for all upcoming jobs as well.
 
-### Increment Version (increment-version)
+### Increment Version
 
-This job uses runs the already mentioned [GitHub-Query](https://github.com/ynput/github-query) Action, which currently returns the a PR label list relevant for version bumping as well as a version increment suggestion.
-These return values get validated to check if creation of another release even makes sense. Will returns an error notification in case not.
+job-name: increment-version
+
 If the return values get validated successfully the [Version-Increment](https://github.com/reecetech/version-increment) Action runs using the increment value as input.
 Finally it returns the next version tag suggestion.
+It will also handle any kind of manual overwrites and pass these on instead.
 
-### Merge to Main Branch (merge-to-main)
+### Merge to Main Branch
 
-Checkout the repositories protected main branch and merges the develop branch into it.
-This runs the [Push-Protected](https://github.com/casperwa/push-protected) Action to push the changes to back to the remotes main branch right away.
+job-name: merge-to-main
 
-### Build from Main Branch (build-from-main)
+Checkout the provided `checkout_branch` and merges the provided `merge_from_branch` into it.
+Will also work for protected branches due to the [Push-Protected](https://github.com/casperwa/push-protected).
 
-Checkout the repositories protected main branch and build an artifact from it.
-This means a bunch of steps need to happen in order:
+### Build from Main Branch
+
+job-name: build-from-main
+
+Checkout the provided `branch_name` and build an artifact from it.
+This means the following logic gets executed:
 
 1. Update the package.py files version variable
 1. Run `python create_package.py --output <output-dir>`, updates additional version numbers as well
 1. Run `git add . -- ':!<artifact-dir>/<artifact-file>'` while excluding the artifact file
+1. Tag gets created if changes were detected
 1. Run [Push-Protected](https://github.com/casperwa/push-protected) Action to update remote main branch
 1. Upload the build artifact to the workflow
 
-### Create Release (create-release)
+### Create Release
+
+job-name: create-release
 
 Now the artifact uploaded by `build-from-main` job gets downloaded.
 Next a new release gets created using [Release-Action](https://github.com/ncipollo/release-action) by default as draft release.
+The formerly created artifact gets attached to the created release.
 
-### Update Develop Branch (update-develop)
+### Update Develop Branch
 
-This job runs in parallel with `create-release` since they don't depend on each other.
+job-name: update-develop
 
-To bring the develop branch up to date with main again a couple of steps are necessary.
+This job runs in parallel with `create-release` cause they don't depend on each other.
+To bring the provided `checkout_branch` up to date with provided `update_from_branch` these steps are required.
 
-1. Check out develop branch and merge remote main branch into it
+1. Check out the `checkout_branch` branch and merge remote `update_from_branch` into it
 1. Update version variable in `package.py` to `next-version+dev`
 1. Build artifact again by running `python create_package.py --output <artifact-dir>` to update all related version numbers
 1. Push to the remote develop using [Push-Protected](https://github.com/casperwa/push-protected).
 
-### Verify Release (verify-release)
+### Verify Release
 
-This jobs starts by querying the latest release as draft or not depending on the initial draft option.
-Then it checks if the found release has teh expected tag assigned to it.
-If this should be not the case it errors with an error notification and informs the user that something didn't work out as expected.
+job-name: verify-release
+
+Now the just created release gets queried as draft or not depending on the initial draft option.
+Then it checks if the found release has the expected tag assigned to it.
+If this should be not the case an error notification will occur and informs the user that something didn't work out as expected.
