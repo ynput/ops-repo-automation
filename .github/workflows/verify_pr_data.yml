@@ -58,10 +58,12 @@ jobs:
           changelog_labels: "${{ inputs.changelog_order }}"
 
       - name: Show debug output
+        env:
+          CHANGELOG_RESULT: ${{ steps.pr-query.outputs.changelog-markdown }}
         run: |
           echo "label-list: ${{ steps.pr-query.outputs.label-list }}"
           echo "bump-increment: ${{ steps.pr-query.outputs.bump-increment }}"
-          echo "changelog: ${{ steps.pr-query.outputs.changelog-markdown }}"
+          echo "changelog: $CHANGELOG_RESULT"
 
       - name: Check for existing PRs
         if: ${{ !fromJson(steps.pr-query.outputs.raw-output) }}
