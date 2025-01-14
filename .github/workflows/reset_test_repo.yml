@@ -220,9 +220,8 @@ jobs:
             -f sha="${{ steps.latest-sha.outputs.sha }}"
 
       - name: Update protect_main.json file
-        # TODO change develop to main
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/branch_rules/protect_main.json
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/branch_rules/protect_main.json
           cat protect_main.json | jq '.bypass_actors[0].actor_id = ${{ secrets.ACTOR_ID_REPO_ROLE }} | .bypass_actors[1].actor_id = ${{ secrets.ACTOR_ID_ORG_ADMIN }}' > protect_main_insert.json
 
       - name: Apply rule set for '${{ env.MAIN_BRANCH }}'
@@ -235,9 +234,8 @@ jobs:
             --input protect_main_insert.json
 
       - name: Update protect_develop.json file
-        # TODO change develop to main
         run: |
-          curl -O https://raw.githubusercontent.com/${{ github.repository }}/develop/branch_rules/protect_develop.json
+          curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/branch_rules/protect_develop.json
           cat protect_develop.json | jq '.bypass_actors[0].actor_id = ${{ secrets.ACTOR_ID_REPO_ROLE }} | .bypass_actors[1].actor_id = ${{ secrets.ACTOR_ID_ORG_ADMIN }}' > protect_develop_insert.json
 
       - name: Apply rule set for 'develop'
