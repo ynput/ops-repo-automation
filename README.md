@@ -20,7 +20,7 @@ In caller_workflows you will find templates for caller workflows which are ready
 
 the branch_rules directory currently holds some exported rule sets for main and develop branch to be applied during repo creation.
 
-### Ephermal Testing [Repository](https://github.com/ynput/ayon-addon-action-testing)
+### Ephemeral Testing [Repository](https://github.com/ynput/ayon-addon-action-testing)
 
 This repository is effected by every run of the reset_test_repo workflow. It's intended as pure testing repository to mimic different repository states with any manual setup needed.
 
@@ -31,7 +31,7 @@ In the long run this should get extended to allow fully automated integration te
 These should be dedicated github actions custom implemented and maintained by input to allow full control.
 These are supposed to handle standalone functional parts of the workflow logic to be easy to use.
 
-They are also supposed to include there own unit-tests to verify they do work as expected and any changes don't break critical logic.
+They are also supposed to include their own unit-tests to verify they do work as expected and any changes don't break critical logic.
 They can be implemented in either raw bash scripts, python code as seen in [Github-Query](https://github.com/ynput/github-query) or as a docker.
 
 Right now only one exists but there are more to come.
