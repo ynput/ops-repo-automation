@@ -129,7 +129,7 @@ jobs:
 
     uses: ynput/ops-repo-automation/.github/workflows/build_from_branch.yml@main
     with:
-      repo:   ${{ github.repository }}
+      repo: ${{ github.repository }}
       branch_name: ${{ vars.MAIN_BRANCH }}
       project_name: ${{ vars.PROJECT_NAME }}
       artifact_name: "${{ vars.PROJECT_NAME }}-package"
@@ -137,7 +137,7 @@ jobs:
     secrets:
       gh_token: ${{ secrets.token }}
       gh_user: ${{ secrets.user }}
-      gh_email: ${{ secrets.email }} 
+      gh_email: ${{ secrets.email }}
 
   update-develop:
     needs:
@@ -199,3 +199,17 @@ jobs:
       gh_token: ${{ secrets.token }}
 
     # TODO verify tag position
+
+  deploy-documentation:
+    needs:
+      - increment-version
+      - merge-to-main
+    # FIXME: switch to main, NOT develop BEFORE releasing
+    uses: ynput/ops-repo-automation/.github/workflows/deploy_mkdocs.yml@develop
+    with:
+      repo: ${{ github.repository }}
+      branch_name: main
+    secrets:
+      gh_token: ${{ secrets.token }}
+      gh_user: ${{ secrets.user }}
+      gh_email: ${{ secrets.email }}
