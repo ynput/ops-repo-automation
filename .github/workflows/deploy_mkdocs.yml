@@ -57,5 +57,9 @@ jobs:
           mike set-default latest --branch gh-pages --push
       - name: Remove dummy version on triggering from a tag
         if: startsWith(github.ref, 'refs/tags/')
-        run: mike delete test-build --branch gh-pages --push
+        run: |
+          if mike list | grep -q "^test-build\$"; then
+            echo "Version 'test-build' found. Deleting..."
+            mike delete test-build --branch gh-pages --push
+          fi
 
