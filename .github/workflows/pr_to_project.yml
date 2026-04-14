@@ -7,7 +7,8 @@ on:
         required: true
       project_id:
         type: number
-        required: true
+        required: false
+        default: 19
       pull_request_number:
         type: number
         required: true
