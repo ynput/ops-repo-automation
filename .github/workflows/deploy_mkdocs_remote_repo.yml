@@ -1,0 +1,74 @@
+name: Deploy MkDocs To Remote Repo
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      source_repo:
+        type: string
+        required: true
+      target_repo:
+        description: "The target repo path (e.g., ynput/ayon-workflow-docs)"
+        type: string
+        required: true
+    secrets:
+      YNPUT_BOT_TOKEN:
+        required: true
+      CI_USER:
+        required: true
+      CI_EMAIL:
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.source_repo }}
+          token: ${{ secrets.YNPUT_BOT_TOKEN }}
+          fetch-depth: 0
+          submodules: true
+
+      - name: 🔑 Set Authentication
+        run: |
+          git config --global user.name "${{ secrets.CI_USER }}"
+          git config --global user.email "${{ secrets.CI_EMAIL }}"
+      
+      - name: Configure Target Remote
+        run: |
+          git remote add target-repo https://x-access-token:${{ secrets.YNPUT_BOT_TOKEN }}@github.com/${{ inputs.target_repo }}.git
+          git fetch target-repo gh-pages || echo "gh-pages doesn't exist yet on target"
+
+      - name: Get current tag
+        id: git_tag
+        uses: devops-actions/action-get-tag@v1.0.3
+        with:
+          default: test-build
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install -r mkdocs_requirements.txt
+
+      - name: Mike deploy ${{ steps.git_tag.outputs.tag }}
+        run: |
+          mike deploy --update-aliases ${{ steps.git_tag.outputs.tag }} latest --branch gh-pages --remote target-repo --push
+          mike set-default latest --branch gh-pages --remote target-repo --push
+      - name: Remove dummy version on triggering from a tag
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          if mike list --branch gh-pages --remote target-repo | grep -q "^test-build\$"; then
+            echo "Version 'test-build' found. Deleting..."
+            mike delete test-build --branch gh-pages --remote target-repo --push
+          fi
+
