@@ -1,0 +1,146 @@
+name: Release Trigger C++
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      draft:
+        type: boolean
+        required: false
+      release_overwrite:
+        type: string
+        required: false
+    secrets:
+      token:
+        required: true
+      user:
+        required: true
+      email:
+        required: true
+
+env:
+  GH_TOKEN: ${{ secrets.token || secrets.YNPUT_BOT_TOKEN }}
+  DRAFT: ${{ inputs.draft }}
+  CHANGELOG_ORDER: "${{ vars.CHANGELOG_ORDER || '' }}"
+
+jobs:
+  verify-latest-release:
+    uses: ynput/ops-repo-automation/.github/workflows/verify_latest_release.yml@main
+    with:
+      repo: ${{ github.repository }}
+      expect_release: true
+    secrets:
+      gh_token: ${{ secrets.token }}
+
+  verify-repo-secrets:
+    uses: ynput/ops-repo-automation/.github/workflows/verify_secrets.yml@main
+    with:
+      repo: ${{ github.repository }}
+    secrets:
+      gh_token: ${{ secrets.token }}
+      gh_user: ${{ secrets.user }}
+      gh_email: ${{ secrets.email }}
+
+  verify-repo-vars:
+    uses: ynput/ops-repo-automation/.github/workflows/verify_variables.yml@main
+    with:
+      variables: "MAIN_BRANCH,MINOR_BUMP_LABEL,PATCH_BUMP_LABEL"
+      repo: ${{ github.repository }}
+    secrets:
+      gh_token: ${{ secrets.token }}
+
+  validate-pr-information:
+    needs:
+      - verify-latest-release
+
+    uses: ynput/ops-repo-automation/.github/workflows/verify_pr_data.yml@main
+    with:
+      repo: ${{ github.repository }}
+      base_branch: "develop"
+      latest_release: ${{ needs.verify-latest-release.outputs.date_published }}
+      changelog_order: ${{ vars.CHANGELOG_ORDER || '' }}
+    secrets:
+      gh_token: ${{ secrets.token }}
+
+  increment-version:
+    runs-on: ubuntu-latest
+    needs:
+      - validate-pr-information
+
+    outputs:
+      next-version: "${{ steps.set-tag.outputs.NEXT_TAG }}"
+
+    steps:
+      - name: 🔼 Get next Version Tag
+        if: ${{ ! inputs.release_overwrite }}
+        uses: reecetech/version-increment@2024.4.4
+        id: calculated_version_tag
+        with:
+          scheme: semver
+          increment: ${{ needs.validate-pr-information.outputs.bump-increment }}
+          release_branch: ${{ vars.MAIN_BRANCH }}
+          use_api: true
+
+      - name: Set next version tag
+        id: set-tag
+        env:
+          TAG: "${{ steps.calculated_version_tag.outputs.major-version }}.${{ steps.calculated_version_tag.outputs.minor-version }}.${{ steps.calculated_version_tag.outputs.patch-version }}"
+        run: |
+          if [ "${{ env.TAG }}" == ".." ]; then
+            echo "NEXT_TAG=${{ inputs.release_overwrite }}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "NEXT_TAG=${{ env.TAG }}" >> $GITHUB_OUTPUT
+
+  merge-to-main:
+    needs:
+      - increment-version
+      - verify-latest-release
+      - verify-repo-secrets
+      - verify-repo-vars
+
+    uses: ynput/ops-repo-automation/.github/workflows/merge_branch.yml@main
+    with:
+      repo: ${{ github.repository }}
+      checkout_branch: ${{ vars.MAIN_BRANCH }}
+      merge_from_branch: ${{ github.ref_name }}
+    secrets:
+      gh_token: ${{ secrets.token }}
+      gh_user: ${{ secrets.user }}
+      gh_email: ${{ secrets.email }}
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs:
+      - validate-pr-information
+      - increment-version
+      - merge-to-main
+
+    env:
+      NEXT_VERSION: "${{ needs.increment-version.outputs.next-version }}"
+      CHANGELOG: "${{ needs.validate-pr-information.outputs.changelog }}"
+
+    steps:
+      - name: 🚀 Create Github Release
+        uses: ncipollo/release-action@v1
+        with:
+          commit: "${{ vars.MAIN_BRANCH }}"
+          tag: "${{ env.NEXT_VERSION }}"
+          body: ${{ env.CHANGELOG || false }}
+          generateReleaseNotes: "${{ !env.CHANGELOG }}"
+          token: ${{ env.GH_TOKEN }}
+          draft: ${{ env.DRAFT }}
+
+  verify-release:
+    needs:
+      - create-release
+      - increment-version
+
+    uses: ynput/ops-repo-automation/.github/workflows/verify_created_release.yml@main
+    with:
+      repo: ${{ github.repository }}
+      expected_release_name: ${{ needs.increment-version.outputs.next-version }}
+      draft_release: ${{ inputs.draft }}
+    secrets:
+      gh_token: ${{ secrets.token }}
