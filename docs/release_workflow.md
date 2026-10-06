@@ -150,7 +150,7 @@ This job runs in parallel with `create-release` cause they don't depend on each 
 To bring the provided `checkout_branch` up to date with provided `update_from_branch` these steps are required.
 
 1. Check out the `checkout_branch` branch and merge remote `update_from_branch` into it
-1. Update version variable in `package.py` to `next-version+dev`
+1. Update version variable in `package.py` to the next development version - the released version with bumped patch and `-dev` suffix (e.g. release `1.2.3` -> `1.2.4-dev`)
 1. Build artifact again by running `python create_package.py --output <artifact-dir>` to update all related version numbers
 1. Push to the remote develop using [Push-Protected](https://github.com/casperwa/push-protected).
 
