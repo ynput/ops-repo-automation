@@ -9,6 +9,14 @@ on:
       expect_release:
         type: boolean
         required: false
+      allow_missing:
+        description: Do not fail when no release exists even if 'expect_release' is set (e.g. first release with explicit version)
+        type: boolean
+        required: false
+      new_version:
+        description: Version that is about to be released - fail if a release or tag with this name already exists
+        type: string
+        required: false
 
     secrets:
       gh_token:
@@ -96,13 +104,30 @@ jobs:
           exit 1
 
       - name: Test existing release
-        if: ${{ !steps.latest-release.outputs.date_published && inputs.expect_release }}
+        if: ${{ !steps.latest-release.outputs.date_published && inputs.expect_release && !inputs.allow_missing }}
         run: |
           echo "::error::No release found, but was expected for ${{ inputs.repo }}. - Please use the initial-release workflow instead"
           exit 1
 
       - name: Test release drafts
-        if: ${{ inputs.expect_release && fromJson(steps.latest-release.outputs.draft) }}
+        if: ${{ inputs.expect_release && steps.latest-release.outputs.draft == 'true' }}
         run: |
           echo "::warning::Release draft already present: ${{ steps.latest-release.outputs.name }}"
           exit 0
+
+      - name: Test new version is not released yet
+        if: ${{ inputs.new_version }}
+        env:
+          NEW_VERSION: ${{ inputs.new_version }}
+        run: |
+          existing=$(gh release list --repo "$GH_REPO" --limit 1000 --json tagName,name \
+            --jq ".[] | select(.tagName == \"$NEW_VERSION\" or .name == \"$NEW_VERSION\") | .tagName")
+          if [ -n "$existing" ]; then
+            echo "::error::Release '$NEW_VERSION' already exists in $GH_REPO (including drafts) - choose a different version."
+            exit 1
+          fi
+
+          if gh api "repos/$GH_REPO/git/ref/tags/$NEW_VERSION" > /dev/null 2>&1; then
+            echo "::error::Tag '$NEW_VERSION' already exists in $GH_REPO - choose a different version."
+            exit 1
+          fi
