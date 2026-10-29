@@ -70,11 +70,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python3 -m pip install -r .docs-setup/mkdocs/requirements.txt
-          # Optional repo specific extras on top of the shared requirements
+          requirements=(-r .docs-setup/mkdocs/requirements.txt)
+          # Repositories that don't use the shared base config yet
           if [ -f mkdocs_requirements.txt ]; then
-            python3 -m pip install -r mkdocs_requirements.txt
+            requirements+=(-r mkdocs_requirements.txt)
           fi
+          # One call, so pip resolves both files together
+          python3 -m pip install "${requirements[@]}"
 
       - name: Mike deploy ${{ steps.git_tag.outputs.tag }}
         run: |

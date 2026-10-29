@@ -60,8 +60,8 @@ extra:
 Use these only when a repository really needs something the shared setup
 doesn't have; anything useful to more repositories belongs in `mkdocs/`.
 
-- **Requirements:** list them in `mkdocs_requirements.txt`. It is installed on
-  top of the shared requirements, so it holds only the additional packages.
+- **Requirements:** add them to `mkdocs/requirements.txt`, even if only one
+  repository uses them, so all repositories build with the same packages.
 - **Hooks:** add the repository's own hook file after the shared one. The
   `hooks` list replaces the shared one, so the shared hooks must be listed too:
   ```yaml
@@ -78,7 +78,9 @@ Keys in `mkdocs.yml` override the same keys in `base.yml`. Dictionaries such as
 list from `base.yml`.
 
 Repositories that don't inherit from `base.yml` yet still build with their own
-`mkdocs.yml`, `mkdocs_hooks.py` and `mkdocs_requirements.txt`.
+`mkdocs.yml`, `mkdocs_hooks.py` and `mkdocs_requirements.txt`; the workflows
+install that file together with the shared requirements only for them. Delete
+it when switching a repository to the shared setup.
 
 ## Building locally
 
