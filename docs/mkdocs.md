@@ -84,16 +84,47 @@ it when switching a repository to the shared setup.
 
 ## Building locally
 
-From the repository root:
+Anything that reads `mkdocs.yml`, including `mkdocs` and `mike` commands,
+needs the shared setup in `.docs-setup/`. From the repository root:
 
 ```bash
 git clone --depth 1 --filter=blob:none --sparse https://github.com/ynput/ops-repo-automation.git .docs-setup
 git -C .docs-setup sparse-checkout set mkdocs
-pip install -r .docs-setup/mkdocs/requirements.txt
-mkdocs serve
+git -C .docs-setup pull
 ```
 
-Update the shared setup with `git -C .docs-setup pull`.
+To use another branch of ops-repo-automation, e.g. to try unmerged changes to
+the shared setup (`git -C .docs-setup switch develop` goes back):
+
+```bash
+git -C .docs-setup remote set-branches --add origin <ops-repo-automation branch>
+git -C .docs-setup fetch --depth 1 origin <ops-repo-automation branch>
+git -C .docs-setup switch <ops-repo-automation branch>
+```
+
+Then run the commands either through `uv`, which uses a temporary environment
+with only the shared requirements (`--no-project` keeps the repository's
+`pyproject.toml` out of it):
+
+```bash
+docs() { uv run --no-project --python 3.12 --with-requirements .docs-setup/mkdocs/requirements.txt "$@"; }
+docs mkdocs serve
+docs mike list
+```
+
+```powershell
+function docs { uv run --no-project --python 3.12 --with-requirements .docs-setup/mkdocs/requirements.txt @args }
+docs mkdocs serve
+docs mike list
+```
+
+or directly, after installing the shared requirements in your environment:
+
+```bash
+pip install -r .docs-setup/mkdocs/requirements.txt
+mkdocs serve
+mike list
+```
 
 ## Testing changes to the shared setup
 
