@@ -26,7 +26,6 @@ on:
 env:
     GH_TOKEN: ${{ secrets.gh_token }}
     OUTPUT_DIR: "artifact"
-    NEXT_PACKAGE_VERSION: "${{ inputs.next_version }}+dev"
 
 jobs:
   update-branch:
@@ -49,9 +48,26 @@ jobs:
           version=$(sed -n 's/^version *= *"\(.*\)"/\1/p' package.py)
           echo "version=$version" >> $GITHUB_OUTPUT
 
-      - name: Update package version for ${{ inputs.checkout_branch }} to ${{ env.NEXT_PACKAGE_VERSION }}
+      - name: Compute next development version
+        id: dev-version
+        env:
+          RELEASED_VERSION: "${{ inputs.next_version }}"
         run: |
-          sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_PACKAGE_VERSION }}\"/" package.py
+          # Released "X.Y.Z" -> develop "X.Y.(Z+1)-dev"
+          if [[ ! "$RELEASED_VERSION" =~ ^v?([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+            echo "::error::Version '$RELEASED_VERSION' is not a valid semver (X.Y.Z)"
+            exit 1
+          fi
+          major="${BASH_REMATCH[1]}"
+          minor="${BASH_REMATCH[2]}"
+          patch="${BASH_REMATCH[3]}"
+          dev_version="${major}.${minor}.$((patch + 1))-dev"
+          echo "Released version: $RELEASED_VERSION -> develop version: $dev_version"
+          echo "version=$dev_version" >> $GITHUB_OUTPUT
+
+      - name: Update package version for ${{ inputs.checkout_branch }} to ${{ steps.dev-version.outputs.version }}
+        run: |
+          sed -i "s/^version = \".*\"/version = \"${{ steps.dev-version.outputs.version }}\"/" package.py
 
       - name: Create artifacts
         id: create-artifact
@@ -64,7 +80,7 @@ jobs:
           git config --global user.email "${{ secrets.gh_email }}"
 
       - name: Commit generated files
-        if: ${{ steps.package-version.outputs.version != env.NEXT_PACKAGE_VERSION }}
+        if: ${{ steps.package-version.outputs.version != steps.dev-version.outputs.version }}
         run: |
           git add . -- ':!${{ env.OUTPUT_DIR }}/${{ steps.create-artifact.outputs.file_name }}'
           git commit -m "[Automated] Update version in package.py for develop"
