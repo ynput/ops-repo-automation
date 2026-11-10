@@ -34,6 +34,9 @@ jobs:
     with:
       repo: ${{ github.repository }}
       expect_release: true
+      # First release is allowed when version is explicitly defined
+      allow_missing: ${{ inputs.release_overwrite && true || false }}
+      new_version: ${{ inputs.release_overwrite }}
     secrets:
       gh_token: ${{ secrets.token }}
 
@@ -58,6 +61,8 @@ jobs:
 
 
   validate-pr-information:
+    # Skipped on first release (no previous release to compare against)
+    if: ${{ needs.verify-latest-release.outputs.date_published != '' && needs.verify-latest-release.outputs.date_published != 'null' }}
     # TODO update branch ref
     needs:
       - verify-latest-release
@@ -72,6 +77,7 @@ jobs:
 
 
   increment-version:
+    if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     needs:
       - validate-pr-information
@@ -105,6 +111,7 @@ jobs:
 
 
   merge-to-main:
+    if: ${{ !failure() && !cancelled() }}
     needs:
       - increment-version
       - verify-latest-release
@@ -123,6 +130,7 @@ jobs:
 
 
   build-from-main:
+    if: ${{ !failure() && !cancelled() }}
     needs:
       - increment-version
       - merge-to-main
@@ -140,6 +148,7 @@ jobs:
       gh_email: ${{ secrets.email }} 
 
   update-develop:
+    if: ${{ !failure() && !cancelled() }}
     needs:
       - build-from-main
       - increment-version
@@ -157,6 +166,7 @@ jobs:
 
 
   create-release:
+    if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     needs:
       - validate-pr-information
@@ -186,6 +196,7 @@ jobs:
 
 
   verify-release:
+    if: ${{ !failure() && !cancelled() }}
     needs:
       - create-release
       - increment-version
