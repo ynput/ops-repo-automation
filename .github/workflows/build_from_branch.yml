@@ -53,8 +53,6 @@ jobs:
           ref: ${{ inputs.branch_name }}
           fetch-depth: 0
           submodules: true
-          # The default GITHUB_TOKEN reads only the calling repository, so
-          # submodules in other private repositories need the bot token
           token: ${{ secrets.gh_token }}
 
       - name: Update package.py version to ${{ env.NEXT_VERSION }}
