@@ -7,6 +7,10 @@ on:
       repo:
         type: string
         required: true
+      docs_setup_ref:
+        description: "ops-repo-automation ref to take the shared mkdocs/ setup from"
+        type: string
+        default: develop
     secrets:
       YNPUT_BOT_TOKEN:
         required: true
@@ -31,6 +35,14 @@ jobs:
           fetch-depth: 0
           submodules: true
 
+      - name: Checkout shared docs setup
+        uses: actions/checkout@v4
+        with:
+          repository: ynput/ops-repo-automation
+          ref: ${{ inputs.docs_setup_ref }}
+          path: .docs-setup
+          sparse-checkout: mkdocs
+
       - name: 🔑 Set Authentication
         run: |
           git config --global user.name "${{ secrets.CI_USER }}"
@@ -45,16 +57,25 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.x"
+          python-version: "3.12"
 
       - name: Install dependencies
         run: |
-          python3 -m pip install -r mkdocs_requirements.txt
+          requirements=(-r .docs-setup/mkdocs/requirements.txt)
+          # Repositories that don't use the shared base config yet
+          if [ -f mkdocs_requirements.txt ]; then
+            requirements+=(-r mkdocs_requirements.txt)
+          fi
+          # One call, so pip resolves both files together
+          python3 -m pip install "${requirements[@]}"
 
       - name: Mike deploy ${{ steps.git_tag.outputs.tag }}
         run: |
           mike deploy --update-aliases ${{ steps.git_tag.outputs.tag }} latest --branch gh-pages --push
           mike set-default latest --branch gh-pages --push
+      - name: Remove old versions
+        run: |
+          python3 .docs-setup/mkdocs/cleanup_versions.py --branch gh-pages --push
       - name: Remove dummy version on triggering from a tag
         if: startsWith(github.ref, 'refs/tags/')
         run: |
