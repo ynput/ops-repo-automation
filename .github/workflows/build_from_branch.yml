@@ -55,6 +55,12 @@ jobs:
           submodules: true
           token: ${{ secrets.gh_token }}
 
+      - name: Authenticate private Git dependencies
+        run: |
+          gh auth setup-git --hostname github.com
+          git config --global --add url."https://github.com/".insteadOf "ssh://git@github.com/"
+          git config --global --add url."https://github.com/".insteadOf "git@github.com:"
+
       - name: Update package.py version to ${{ env.NEXT_VERSION }}
         run: |
           sed -i "s/^version = \".*\"/version = \"${{ env.NEXT_VERSION }}\"/" package.py
