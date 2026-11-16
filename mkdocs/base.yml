@@ -1,0 +1,92 @@
+# Shared MkDocs config for the API docs of AYON repositories.
+#
+# The deploy workflows check this folder out to `.docs-setup/` inside the
+# repository being built, and its `mkdocs.yml` inherits from this file:
+#
+#   INHERIT: .docs-setup/mkdocs/base.yml
+#   site_name: ayon-houdini
+#   repo_url: https://github.com/ynput/ayon-houdini
+#   nav:
+#     - Home: index.md
+#     - License: license.md
+#
+# Paths below are relative to the repository root, not to this file.
+# The logo, favicon and custom.css come from `overrides/`; a file with the
+# same path in the repository's `docs/` folder takes precedence.
+#
+# Options a repository can set in its `mkdocs.yml`; `hooks.py` handles them:
+#
+#   extra:
+#     private: true              # hide repo link and source code
+#     document_root_files: true  # document the Python files in the root
+#     versions_to_keep: 15       # delete older versions after deploy
+#                                # (cleanup_versions.py)
+
+theme:
+  name: material
+  custom_dir: .docs-setup/mkdocs/overrides
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+  logo: img/ay-symbol-blackw-full.png
+  favicon: img/favicon.ico
+  features:
+    - navigation.sections
+    - navigation.path
+    - navigation.prune
+
+extra:
+  version:
+    provider: mike
+
+extra_css: [css/custom.css]
+
+markdown_extensions:
+  - mdx_gh_links
+  - pymdownx.snippets
+
+plugins:
+  - search
+  - offline
+  - mkdocs-autoapi:
+      autoapi_dir: ./
+      autoapi_add_nav_entry: Reference
+      autoapi_ignore:
+        - .*
+        - docs/**/*
+        - ./**/tests/**/*   # tests at any depth
+        - tools/**/*
+        - stubs/**/*        # mocha fix
+        - ./**/pythonrc.py  # houdini fix
+        - client/ayon_unreal/integration/**/*      # unreal fix
+        - client/ayon_usd/ayon_bin_client/**/*.py  # usd fix
+        - ./**/vendor/**/*                         # third party code
+        - .*/**/*
+        - ./*.py
+  - mkdocstrings:
+      handlers:
+        python:
+          paths:
+            - ./
+            - client/*
+            - server/*
+            - services/*
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      htmlmin_opts:
+        remove_comments: true
+      cache_safe: true
+  - mike
+
+hooks:
+  - .docs-setup/mkdocs/hooks.py
