@@ -56,9 +56,20 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+
       - name: Install dependencies
         run: |
-          python3 -m pip install -r mkdocs_requirements.txt
+          if [ -f pyproject.toml ] && python3 -c "import sys, tomllib; sys.exit('docs' not in tomllib.load(open('pyproject.toml', 'rb')).get('dependency-groups', {}))"; then
+            uv sync --only-group docs
+            echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+          elif [ -f mkdocs_requirements.txt ]; then
+            python3 -m pip install -r mkdocs_requirements.txt
+          else
+            echo "::error::No docs dependency group or mkdocs_requirements.txt found."
+            exit 1
+          fi
 
       - name: Mike deploy ${{ steps.git_tag.outputs.tag }}
         run: |
