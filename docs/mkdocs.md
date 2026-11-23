@@ -9,7 +9,7 @@ use is kept in one place, the [`mkdocs/`](../mkdocs) folder of this repository:
 | `mkdocs/base.yml` | Shared MkDocs config: theme, markdown extensions, plugins, hooks |
 | `mkdocs/hooks.py` | Shared MkDocs hooks: temporary `__init__.py` files for autoapi, `__pycache__` cleanup, the options below |
 | `mkdocs/requirements.txt` | Shared Python requirements |
-| `mkdocs/overrides/` | Shared assets: logo, favicon, `css/custom.css` |
+| `mkdocs/overrides/` | The AYON theme (styled after AYONpedia): logo, favicon, `css/`, `js/`, and `main.html` and `partials/`, which override Material's templates |
 | `mkdocs/cleanup_versions.py` | Deletes old deployed versions, run by the workflows after `mike deploy` |
 
 The workflows check `mkdocs/` out to `.docs-setup/` inside the repository being

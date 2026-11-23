@@ -11,8 +11,9 @@
 #     - License: license.md
 #
 # Paths below are relative to the repository root, not to this file.
-# The logo, favicon and custom.css come from `overrides/`; a file with the
-# same path in the repository's `docs/` folder takes precedence.
+# The logo, favicon and the AYON theme (css/ayon-theme.css, js/ayon-theme.js
+# and partials/, styled after AYONpedia) come from `overrides/`; a file with
+# the same path in the repository's `docs/` folder takes precedence.
 #
 # Options a repository can set in its `mkdocs.yml`; `hooks.py` handles them:
 #
@@ -25,29 +26,48 @@
 theme:
   name: material
   custom_dir: .docs-setup/mkdocs/overrides
+  # The theme picker of AYONpedia and the AYON web app (overrides/partials/
+  # palette.html): Dark (the default), Light and System. The icons are
+  # Material Symbols names. Material resolves System through the `media` of
+  # the Light and Dark entries, so keep those.
   palette:
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       toggle:
-        icon: material/weather-sunny
-        name: Switch to light mode
+        icon: dark_mode
+        name: Dark
     - media: "(prefers-color-scheme: light)"
       scheme: default
       toggle:
-        icon: material/weather-night
-        name: Switch to dark mode
-  logo: img/ay-symbol-blackw-full.png
+        icon: light_mode
+        name: Light
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: computer
+        name: System
+  font:
+    text: Inter
+  icon:
+    # AYONpedia's magnifier (Infima's), in overrides/.icons/ayon/
+    search: ayon/search
+  # css/ayon-theme.css swaps it for the black logo on the light scheme
+  logo: img/AYON_docs_white.svg
   favicon: img/favicon.ico
+  # No navigation.sections: sections collapse with a chevron, as on AYONpedia
   features:
-    - navigation.sections
     - navigation.path
+    # Back-to-top button when scrolling up, styled like AYONpedia's in css/ayon-theme.css
+    - navigation.top
     - navigation.prune
 
 extra:
+  # The AYON docs logo in the header leads to AYONpedia
+  homepage: https://docs.ayon.dev/
   version:
     provider: mike
 
-extra_css: [css/custom.css]
+extra_css: [css/ayon-theme.css]
+extra_javascript: [js/ayon-theme.js]
 
 markdown_extensions:
   - mdx_gh_links

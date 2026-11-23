@@ -1,0 +1,30 @@
+{#-
+  Breadcrumbs like AYONpedia's: a home icon, the sections, and the current
+  page as the last, highlighted item. Replaces Material's partials/path.html,
+  which shows the home page by name and leaves out the current page.
+-#}
+{% import "partials/path-item.html" as item with context %}
+{% if page.meta and page.meta.hide %}
+  {% set hidden = "hidden" if "path" in page.meta.hide %}
+{% endif %}
+{% if not page.is_homepage %}
+  <nav class="md-path" aria-label="{{ lang.t('nav') }}" {{ hidden }}>
+    <ol class="md-path__list">
+      {% if nav.homepage %}
+        <li class="md-path__item">
+          <a href="{{ nav.homepage.url | url }}" class="md-path__link ayon-path__home" aria-label="{{ nav.homepage.title }}" title="{{ nav.homepage.title }}">
+            {% include ".icons/material/home.svg" %}
+          </a>
+        </li>
+      {% endif %}
+      {% for nav_item in page.ancestors | reverse %}
+        {{ item.render(nav_item) }}
+      {% endfor %}
+      <li class="md-path__item">
+        <span class="md-path__link ayon-path__current" aria-current="page">
+          <span class="md-ellipsis">{{ page.title }}</span>
+        </span>
+      </li>
+    </ol>
+  </nav>
+{% endif %}

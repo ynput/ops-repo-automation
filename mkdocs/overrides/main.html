@@ -1,0 +1,10 @@
+{#-
+  The Ynput bar above the header, as on AYONpedia. It scrolls away; the header
+  below it stays at the top.
+-#}
+{% extends "base.html" %}
+
+{% block header %}
+  {% include "partials/ynput-bar.html" %}
+  {{ super() }}
+{% endblock %}
