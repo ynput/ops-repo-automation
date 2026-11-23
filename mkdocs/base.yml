@@ -52,6 +52,12 @@ extra_css: [css/custom.css]
 markdown_extensions:
   - mdx_gh_links
   - pymdownx.snippets
+  # Mermaid diagrams in ```mermaid code blocks
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
 plugins:
   - search
