@@ -1,0 +1,36 @@
+{#-
+  Theme picker like AYONpedia's and the AYON web app's: a button with the icon
+  of the current choice opens a menu with Dark, Light and System. It replaces
+  Material's partials/palette.html and keeps its markup contract, so Material
+  still applies and stores the choice:
+    - the `__palette` radio inputs in the `palette` form, in the order of
+      `theme.palette` in base.yml;
+    - Material hides the element right after each input unless that input is
+      the chosen one, so the button after each input shows only the current
+      icon.
+  Icons are Material Symbols names (`toggle.icon`), as on AYONpedia; the font is
+  loaded by css/ayon-theme.css. js/ayon-theme.js opens and closes the menu.
+-#}
+<form class="md-header__option ayon-theme" data-md-component="palette">
+  {#- Dark (the first entry) by default, like AYONpedia, instead of following the system -#}
+  <script>__md_get("__palette")||__md_set("__palette",{index:0})</script>
+  <div class="ayon-theme__picker">
+    {% for option in config.theme.palette %}
+      {% set scheme  = option.scheme  | d("default", true) %}
+      {% set primary = option.primary | d("indigo", true) %}
+      {% set accent  = option.accent  | d("indigo", true) %}
+      <input class="md-option" data-md-color-media="{{ option.media }}" data-md-color-scheme="{{ scheme | replace(' ', '-') }}" data-md-color-primary="{{ primary | replace(' ', '-') }}" data-md-color-accent="{{ accent | replace(' ', '-') }}" aria-label="{{ option.toggle.name }}" type="radio" name="__palette" id="__palette_{{ loop.index0 }}" tabindex="-1">
+      <button type="button" class="md-header__button md-icon ayon-theme__button" title="Theme: {{ option.toggle.name }}" aria-label="Theme: {{ option.toggle.name }}" aria-haspopup="true" aria-expanded="false" hidden>
+        <span class="material-symbols-outlined" aria-hidden="true">{{ option.toggle.icon }}</span>
+      </button>
+    {% endfor %}
+    <div class="ayon-theme__menu" role="menu" aria-label="Theme" hidden>
+      {% for option in config.theme.palette %}
+        <label class="ayon-theme__option" for="__palette_{{ loop.index0 }}" role="menuitemradio">
+          <span class="material-symbols-outlined" aria-hidden="true">{{ option.toggle.icon }}</span>
+          {{ option.toggle.name }}
+        </label>
+      {% endfor %}
+    </div>
+  </div>
+</form>

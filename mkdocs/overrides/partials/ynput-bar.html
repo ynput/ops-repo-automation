@@ -1,0 +1,34 @@
+{#-
+  The Ynput bar of AYONpedia (ayon-documentation, src/components/YnputNavbar):
+  the Ynput logo, the links to the other Ynput sites, X and GitHub. Keep the
+  links in sync with it. css/ayon-theme.css swaps the logo on the light scheme
+  and drops links as the bar gets narrower.
+-#}
+{% set ynput_links = [
+  ("Visit website", "https://ayon.app/"),
+  ("Ynput Cloud", "https://ynput.cloud/"),
+  ("Try AYON", "https://playground.ayon.app/"),
+  ("Feedback", "https://feedback.ayon.app/"),
+  ("Services", "https://ayon.app/services"),
+  ("Community", "https://ynput.io/community/"),
+  ("Company", "https://ayon.app/about-us"),
+  ("Contact", "https://ayon.app/contact"),
+] %}
+<div class="ynput-bar">
+  <a class="ynput-bar__logo" href="https://ynput.io" target="_blank" rel="noopener noreferrer">
+    <img src="{{ 'img/ynput_logo_small_W.svg' | url }}" alt="Ynput">
+  </a>
+  <nav class="ynput-bar__links" aria-label="Ynput">
+    {% for name, link in ynput_links %}
+      <a href="{{ link }}" target="_blank" rel="noopener noreferrer">{{ name }}</a>
+    {% endfor %}
+  </nav>
+  <div class="ynput-bar__icons">
+    <a href="https://x.com/ynput_io" target="_blank" rel="noopener noreferrer" aria-label="X" class="md-icon">
+      {% include ".icons/ayon/x.svg" %}
+    </a>
+    <a href="https://github.com/ynput" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="md-icon">
+      {% include ".icons/ayon/github.svg" %}
+    </a>
+  </div>
+</div>
